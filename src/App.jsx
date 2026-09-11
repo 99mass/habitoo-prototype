@@ -3,6 +3,7 @@ import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-d
 import { HabitooProvider } from './context/HabitooContext';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { BottomNav } from './components/BottomNav';
 import { DepositModal } from './components/DepositModal';
 import { AuthModal } from './components/AuthModal';
 
@@ -27,10 +28,10 @@ const AppContent = () => {
   const isPublishPage = location.pathname === '/publier' || location.pathname === '/publier-une-annonce';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%', maxWidth: '100%', overflowX: 'hidden' }}>
+    <div className="app-root-layout" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%', maxWidth: '100%', overflowX: 'hidden' }}>
       <Header />
       
-      <main style={{ flexGrow: 1, minWidth: 0, width: '100%', overflowX: 'hidden' }}>
+      <main className="app-main-content" style={{ flexGrow: 1, minWidth: 0, width: '100%', overflowX: 'hidden' }}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/recherche" element={<SerpPage />} />
@@ -45,9 +46,20 @@ const AppContent = () => {
 
       {!isPublishPage && <Footer />}
 
+      {/* PWA Mobile Bottom Navigation */}
+      <BottomNav />
+
       {/* Global Modals */}
       <DepositModal />
       <AuthModal />
+
+      <style>{`
+        @media (max-width: 768px) {
+          .app-main-content {
+            padding-bottom: 64px;
+          }
+        }
+      `}</style>
     </div>
   );
 };

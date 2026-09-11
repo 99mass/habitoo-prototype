@@ -9,8 +9,12 @@ import {
   Coins, 
   Check, 
   ChevronDown,
-  X,
-  Layers
+  ChevronRight,
+  X, 
+  Layers,
+  Key,
+  Tag,
+  SlidersHorizontal
 } from 'lucide-react';
 
 export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
@@ -112,6 +116,7 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
         }}
       >
         <div
+          className="search-wave-tabs-container"
           style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -127,15 +132,15 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
           <button
             type="button"
             onClick={() => handleTransactionChange("VENTE")}
+            className={`search-tab-btn tab-acheter ${transactionType === "VENTE" ? "active" : ""}`}
             style={{
-              padding: '9px 26px 8px',
+              padding: '9px 20px 8px',
               borderRadius: '12px 12px 0 0',
               fontWeight: 800,
-              fontSize: '0.875rem',
-              backgroundColor: transactionType === "VENTE" ? '#FFFFFF' : '#F9FAFB',
-              color: transactionType === "VENTE" ? 'var(--primary-red)' : '#6B7280',
+              fontSize: '0.85rem',
+              backgroundColor: transactionType === "VENTE" ? 'var(--primary-red)' : '#FFFFFF',
+              color: transactionType === "VENTE" ? '#FFFFFF' : '#4B5563',
               border: 'none',
-              borderBottom: transactionType === "VENTE" ? '3px solid var(--primary-red)' : '3px solid transparent',
               cursor: 'pointer',
               transition: 'all 0.2s ease',
               display: 'inline-flex',
@@ -143,21 +148,22 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
               gap: '6px'
             }}
           >
+            <Home size={15} color={transactionType === "VENTE" ? '#FFFFFF' : '#6B7280'} />
             <span>Acheter</span>
           </button>
 
           <button
             type="button"
             onClick={() => handleTransactionChange("LOCATION")}
+            className={`search-tab-btn tab-louer ${transactionType === "LOCATION" ? "active" : ""}`}
             style={{
-              padding: '9px 26px 8px',
+              padding: '9px 20px 8px',
               borderRadius: '12px 12px 0 0',
               fontWeight: 800,
-              fontSize: '0.875rem',
-              backgroundColor: transactionType === "LOCATION" ? '#FFFFFF' : '#F9FAFB',
-              color: transactionType === "LOCATION" ? 'var(--primary-red)' : '#6B7280',
+              fontSize: '0.85rem',
+              backgroundColor: transactionType === "LOCATION" ? 'var(--primary-red)' : '#FFFFFF',
+              color: transactionType === "LOCATION" ? '#FFFFFF' : '#4B5563',
               border: 'none',
-              borderBottom: transactionType === "LOCATION" ? '3px solid var(--primary-red)' : '3px solid transparent',
               cursor: 'pointer',
               transition: 'all 0.2s ease',
               display: 'inline-flex',
@@ -165,6 +171,7 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
               gap: '6px'
             }}
           >
+            <Key size={15} color={transactionType === "LOCATION" ? '#FFFFFF' : '#6B7280'} />
             <span>Louer</span>
           </button>
         </div>
@@ -229,7 +236,7 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
                 <input
                   id="hero-location-input"
                   type="text"
-                  placeholder="Sélectionnez une ville ou quartier..."
+                  placeholder="Ville, quartier..."
                   value={locationQuery}
                   onChange={(e) => setLocationQuery(e.target.value)}
                   list="neighborhood-suggestions-list"
@@ -301,8 +308,10 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
                     }}
                   >
                     {selectedTypes.length === 0 
-                      ? "Maison, appartement, terrain..." 
-                      : `${selectedTypes.length} type(s) sélectionné(s)`}
+                      ? "Tous types" 
+                      : selectedTypes.length === 1 
+                        ? selectedTypes[0] 
+                        : `${selectedTypes.length} type(s)`}
                   </div>
                 </div>
                 <ChevronDown 
@@ -379,7 +388,7 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
 
             {/* 3. BUDGET (Dynamic slider with live FCFA display) */}
             <div 
-              className="search-field-box"
+              className="search-field-box search-budget-box"
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -394,11 +403,11 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
                 <Coins size={20} />
               </div>
               <div style={{ flexGrow: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1px' }}>
-                  <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--obsidian-black)', lineHeight: 1.1 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3px', gap: '8px' }}>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--obsidian-black)', lineHeight: 1.1, whiteSpace: 'nowrap' }}>
                     Budget max
                   </div>
-                  <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--primary-red)' }}>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--primary-red)', whiteSpace: 'nowrap' }}>
                     {formatPrice(
                       maxBudget, 
                       Math.round(maxBudget / 600), 
@@ -510,6 +519,7 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
                   key={amenity}
                   type="button"
                   onClick={() => toggleAmenity(amenity)}
+                  className="amenity-chip-btn"
                   style={{
                     padding: '5px 14px',
                     borderRadius: '9999px',
@@ -538,21 +548,77 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
         @media (max-width: 960px) {
           .search-main-grid {
             grid-template-columns: 1fr 1fr !important;
+            gap: 10px !important;
+          }
+          .search-budget-box {
+            grid-column: span 2 !important;
           }
           .search-main-grid > div:last-child {
-            grid-column: span 2;
+            grid-column: span 2 !important;
           }
           .search-main-grid > div:last-child button {
-            width: 100%;
+            width: 100% !important;
             justify-content: center;
           }
         }
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
+          .search-wave-tabs-bar {
+            width: 100% !important;
+            display: flex !important;
+          }
+          .search-wave-tabs-container {
+            width: 100% !important;
+            display: flex !important;
+            box-sizing: border-box !important;
+            border-radius: 18px 18px 0 0 !important;
+            padding: 4px !important;
+            gap: 4px !important;
+            border-bottom: 1px solid #FFFFFF !important;
+          }
+          .search-tab-btn {
+            flex: 1 1 50% !important;
+            width: 50% !important;
+            justify-content: center !important;
+            padding: 10px 14px 9px !important;
+            font-size: 0.88rem !important;
+          }
+          .tab-acheter {
+            border-radius: 14px 0 0 0 !important;
+          }
+          .tab-louer {
+            border-radius: 0 14px 0 0 !important;
+          }
+          .search-main-card {
+            border-top-left-radius: 0 !important;
+            border-top-right-radius: 0 !important;
+            border-radius: 0 0 18px 18px !important;
+            padding: 12px 10px 14px 10px !important;
+          }
           .search-main-grid {
-            grid-template-columns: 1fr !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 8px !important;
+          }
+          .search-field-box {
+            padding: 7px 10px !important;
+            min-height: 48px;
+          }
+          .search-budget-box {
+            grid-column: span 2 !important;
           }
           .search-main-grid > div:last-child {
-            grid-column: span 1;
+            grid-column: span 2 !important;
+            margin-top: 4px;
+          }
+          .search-main-grid > div:last-child button {
+            width: 100% !important;
+            height: 46px !important;
+            font-size: 0.95rem !important;
+            border-radius: 12px !important;
+            justify-content: center;
+          }
+          .amenity-chip-btn {
+            padding: 4px 10px !important;
+            font-size: 0.72rem !important;
           }
         }
       `}</style>

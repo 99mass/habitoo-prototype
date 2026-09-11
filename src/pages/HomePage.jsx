@@ -23,7 +23,8 @@ import {
   ChevronRight as ChevronRightIcon,
   CheckCircle2,
   ClipboardCheck,
-  ShieldCheck
+  ShieldCheck,
+  Users
 } from 'lucide-react';
 
 export const HomePage = () => {
@@ -40,19 +41,36 @@ export const HomePage = () => {
       if (heroEl && searchBtn) {
         const heroRect = heroEl.getBoundingClientRect();
         const btnRect = searchBtn.getBoundingClientRect();
-        // Distance from the bottom of the hero section to the vertical center of the search button
-        const btnMidY = btnRect.top + btnRect.height / 2;
-        const offset = Math.max(0, Math.round(heroRect.bottom - btnMidY));
-        setBannerBottomOffset(offset);
+        // Distance from the bottom of the hero section to the bottom of the search button
+        const btnTargetY = btnRect.bottom;
+        const offset = Math.max(0, Math.round(heroRect.bottom - btnTargetY));
+        if (offset > 0) {
+          setBannerBottomOffset(offset);
+        }
       }
     };
 
     updateBannerBottom();
     window.addEventListener('resize', updateBannerBottom);
-    const timer = setTimeout(updateBannerBottom, 150);
+
+    let observer = null;
+    if (typeof ResizeObserver !== 'undefined' && heroSectionRef.current) {
+      observer = new ResizeObserver(() => {
+        updateBannerBottom();
+      });
+      observer.observe(heroSectionRef.current);
+    }
+
+    const t1 = setTimeout(updateBannerBottom, 100);
+    const t2 = setTimeout(updateBannerBottom, 300);
+    const t3 = setTimeout(updateBannerBottom, 800);
+
     return () => {
       window.removeEventListener('resize', updateBannerBottom);
-      clearTimeout(timer);
+      if (observer) observer.disconnect();
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
     };
   }, []);
 
@@ -94,30 +112,21 @@ export const HomePage = () => {
           ========================================================================= */}
       <section ref={heroSectionRef} className="home-hero-section">
         
-        {/* Background Banner with sharp terrace photo, stopping at the exact height of the search button */}
+        {/* Background Banner with desktop & mobile sunset villa images, stopping at the exact height of the search button */}
         <div 
           className="hero-bg-banner"
           style={{ bottom: `${bannerBottomOffset}px` }}
         >
-          <img 
-            src="/assets/hero-terrace-skyline.jpg" 
-            alt="Habitoo - Immobilier d'exception en Afrique" 
-            className="hero-bg-photo"
-          />
-          {/* Subtle light contrast overlay on left — ZERO blur */}
+          <picture className="hero-bg-picture">
+            <source media="(max-width: 768px)" srcSet="/assets/hero-sunset-villa-mobile.jpg" />
+            <img 
+              src="/assets/hero-terrace-skyline.jpg" 
+              alt="Habitoo - Immobilier d'exception en Afrique" 
+              className="hero-bg-photo"
+            />
+          </picture>
+          {/* Subtle soft white overlay — douce, naturelle et non piquante */}
           <div className="hero-bg-overlay" />
-        </div>
-
-        {/* Floating Glass Badge centered vertically with respect to the background banner */}
-        <div 
-          className="hero-bg-center-target hide-mobile"
-          style={{ bottom: `${bannerBottomOffset}px` }}
-        >
-          <div className="container hero-bg-badge-flex">
-            <div className="hero-floating-glass-pill">
-              Des lieux pour aujourd'hui et demain.
-            </div>
-          </div>
         </div>
 
         <div className="container hero-content-container">
@@ -127,6 +136,12 @@ export const HomePage = () => {
             
             {/* Left: Heading, Subtitle & 3 Trust Badges */}
             <div className="hero-text-column">
+              {/* Pre-tag matching mockup */}
+              <div className="hero-pre-tag">
+                <span className="hero-pre-tag-dash" />
+                <span>Des lieux pour aujourd'hui et demain</span>
+              </div>
+
               <h1 className="font-serif hero-headline">
                 Trouvez plus<br />
                 qu'un logement,<br />
@@ -134,31 +149,39 @@ export const HomePage = () => {
               </h1>
 
               <p className="hero-subheadline">
-                Maisons, appartements, terrains... en location ou en vente, dans les plus grandes villes d'Afrique.
+                Maisons, appartements, terrains... en location ou en vente à Brazzaville, Kinshasa et Abidjan.
               </p>
 
-              {/* 3 Trust Highlights matching prototype */}
+              {/* 3 Trust Highlights matching mockup */}
               <div className="hero-trust-badges">
                 <div className="hero-trust-badge">
                   <div className="hero-trust-icon-box">
-                    <Home size={15} strokeWidth={2.2} />
+                    <ShieldCheck size={15} strokeWidth={2.2} />
                   </div>
                   <span>Annonces vérifiées</span>
                 </div>
 
                 <div className="hero-trust-badge">
                   <div className="hero-trust-icon-box">
-                    <MapPin size={15} strokeWidth={2.2} />
+                    <Users size={15} strokeWidth={2.2} />
                   </div>
                   <span>Particuliers et professionnels</span>
                 </div>
 
                 <div className="hero-trust-badge">
                   <div className="hero-trust-icon-box">
-                    <Star size={15} strokeWidth={2.2} />
+                    <Home size={15} strokeWidth={2.2} />
                   </div>
                   <span>Un accompagnement de confiance</span>
                 </div>
+              </div>
+            </div>
+
+            {/* Right: Floating Balcony Glass Pill matching mockup */}
+            <div className="hero-balcony-target">
+              <div className="hero-floating-glass-pill">
+                <span className="hero-pill-red-dash" />
+                <span>Un chez-vous pour une meilleure vie</span>
               </div>
             </div>
 
@@ -343,12 +366,12 @@ export const HomePage = () => {
         <div className="container">
           
           {/* Section Header */}
-          <div className="services-section-header">
+          <div className="services-header">
             <span className="services-tag">
               PLUS QU'UNE PLATEFORME D'ANNONCES
             </span>
             <h2 className="font-serif services-title">
-              Des services pour vous accompagner
+              Des services pour vous accompagner à chaque étape
             </h2>
             <p className="services-desc">
               Habitoo simplifie votre quotidien avec des services d'excellence, pensés pour les locataires, propriétaires et investisseurs.
@@ -514,7 +537,7 @@ export const HomePage = () => {
 
 
       {/* =========================================================================
-          5. CITIES SECTION ("NOS VILLES" - Dark Panoramic Section)
+          5. CITIES SECTION (Atmospheric Night/Sunset Skyline Panorama Background)
           ========================================================================= */}
       <section className="section-cities">
         <div className="cities-bg-overlay" />
@@ -750,11 +773,16 @@ export const HomePage = () => {
           overflow: hidden;
           z-index: 1;
         }
+        .hero-bg-picture {
+          width: 100%;
+          height: 100%;
+          display: block;
+        }
         .hero-bg-photo {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          object-position: center 25%;
+          object-position: center 35%;
           /* Crisp & sharp: absolutely NO blur */
           filter: none !important;
           display: block;
@@ -764,31 +792,59 @@ export const HomePage = () => {
           inset: 0;
           background: linear-gradient(
             to right,
-            rgba(255, 255, 255, 0.95) 0%,
-            rgba(255, 255, 255, 0.88) 36%,
-            rgba(255, 255, 255, 0.25) 58%,
-            rgba(255, 255, 255, 0) 76%
+            rgba(255, 255, 255, 0.72) 0%,
+            rgba(255, 255, 255, 0.52) 30%,
+            rgba(255, 255, 255, 0.15) 54%,
+            transparent 72%
           );
           pointer-events: none;
           backdrop-filter: none !important;
           -webkit-backdrop-filter: none !important;
         }
-        @media (max-width: 960px) {
-          .hero-bg-banner {
-            bottom: 95px;
-          }
-        }
         @media (max-width: 600px) {
-          .hero-bg-banner {
-            bottom: 125px;
-          }
           .hero-bg-overlay {
             background: linear-gradient(
               to bottom,
-              rgba(255, 255, 255, 0.95) 0%,
-              rgba(255, 255, 255, 0.88) 50%,
-              rgba(255, 255, 255, 0.65) 100%
+              rgba(255, 255, 255, 0.76) 0%,
+              rgba(255, 255, 255, 0.52) 42%,
+              rgba(255, 255, 255, 0.12) 75%,
+              transparent 100%
             );
+          }
+        }
+        @media (max-width: 768px) {
+          .home-hero-section {
+            padding-top: 66px !important;
+          }
+          .hero-upper-row {
+            margin-bottom: 8px !important;
+          }
+          .hero-headline {
+            font-size: 1.65rem !important;
+            line-height: 1.14 !important;
+            margin-bottom: 6px !important;
+            letter-spacing: -0.5px !important;
+          }
+          .hero-subheadline {
+            font-size: 0.8125rem !important;
+            line-height: 1.35 !important;
+            margin-bottom: 8px !important;
+          }
+          .hero-trust-badges {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 6px !important;
+            margin-bottom: 6px !important;
+          }
+          .hero-trust-badge {
+            font-size: 0.72rem !important;
+            padding: 3px 8px !important;
+            border-radius: 9999px !important;
+            gap: 5px !important;
+          }
+          .hero-trust-badge svg {
+            width: 13px !important;
+            height: 13px !important;
           }
         }
         .hero-content-container {
@@ -805,6 +861,23 @@ export const HomePage = () => {
         .hero-text-column {
           max-width: 580px;
         }
+        .hero-pre-tag {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 0.82rem;
+          font-weight: 700;
+          color: #4B5563;
+          margin-bottom: 8px;
+          letter-spacing: 0.2px;
+        }
+        .hero-pre-tag-dash {
+          display: inline-block;
+          width: 18px;
+          height: 3px;
+          background-color: var(--primary-red);
+          border-radius: 2px;
+        }
         .hero-headline {
           font-size: clamp(1.8rem, 3.2vw, 2.55rem);
           font-weight: 800;
@@ -819,11 +892,11 @@ export const HomePage = () => {
         }
         .hero-subheadline {
           font-size: clamp(0.85rem, 1.15vw, 0.9375rem);
-          color: #374151;
+          color: #1F2937;
           line-height: 1.45;
           margin-bottom: 14px;
           max-width: 500px;
-          font-weight: 500;
+          font-weight: 600;
         }
         .hero-trust-badges {
           display: flex;
@@ -838,7 +911,7 @@ export const HomePage = () => {
           font-size: 0.78rem;
           font-weight: 700;
           color: var(--obsidian-black);
-          background: rgba(255, 255, 255, 0.85);
+          background: rgba(255, 255, 255, 0.88);
           border: 1px solid rgba(0, 0, 0, 0.08);
           padding: 4px 8px;
           border-radius: 6px;
@@ -851,6 +924,26 @@ export const HomePage = () => {
         }
 
         /* Floating badge centered vertically with respect to the background banner */
+        .hero-balcony-target {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          flex-shrink: 0;
+        }
+        @media (max-width: 960px) {
+          .hero-balcony-target {
+            display: none !important;
+          }
+        }
+        .hero-pill-red-dash {
+          display: inline-block;
+          width: 14px;
+          height: 3px;
+          background-color: var(--primary-red);
+          border-radius: 2px;
+          margin-right: 8px;
+          vertical-align: middle;
+        }
         .hero-bg-center-target {
           position: absolute;
           top: 0;
@@ -890,6 +983,37 @@ export const HomePage = () => {
           position: relative;
           z-index: 20;
           margin-top: 4px;
+        }
+
+        /* Section Head Row (Common for Categories, Cities, Services) */
+        .section-head-row {
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          margin-bottom: 18px;
+          gap: 12px;
+        }
+        .section-head-title {
+          font-size: clamp(1.4rem, 2.4vw, 1.95rem);
+          font-weight: 800;
+          color: var(--obsidian-black);
+          line-height: 1.2;
+          margin: 0;
+        }
+        .section-head-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 0.85rem;
+          font-weight: 700;
+          color: var(--primary-red);
+          text-decoration: none;
+          white-space: nowrap;
+          transition: transform 0.15s ease, opacity 0.15s ease;
+        }
+        .section-head-link:hover {
+          opacity: 0.85;
+          transform: translateX(2px);
         }
 
         /* ===== 2. CATEGORIES SECTION ===== */
@@ -997,6 +1121,24 @@ export const HomePage = () => {
           align-items: center;
           gap: 16px;
         }
+        @media (max-width: 600px) {
+          .section-showcase {
+            padding: 36px 0;
+          }
+          .showcase-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 18px;
+          }
+          .showcase-header-actions {
+            width: 100%;
+            justify-content: space-between;
+          }
+          .showcase-nav-arrows {
+            display: none;
+          }
+        }
         .showcase-view-all {
           display: inline-flex;
           align-items: center;
@@ -1081,6 +1223,7 @@ export const HomePage = () => {
           padding: 60px 0 80px;
           background-color: #FAF5F5;
         }
+        .services-header,
         .services-section-header {
           text-align: left;
           max-width: 1000px;
@@ -1316,6 +1459,13 @@ export const HomePage = () => {
           margin-bottom: 30px;
           flex-wrap: wrap;
           gap: 16px;
+        }
+        @media (max-width: 600px) {
+          .cities-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+          }
         }
         .cities-tag {
           font-size: 0.8125rem;

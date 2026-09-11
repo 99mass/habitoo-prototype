@@ -31,10 +31,21 @@ export const Header = () => {
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const dropdownRef = useRef(null);
   const userDropdownRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const isHome = location.pathname === '/';
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 30);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Close dropdowns on click outside
   useEffect(() => {
@@ -67,7 +78,7 @@ export const Header = () => {
   });
 
   return (
-    <header className="site-header">
+    <header className={`site-header ${isHome ? 'is-home' : ''} ${isScrolled ? 'is-scrolled' : ''}`}>
       <div className="container-wide header-inner">
         
         {/* Brand Logo — Red version with brand name + motto */}
@@ -90,9 +101,6 @@ export const Header = () => {
           </Link>
           <Link to="/recherche?type=LOCATION" style={navLinkStyle(location.search.includes('type=LOCATION'))}>
             Louer
-          </Link>
-          <Link to="/publier" style={navLinkStyle(location.pathname === '/publier')}>
-            Vendre
           </Link>
           <Link to="/conciergerie" style={navLinkStyle(location.pathname === '/conciergerie')}>
             Conciergerie
@@ -141,7 +149,7 @@ export const Header = () => {
         <div className="header-actions">
           
           {/* Currency / City Switcher */}
-          <div style={{ position: 'relative' }} ref={dropdownRef}>
+          <div className="currency-toggle-wrap hide-mobile" style={{ position: 'relative' }} ref={dropdownRef}>
             <button
               onClick={() => setIsCityDropdownOpen(!isCityDropdownOpen)}
               className="currency-toggle-btn"
@@ -299,6 +307,23 @@ export const Header = () => {
           >
             <Plus size={16} strokeWidth={2.5} />
             <span>Déposer une annonce</span>
+          </button>
+
+          {/* Mobile Notification Button (matching reference mockup) */}
+          <button
+            onClick={() => {
+              if (currentUser) {
+                navigate('/mon-compte?tab=notifications');
+              } else {
+                openAuthModal(() => navigate('/mon-compte?tab=notifications'));
+              }
+            }}
+            className="mobile-notif-btn"
+            title="Notifications"
+            aria-label="Notifications"
+          >
+            <Bell size={18} color="#1A1A1A" strokeWidth={2.2} />
+            <span className="notif-red-dot" />
           </button>
 
           {/* Mobile Menu Toggle */}
@@ -831,16 +856,71 @@ export const Header = () => {
         .hide-mobile { display: none !important; }
         .btn-header-login { display: none; }
         .header-user-avatar-btn { display: none; }
+        .mobile-notif-btn { display: none; }
 
         @media (max-width: 768px) {
+          .mobile-notif-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #FFFFFF;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            position: relative;
+            cursor: pointer;
+            padding: 0;
+            flex-shrink: 0;
+            -webkit-tap-highlight-color: transparent;
+          }
+
+          .notif-red-dot {
+            position: absolute;
+            top: 7px;
+            right: 8px;
+            width: 7px;
+            height: 7px;
+            background-color: var(--primary-red);
+            border-radius: 50%;
+            border: 1.5px solid #FFFFFF;
+          }
+
+          .site-header.is-home {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            border-bottom: none;
+            box-shadow: none;
+            z-index: 100;
+          }
+
+          .site-header.is-home.is-scrolled {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+            z-index: 999;
+          }
+
           .header-inner {
             gap: 8px;
           }
           .header-actions {
-            gap: 6px;
+            gap: 8px;
           }
           .header-logo-img {
-            height: 30px;
+            height: 32px;
           }
           .currency-toggle-btn {
             padding: 6px 10px;
