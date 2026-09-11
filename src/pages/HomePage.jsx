@@ -839,10 +839,10 @@ export const HomePage = () => {
           font-weight: 700;
           color: var(--obsidian-black);
           background: rgba(255, 255, 255, 0.85);
-          border: 1px solid rgba(0, 0, 0, 0.06);
+          border: 1px solid rgba(0, 0, 0, 0.08);
           padding: 4px 8px;
           border-radius: 6px;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+          box-shadow: none;
         }
         .hero-trust-icon-box {
           color: var(--primary-red);
@@ -881,7 +881,7 @@ export const HomePage = () => {
           border-radius: 10px;
           font-size: 0.84rem;
           font-weight: 600;
-          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+          box-shadow: none;
           border: 1px solid rgba(255, 255, 255, 0.18);
           white-space: nowrap;
         }
@@ -907,15 +907,16 @@ export const HomePage = () => {
           height: 190px;
           border-radius: 16px;
           overflow: hidden;
-          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+          box-shadow: none;
           border: 1px solid var(--border-color);
           display: block;
           text-decoration: none;
-          transition: transform 0.25s ease, box-shadow 0.25s ease;
+          transition: transform 0.25s ease, border-color 0.25s ease;
         }
         .category-card:hover {
           transform: translateY(-4px);
-          box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+          box-shadow: none;
+          border-color: #9CA3AF;
         }
         .category-card-img {
           width: 100%;
@@ -941,7 +942,8 @@ export const HomePage = () => {
           display: flex;
           align-items: center;
           gap: 10px;
-          box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+          box-shadow: none;
+          border: 1px solid rgba(0, 0, 0, 0.08);
         }
         .category-pill-icon {
           color: var(--obsidian-black);
@@ -1059,12 +1061,19 @@ export const HomePage = () => {
           background-color: var(--obsidian-black);
           color: #FFFFFF;
           border-color: var(--obsidian-black);
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+          box-shadow: none;
         }
         .showcase-grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
           gap: 24px;
+        }
+        .showcase-grid > div {
+          box-shadow: none !important;
+        }
+        .showcase-grid > div:hover {
+          box-shadow: none !important;
+          border-color: #9CA3AF !important;
         }
 
         /* ===== 4. SERVICES SECTION ===== */
@@ -1115,12 +1124,13 @@ export const HomePage = () => {
           background-color: #FFFFFF;
           border-radius: 28px;
           padding: 32px;
-          box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
-          border: 1px solid rgba(0, 0, 0, 0.05);
-          transition: transform 0.25s ease, box-shadow 0.25s ease;
+          box-shadow: none;
+          border: 1px solid rgba(0, 0, 0, 0.08);
+          transition: transform 0.25s ease, border-color 0.25s ease;
         }
         .service-split-row:hover {
-          box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.09);
+          box-shadow: none;
+          border-color: rgba(0, 0, 0, 0.16);
         }
 
         @media (min-width: 960px) {
@@ -1139,7 +1149,8 @@ export const HomePage = () => {
           position: relative;
           border-radius: 20px;
           overflow: hidden;
-          box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.12);
+          box-shadow: none;
+          border: 1px solid rgba(0, 0, 0, 0.08);
           aspect-ratio: 3 / 2;
           background-color: #E5E7EB;
         }
@@ -1167,8 +1178,8 @@ export const HomePage = () => {
           display: flex;
           align-items: center;
           gap: 12px;
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-          border: 1px solid rgba(255, 255, 255, 0.8);
+          box-shadow: none;
+          border: 1px solid rgba(0, 0, 0, 0.08);
           max-width: calc(100% - 36px);
         }
         .service-floating-icon {
@@ -1266,14 +1277,14 @@ export const HomePage = () => {
           color: #FFFFFF;
           font-weight: 700;
           font-size: 0.9375rem;
-          box-shadow: 0 4px 14px rgba(247, 0, 0, 0.25);
+          box-shadow: none;
           text-decoration: none;
           transition: all 0.2s ease;
         }
         .service-cta-link:hover {
           background-color: #d10000;
           transform: translateY(-1px);
-          box-shadow: 0 6px 20px rgba(247, 0, 0, 0.35);
+          box-shadow: none;
         }
 
         /* Mobile responsive ordering for inverted row: ensure image is on top */
@@ -1345,13 +1356,14 @@ export const HomePage = () => {
           background-color: #FFFFFF;
           border-radius: 16px;
           overflow: hidden;
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+          box-shadow: none;
+          border: 1px solid rgba(255, 255, 255, 0.15);
           cursor: pointer;
-          transition: transform 0.25s ease, box-shadow 0.25s ease;
+          transition: transform 0.25s ease;
         }
         .city-explore-card:hover {
           transform: translateY(-4px);
-          box-shadow: 0 14px 32px rgba(0, 0, 0, 0.3);
+          box-shadow: none;
         }
         .city-explore-img-wrap {
           height: 140px;
@@ -1412,7 +1424,8 @@ export const HomePage = () => {
         .professionals-image-wrapper {
           border-radius: 22px;
           overflow: hidden;
-          box-shadow: 0 14px 34px -8px rgba(0, 0, 0, 0.12);
+          box-shadow: none;
+          border: 1px solid rgba(0, 0, 0, 0.08);
           aspect-ratio: 4 / 3;
           background-color: #F3F4F6;
         }
@@ -1470,7 +1483,7 @@ export const HomePage = () => {
           font-weight: 700;
           font-size: 0.9rem;
           border: none;
-          box-shadow: 0 4px 14px rgba(247, 0, 0, 0.3);
+          box-shadow: none;
           cursor: pointer;
         }
         .professionals-features-list {
@@ -1512,7 +1525,8 @@ export const HomePage = () => {
           align-items: center;
           position: relative;
           overflow: hidden;
-          box-shadow: 0 16px 36px rgba(227, 2, 10, 0.25);
+          box-shadow: none;
+          border: 1px solid rgba(255, 255, 255, 0.15);
           padding: 0 0 0 clamp(24px, 4.5vw, 56px);
         }
         .mobile-app-content {
