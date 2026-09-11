@@ -1,0 +1,875 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useHabitoo } from '../context/HabitooContext';
+import { CITIES } from '../data/propertiesData';
+import { 
+  Bell, 
+  ChevronDown, 
+  Plus, 
+  User, 
+  Menu, 
+  X, 
+  Search,
+  LogIn,
+  LogOut,
+  ShieldCheck,
+  Megaphone,
+  Settings
+} from 'lucide-react';
+
+export const Header = () => {
+  const { 
+    activeCity, 
+    setActiveCity, 
+    favorites, 
+    openDepositModal,
+    currentUser,
+    openAuthModal,
+    logout
+  } = useHabitoo();
+
+  const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const userDropdownRef = useRef(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Close dropdowns on click outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsCityDropdownOpen(false);
+      }
+      if (userDropdownRef.current && !userDropdownRef.current.contains(e.target)) {
+        setIsUserDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location]);
+
+  const navLinkStyle = (active) => ({
+    fontWeight: 600,
+    fontSize: '0.9rem',
+    color: active ? 'var(--primary-red)' : '#262626',
+    textDecoration: 'none',
+    padding: '6px 0',
+    position: 'relative',
+    whiteSpace: 'nowrap',
+    transition: 'color 0.15s ease'
+  });
+
+  return (
+    <header className="site-header">
+      <div className="container-wide header-inner">
+        
+        {/* Brand Logo — Red version with brand name + motto */}
+        <Link to="/" className="header-brand">
+          <img 
+            src="/assets/Code_Generated_Image (2).png" 
+            alt="Habitoo — La nouvelle façon de se loger" 
+            className="header-logo-img"
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.parentNode.innerHTML = '<span style="font-family:Playfair Display,serif;font-size:1.65rem;font-weight:900;color:#F70000;">Habitoo</span>';
+            }}
+          />
+        </Link>
+
+        {/* Desktop Primary Navigation matching mockup */}
+        <nav className="desktop-nav">
+          <Link to="/recherche?type=VENTE" style={navLinkStyle(location.search.includes('type=VENTE'))}>
+            Acheter
+          </Link>
+          <Link to="/recherche?type=LOCATION" style={navLinkStyle(location.search.includes('type=LOCATION'))}>
+            Louer
+          </Link>
+          <Link to="/publier" style={navLinkStyle(location.pathname === '/publier')}>
+            Vendre
+          </Link>
+          <Link to="/conciergerie" style={navLinkStyle(location.pathname === '/conciergerie')}>
+            Conciergerie
+          </Link>
+          <a 
+            href="#services" 
+            onClick={(e) => {
+              if (location.pathname !== '/') {
+                navigate('/#services');
+              } else {
+                const el = document.getElementById('services');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+            style={navLinkStyle(false)}
+          >
+            Visite 360°
+          </a>
+          <a 
+            href="#professionnels" 
+            onClick={(e) => {
+              if (location.pathname !== '/') {
+                navigate('/#professionnels');
+              } else {
+                const el = document.getElementById('professionnels');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+            style={navLinkStyle(false)}
+          >
+            Nos partenaires
+          </a>
+          <a 
+            href="#a-propos" 
+            onClick={(e) => {
+              const el = document.getElementById('a-propos') || document.querySelector('footer');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            style={navLinkStyle(false)}
+          >
+            À propos
+          </a>
+        </nav>
+
+        {/* Right Actions */}
+        <div className="header-actions">
+          
+          {/* Currency / City Switcher */}
+          <div style={{ position: 'relative' }} ref={dropdownRef}>
+            <button
+              onClick={() => setIsCityDropdownOpen(!isCityDropdownOpen)}
+              className="currency-toggle-btn"
+              title="Changer de ville et devise"
+              aria-label={`Marché actif : ${activeCity.name}, Devise : ${activeCity.currency}. Cliquer pour changer.`}
+              aria-expanded={isCityDropdownOpen}
+              aria-haspopup="true"
+            >
+              <span className="currency-toggle-flag">{activeCity.flag}</span>
+              <span className="currency-toggle-code">{activeCity.currency}</span>
+              <ChevronDown size={12} className={`currency-toggle-chevron ${isCityDropdownOpen ? 'open' : ''}`} />
+            </button>
+
+            {isCityDropdownOpen && (
+              <div className="city-dropdown">
+                <div className="city-dropdown-title">
+                  Marchés & Devises
+                </div>
+                {CITIES.map((city) => (
+                  <button
+                    key={city.id}
+                    onClick={() => {
+                      setActiveCity(city);
+                      setIsCityDropdownOpen(false);
+                    }}
+                    className={`city-dropdown-item ${activeCity.id === city.id ? 'active' : ''}`}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <span style={{ fontSize: '1.2rem' }}>{city.flag}</span>
+                      <div>
+                        <div style={{ fontWeight: 600, fontSize: '0.85rem', color: 'var(--obsidian-black)' }}>
+                          {city.name}
+                        </div>
+                        <div style={{ fontSize: '0.72rem', color: 'var(--graphite-gray)' }}>
+                          {city.country}
+                        </div>
+                      </div>
+                    </div>
+                    <span className={`currency-badge ${activeCity.id === city.id ? 'active' : ''}`}>
+                      {city.currency}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* User Account / Login */}
+          {currentUser ? (
+            <div style={{ position: 'relative' }} ref={userDropdownRef}>
+              <button
+                onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                className="header-user-avatar-btn"
+                title={`Connecté en tant que ${currentUser.name}`}
+              >
+                {currentUser.avatar ? (
+                  <img 
+                    src={currentUser.avatar} 
+                    alt={currentUser.name} 
+                    className="header-user-img"
+                  />
+                ) : (
+                  <span className="header-user-initials">
+                    {currentUser.name.charAt(0)}
+                  </span>
+                )}
+                <span className="header-user-online-dot" />
+              </button>
+
+              {isUserDropdownOpen && (
+                <div className="user-dropdown-menu">
+                  <div className="user-dropdown-header">
+                    <div style={{ fontWeight: 700, fontSize: '0.9375rem', color: 'var(--obsidian-black)' }}>
+                      {currentUser.name}
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--graphite-gray)', marginTop: '2px' }}>
+                      {currentUser.email || currentUser.phone}
+                    </div>
+                  </div>
+
+                  <div className="user-dropdown-divider" />
+
+                  <Link 
+                    to="/mon-compte?tab=profile" 
+                    className="user-dropdown-item"
+                    onClick={() => setIsUserDropdownOpen(false)}
+                  >
+                    <User size={16} />
+                    <span>Mon Profil</span>
+                  </Link>
+                  <Link 
+                    to="/mon-compte?tab=properties" 
+                    className="user-dropdown-item"
+                    onClick={() => setIsUserDropdownOpen(false)}
+                  >
+                    <Megaphone size={16} />
+                    <span>Mes Annonces</span>
+                  </Link>
+                  <Link 
+                    to="/mon-compte?tab=notifications" 
+                    className="user-dropdown-item"
+                    onClick={() => setIsUserDropdownOpen(false)}
+                  >
+                    <Bell size={16} />
+                    <span>Notifications</span>
+                  </Link>
+                  <Link 
+                    to="/mon-compte?tab=settings" 
+                    className="user-dropdown-item"
+                    onClick={() => setIsUserDropdownOpen(false)}
+                  >
+                    <Settings size={16} />
+                    <span>Paramètres</span>
+                  </Link>
+
+                  <div className="user-dropdown-divider" />
+
+                  <button
+                    onClick={() => {
+                      logout();
+                      setIsUserDropdownOpen(false);
+                      if (location.pathname === '/mon-compte') {
+                        navigate('/');
+                      }
+                    }}
+                    className="user-dropdown-item logout"
+                  >
+                    <LogOut size={16} />
+                    <span>Se déconnecter</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button 
+              onClick={openAuthModal} 
+              className="btn-header-login"
+              title="Se connecter"
+            >
+              <User size={17} />
+              <span>Se connecter</span>
+            </button>
+          )}
+
+          {/* Red CTA Button: + Déposer une annonce */}
+          <button
+            onClick={() => {
+              if (currentUser) {
+                navigate('/publier');
+              } else {
+                openAuthModal(() => navigate('/publier'));
+              }
+            }}
+            className="btn-header-cta hide-mobile"
+          >
+            <Plus size={16} strokeWidth={2.5} />
+            <span>Déposer une annonce</span>
+          </button>
+
+          {/* Mobile Menu Toggle */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="mobile-menu-btn header-icon-btn"
+            aria-label={mobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+          >
+            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
+
+      </div>
+
+      {/* Mobile Drawer Menu */}
+      {mobileMenuOpen && (
+        <div className="mobile-drawer">
+          {/* User profile / Login banner in drawer */}
+          {currentUser ? (
+            <div className="mobile-user-card">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div className="mobile-user-avatar">
+                  {currentUser.name.charAt(0)}
+                </div>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--obsidian-black)' }}>
+                    {currentUser.name}
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--graphite-gray)' }}>
+                    {currentUser.email || currentUser.phone}
+                  </div>
+                </div>
+              </div>
+              <button 
+                onClick={() => {
+                  logout();
+                  setMobileMenuOpen(false);
+                  if (location.pathname === '/mon-compte') {
+                    navigate('/');
+                  }
+                }}
+                className="mobile-logout-btn"
+              >
+                <LogOut size={14} />
+                <span>Déconnexion</span>
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                openAuthModal();
+              }}
+              className="btn-primary"
+              style={{ width: '100%', justifyContent: 'center', padding: '12px', marginBottom: '12px' }}
+            >
+              <LogIn size={16} />
+              <span>Se connecter</span>
+            </button>
+          )}
+
+          <Link to="/recherche?type=VENTE" className="mobile-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+            Acheter
+          </Link>
+          <Link to="/recherche?type=LOCATION" className="mobile-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+            Louer
+          </Link>
+          <Link to="/publier" className="mobile-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+            Vendre
+          </Link>
+          <Link to="/conciergerie" className="mobile-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+            Conciergerie
+          </Link>
+          <a 
+            href="#services" 
+            className="mobile-drawer-link" 
+            onClick={() => {
+              setMobileMenuOpen(false);
+              const el = document.getElementById('services');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            Visite 360°
+          </a>
+          <a 
+            href="#professionnels" 
+            className="mobile-drawer-link" 
+            onClick={() => {
+              setMobileMenuOpen(false);
+              const el = document.getElementById('professionnels');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            Nos partenaires
+          </a>
+          <a 
+            href="#a-propos" 
+            className="mobile-drawer-link" 
+            onClick={() => {
+              setMobileMenuOpen(false);
+              const el = document.getElementById('a-propos') || document.querySelector('footer');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            À propos
+          </a>
+
+          <button
+            onClick={() => {
+              setMobileMenuOpen(false);
+              if (currentUser) {
+                navigate('/publier');
+              } else {
+                openAuthModal(() => navigate('/publier'));
+              }
+            }}
+            className="btn-header-cta"
+            style={{ width: '100%', justifyContent: 'center', marginTop: '16px', padding: '14px' }}
+          >
+            <Plus size={18} strokeWidth={2.5} />
+            <span>Déposer une annonce</span>
+          </button>
+        </div>
+      )}
+
+      <style>{`
+        .site-header {
+          position: sticky;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: var(--header-height);
+          background-color: var(--surface-glass);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border-bottom: 1px solid var(--border-color);
+          z-index: 900;
+          display: flex;
+          align-items: center;
+        }
+        .header-inner {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+          gap: 20px;
+        }
+        .header-brand {
+          display: flex;
+          align-items: center;
+          text-decoration: none;
+          flex-shrink: 0;
+        }
+        .header-logo-img {
+          height: 36px;
+          width: auto;
+          object-fit: contain;
+        }
+        .desktop-nav {
+          display: none;
+          align-items: center;
+          gap: clamp(14px, 2vw, 32px);
+        }
+        .header-actions {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        /* Currency Toggle */
+        .currency-toggle-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 8px 14px;
+          border-radius: var(--radius-pill);
+          border: 1px solid var(--border-color);
+          background-color: var(--surface-white);
+          color: var(--obsidian-black);
+          font-size: 0.8125rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.15s;
+        }
+        .currency-toggle-btn:hover {
+          border-color: var(--primary-red);
+          background-color: var(--soft-tint);
+        }
+        .currency-toggle-flag {
+          font-size: 1.1rem;
+          line-height: 1;
+        }
+        .currency-toggle-code {
+          color: var(--obsidian-black);
+          letter-spacing: 0.5px;
+        }
+        .currency-toggle-chevron {
+          color: var(--graphite-gray);
+          transition: transform 0.2s;
+        }
+        .currency-toggle-chevron.open {
+          transform: rotate(180deg);
+        }
+
+        /* Header icon buttons */
+        .header-icon-btn {
+          position: relative;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          border: 1px solid var(--border-color);
+          background-color: var(--surface-white);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--obsidian-black);
+          cursor: pointer;
+          text-decoration: none;
+          transition: all 0.15s;
+        }
+        .header-icon-btn:hover {
+          border-color: var(--graphite-gray);
+        }
+        .header-badge {
+          position: absolute;
+          top: -4px;
+          right: -4px;
+          background-color: var(--primary-red);
+          color: #FFF;
+          font-size: 0.6875rem;
+          font-weight: 700;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 2px solid #FFF;
+        }
+
+        /* Publish CTA */
+        .btn-publish {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 9px 20px;
+          border-radius: var(--radius-pill);
+          border: 2px solid var(--primary-red);
+          background: transparent;
+          color: var(--primary-red);
+          font-weight: 700;
+          font-size: 0.875rem;
+          cursor: pointer;
+          transition: all 0.2s;
+          white-space: nowrap;
+        }
+        .btn-publish:hover {
+          background-color: var(--primary-red);
+          color: #FFF;
+        }
+
+        /* Login Button in Header */
+        .btn-header-login {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 8px 16px;
+          border-radius: var(--radius-pill);
+          border: 1px solid var(--border-color);
+          background-color: var(--surface-white);
+          color: var(--obsidian-black);
+          font-weight: 700;
+          font-size: 0.875rem;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .btn-header-login:hover {
+          border-color: var(--primary-red);
+          color: var(--primary-red);
+          background-color: var(--soft-tint);
+        }
+
+        /* Red Header CTA (+ Déposer une annonce) */
+        .btn-header-cta {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 10px 20px;
+          border-radius: var(--radius-pill);
+          background-color: var(--primary-red);
+          color: #FFFFFF;
+          border: none;
+          font-weight: 700;
+          font-size: 0.875rem;
+          cursor: pointer;
+          white-space: nowrap;
+          box-shadow: 0 4px 14px rgba(247, 0, 0, 0.25);
+          transition: all 0.2s ease;
+        }
+        .btn-header-cta:hover {
+          background-color: var(--primary-red-hover);
+          transform: translateY(-1px);
+          box-shadow: 0 6px 18px rgba(247, 0, 0, 0.35);
+        }
+
+        /* User Avatar Button */
+        .header-user-avatar-btn {
+          position: relative;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          border: 2px solid var(--primary-red);
+          background-color: var(--soft-tint);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          padding: 0;
+          overflow: visible;
+          transition: transform 0.15s;
+        }
+        .header-user-avatar-btn:hover {
+          transform: scale(1.05);
+        }
+        .header-user-img {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+        .header-user-initials {
+          font-weight: 800;
+          font-size: 1rem;
+          color: var(--primary-red);
+        }
+        .header-user-online-dot {
+          position: absolute;
+          bottom: -1px;
+          right: -1px;
+          width: 11px;
+          height: 11px;
+          background-color: var(--verified-green);
+          border: 2px solid #FFF;
+          border-radius: 50%;
+        }
+
+        /* User Dropdown Menu */
+        .user-dropdown-menu {
+          position: absolute;
+          top: calc(100% + 10px);
+          right: 0;
+          width: 250px;
+          background-color: var(--surface-white);
+          border-radius: var(--radius-card);
+          box-shadow: var(--shadow-lg);
+          border: 1px solid var(--border-color);
+          padding: 10px;
+          z-index: 1000;
+          animation: fadeIn 0.15s ease-out;
+        }
+        .user-dropdown-header {
+          padding: 8px 10px;
+        }
+        .user-dropdown-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 0.6875rem;
+          font-weight: 700;
+          background-color: rgba(5,150,105,0.1);
+          color: #059669;
+          padding: 2px 8px;
+          border-radius: var(--radius-pill);
+          margin-top: 6px;
+        }
+        .user-dropdown-divider {
+          height: 1px;
+          background-color: var(--border-color);
+          margin: 6px 0;
+        }
+        .user-dropdown-item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          width: 100%;
+          padding: 9px 12px;
+          border-radius: 8px;
+          background: transparent;
+          border: none;
+          color: var(--obsidian-black);
+          font-weight: 600;
+          font-size: 0.875rem;
+          text-decoration: none;
+          text-align: left;
+          cursor: pointer;
+          transition: all 0.15s;
+        }
+        .user-dropdown-item:hover {
+          background-color: var(--bg-main);
+          color: var(--primary-red);
+        }
+        .user-dropdown-item.logout {
+          color: #DC2626;
+        }
+        .user-dropdown-item.logout:hover {
+          background-color: #FEF2F2;
+        }
+
+        /* Mobile Drawer User Card */
+        .mobile-user-card {
+          background-color: var(--bg-main);
+          border-radius: 12px;
+          padding: 14px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 12px;
+          border: 1px solid var(--border-color);
+        }
+        .mobile-user-avatar {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          background-color: var(--primary-red);
+          color: #FFF;
+          font-weight: 800;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .mobile-logout-btn {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          background: transparent;
+          border: 1px solid #FCA5A5;
+          color: #DC2626;
+          border-radius: var(--radius-pill);
+          padding: 5px 10px;
+          font-size: 0.75rem;
+          font-weight: 700;
+          cursor: pointer;
+        }
+
+        /* City dropdown */
+        .city-dropdown {
+          position: absolute;
+          top: calc(100% + 8px);
+          right: 0;
+          width: 240px;
+          background-color: var(--surface-white);
+          border-radius: var(--radius-card);
+          box-shadow: var(--shadow-lg);
+          border: 1px solid var(--border-color);
+          padding: 8px;
+          z-index: 999;
+          animation: fadeIn 0.15s ease-out;
+        }
+        .city-dropdown-title {
+          padding: 8px 12px;
+          font-size: 0.75rem;
+          font-weight: 700;
+          color: var(--graphite-gray);
+          text-transform: uppercase;
+        }
+        .city-dropdown-item {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+          padding: 10px 12px;
+          border-radius: 8px;
+          background-color: transparent;
+          border: none;
+          text-align: left;
+          cursor: pointer;
+          transition: background-color 0.15s;
+        }
+        .city-dropdown-item.active {
+          background-color: var(--soft-tint);
+        }
+        .city-dropdown-item:hover {
+          background-color: var(--bg-main);
+        }
+        .currency-badge {
+          font-weight: 700;
+          font-size: 0.8125rem;
+          color: var(--graphite-gray);
+          background: #FFF;
+          padding: 2px 6px;
+          border-radius: 4px;
+          border: 1px solid var(--border-color);
+        }
+        .currency-badge.active {
+          color: var(--primary-red);
+        }
+
+        /* Mobile drawer */
+        .mobile-drawer {
+          position: absolute;
+          top: var(--header-height);
+          left: 0;
+          right: 0;
+          background-color: var(--surface-white);
+          border-bottom: 1px solid var(--border-color);
+          padding: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          box-shadow: var(--shadow-lg);
+          z-index: 999;
+          max-height: calc(100vh - var(--header-height));
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+        .mobile-drawer-link {
+          font-size: 1.1rem;
+          font-weight: 600;
+          padding: 12px 0;
+          color: var(--obsidian-black);
+          text-decoration: none;
+          border-bottom: 1px solid var(--border-light);
+        }
+        .mobile-drawer-link:last-of-type {
+          border-bottom: none;
+        }
+
+        /* Responsive */
+        .mobile-menu-btn { display: flex; }
+        .hide-mobile { display: none !important; }
+        .btn-header-login { display: none; }
+        .header-user-avatar-btn { display: none; }
+
+        @media (max-width: 768px) {
+          .header-inner {
+            gap: 8px;
+          }
+          .header-actions {
+            gap: 6px;
+          }
+          .header-logo-img {
+            height: 30px;
+          }
+          .currency-toggle-btn {
+            padding: 6px 10px;
+            font-size: 0.75rem;
+            gap: 4px;
+          }
+          .header-icon-btn {
+            width: 36px;
+            height: 36px;
+          }
+        }
+
+        @media (min-width: 768px) {
+          .btn-header-login { display: inline-flex; }
+          .header-user-avatar-btn { display: flex; }
+        }
+
+        @media (min-width: 900px) {
+          .desktop-nav {
+            display: flex !important;
+          }
+          .mobile-menu-btn {
+            display: none !important;
+          }
+          .hide-mobile {
+            display: inline-flex !important;
+          }
+        }
+      `}</style>
+    </header>
+  );
+};
