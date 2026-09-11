@@ -17,6 +17,8 @@ import {
 export const PropertyCard = ({ property, onHover = null, isHighlighted = false }) => {
   const { isFavorite, toggleFavorite, formatPrice } = useHabitoo();
   const favorite = isFavorite(property.id);
+  const isProListing = property.isPro ?? (property.advertiserType === 'PRO' || (property.agent?.agency && property.agent.agency !== 'Particulier' && property.agent.agency !== 'Direct Propriétaire'));
+  const isVente = property.category === 'VENTE';
 
   return (
     <div
@@ -77,7 +79,7 @@ export const PropertyCard = ({ property, onHover = null, isHighlighted = false }
             zIndex: 2
           }}
         >
-          {/* LOCATION / VENTE badge */}
+          {/* LOCATION vs VENTE badge */}
           <span 
             style={{
               display: 'inline-flex',
@@ -86,35 +88,56 @@ export const PropertyCard = ({ property, onHover = null, isHighlighted = false }
               fontSize: '0.72rem',
               fontWeight: 800,
               borderRadius: '9999px',
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              color: 'var(--obsidian-black)',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.12)',
+              backgroundColor: isVente ? 'var(--primary-red)' : '#111827',
+              color: '#FFFFFF',
+              boxShadow: isVente 
+                ? '0 2px 8px rgba(247, 0, 0, 0.35)' 
+                : '0 2px 8px rgba(0, 0, 0, 0.25)',
               letterSpacing: '0.5px',
               textTransform: 'uppercase'
             }}
           >
-            {property.category === 'VENTE' ? 'À VENDRE' : 'À LOUER'}
+            {isVente ? 'À VENDRE' : 'À LOUER'}
           </span>
 
-          {/* PRO badge */}
-          {(property.isPro || property.agent?.certified) && (
+          {/* PRO vs PARTICULIER badge */}
+          {isProListing ? (
             <span 
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '3px',
-                padding: '4px 8px',
-                fontSize: '0.72rem',
+                gap: '4px',
+                padding: '4px 9px',
+                fontSize: '0.7rem',
                 fontWeight: 800,
                 borderRadius: '9999px',
                 backgroundColor: '#2563EB',
                 color: '#FFFFFF',
-                boxShadow: '0 2px 6px rgba(37,99,235,0.25)',
-                letterSpacing: '0.5px'
+                boxShadow: '0 2px 6px rgba(37,99,235,0.3)',
+                letterSpacing: '0.4px'
               }}
             >
-              <ShieldCheck size={12} />
+              <ShieldCheck size={12} strokeWidth={2.5} />
               PRO
+            </span>
+          ) : (
+            <span 
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                padding: '4px 9px',
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                borderRadius: '9999px',
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                color: '#374151',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.12)',
+                letterSpacing: '0.4px',
+                border: '1px solid rgba(0,0,0,0.06)'
+              }}
+            >
+              PARTICULIER
             </span>
           )}
         </div>

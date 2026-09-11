@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useHabitoo } from '../context/HabitooContext';
 import { PROPERTIES_DATA } from '../data/propertiesData';
@@ -22,27 +22,69 @@ import {
   BarChart3,
   ChevronRight as ChevronRightIcon,
   CheckCircle2,
-  ClipboardCheck
+  ClipboardCheck,
+  ShieldCheck
 } from 'lucide-react';
 
 export const HomePage = () => {
   const { openAuthModal } = useHabitoo();
   const navigate = useNavigate();
+  const heroSectionRef = useRef(null);
+  const [bannerBottomOffset, setBannerBottomOffset] = useState(82);
 
-  // Carousel pagination for "Nos dernières annonces"
+  // Measure the vertical position of the search button to stop the background banner exactly at its height
+  useEffect(() => {
+    const updateBannerBottom = () => {
+      const heroEl = heroSectionRef.current;
+      const searchBtn = heroEl?.querySelector('button[type="submit"]');
+      if (heroEl && searchBtn) {
+        const heroRect = heroEl.getBoundingClientRect();
+        const btnRect = searchBtn.getBoundingClientRect();
+        // Distance from the bottom of the hero section to the vertical center of the search button
+        const btnMidY = btnRect.top + btnRect.height / 2;
+        const offset = Math.max(0, Math.round(heroRect.bottom - btnMidY));
+        setBannerBottomOffset(offset);
+      }
+    };
+
+    updateBannerBottom();
+    window.addEventListener('resize', updateBannerBottom);
+    const timer = setTimeout(updateBannerBottom, 150);
+    return () => {
+      window.removeEventListener('resize', updateBannerBottom);
+      clearTimeout(timer);
+    };
+  }, []);
+
+  // Filter for showcase: "ALL" | "PARTICULIER" | "PRO"
+  const [showcaseFilter, setShowcaseFilter] = useState('ALL');
   const [carouselIndex, setCarouselIndex] = useState(0);
   const itemsPerPage = 4;
-  const totalListings = PROPERTIES_DATA.length;
+
+  const proCount = PROPERTIES_DATA.filter(p => p.isPro || p.advertiserType === 'PRO').length;
+  const particulierCount = PROPERTIES_DATA.filter(p => !p.isPro || p.advertiserType === 'PARTICULIER').length;
+
+  const filteredProperties = useMemo(() => {
+    if (showcaseFilter === 'PRO') {
+      return PROPERTIES_DATA.filter(p => p.isPro || p.advertiserType === 'PRO');
+    }
+    if (showcaseFilter === 'PARTICULIER') {
+      return PROPERTIES_DATA.filter(p => !p.isPro || p.advertiserType === 'PARTICULIER');
+    }
+    return PROPERTIES_DATA;
+  }, [showcaseFilter]);
+
+  const totalFiltered = filteredProperties.length;
 
   const handlePrev = () => {
-    setCarouselIndex(prev => (prev > 0 ? prev - 1 : Math.max(0, totalListings - itemsPerPage)));
+    setCarouselIndex(prev => (prev > 0 ? prev - 1 : Math.max(0, totalFiltered - itemsPerPage)));
   };
 
   const handleNext = () => {
-    setCarouselIndex(prev => (prev + itemsPerPage < totalListings ? prev + 1 : 0));
+    setCarouselIndex(prev => (prev + itemsPerPage < totalFiltered ? prev + 1 : 0));
   };
 
-  const displayedProperties = PROPERTIES_DATA.slice(carouselIndex, carouselIndex + itemsPerPage);
+  const displayedProperties = filteredProperties.slice(carouselIndex, carouselIndex + itemsPerPage);
 
   return (
     <div className="habitoo-homepage" style={{ position: 'relative', overflowX: 'hidden', backgroundColor: '#FFFFFF' }}>
@@ -50,10 +92,13 @@ export const HomePage = () => {
       {/* =========================================================================
           1. HERO SECTION (Compact, Sharp Terrace Background stopping at vertical middle of Search)
           ========================================================================= */}
-      <section className="home-hero-section">
+      <section ref={heroSectionRef} className="home-hero-section">
         
-        {/* Background Banner with sharp terrace photo, stopping at vertical middle of search form */}
-        <div className="hero-bg-banner">
+        {/* Background Banner with sharp terrace photo, stopping at the exact height of the search button */}
+        <div 
+          className="hero-bg-banner"
+          style={{ bottom: `${bannerBottomOffset}px` }}
+        >
           <img 
             src="/assets/hero-terrace-skyline.jpg" 
             alt="Habitoo - Immobilier d'exception en Afrique" 
@@ -64,7 +109,10 @@ export const HomePage = () => {
         </div>
 
         {/* Floating Glass Badge centered vertically with respect to the background banner */}
-        <div className="hero-bg-center-target hide-mobile">
+        <div 
+          className="hero-bg-center-target hide-mobile"
+          style={{ bottom: `${bannerBottomOffset}px` }}
+        >
           <div className="container hero-bg-badge-flex">
             <div className="hero-floating-glass-pill">
               Des lieux pour aujourd'hui et demain.
@@ -138,7 +186,7 @@ export const HomePage = () => {
               className="category-card"
             >
               <img 
-                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80" 
+                src="/assets/category-appartement.jpg" 
                 alt="Appartements confort et modernité"
                 className="category-card-img"
               />
@@ -160,8 +208,8 @@ export const HomePage = () => {
               className="category-card"
             >
               <img 
-                src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80" 
-                alt="Maisons pour toute la famille"
+                src="/assets/category-maison.jpg" 
+                alt="Maisons et villas pour toute la famille"
                 className="category-card-img"
               />
               <div className="category-card-overlay" />
@@ -182,8 +230,8 @@ export const HomePage = () => {
               className="category-card"
             >
               <img 
-                src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80" 
-                alt="Terrains investissez dans l'avenir"
+                src="/assets/category-terrain.jpg" 
+                alt="Terrains à vendre - Investissez dans l'avenir"
                 className="category-card-img"
               />
               <div className="category-card-overlay" />
@@ -224,7 +272,7 @@ export const HomePage = () => {
 
             <div className="showcase-header-actions">
               <Link to="/recherche" className="showcase-view-all">
-                <span>Voir toutes les annonces ({totalListings})</span>
+                <span>Voir toutes les annonces ({PROPERTIES_DATA.length})</span>
                 <ArrowRight size={15} />
               </Link>
 
@@ -245,6 +293,32 @@ export const HomePage = () => {
                 </button>
               </div>
             </div>
+          </div>
+
+          {/* Filter Tabs: Tout mélangé | Particuliers | Agences Pro */}
+          <div className="showcase-filter-tabs">
+            <button 
+              type="button"
+              onClick={() => { setShowcaseFilter('ALL'); setCarouselIndex(0); }}
+              className={`showcase-tab ${showcaseFilter === 'ALL' ? 'active' : ''}`}
+            >
+              Toutes les annonces ({PROPERTIES_DATA.length})
+            </button>
+            <button 
+              type="button"
+              onClick={() => { setShowcaseFilter('PARTICULIER'); setCarouselIndex(0); }}
+              className={`showcase-tab ${showcaseFilter === 'PARTICULIER' ? 'active' : ''}`}
+            >
+              Particuliers ({particulierCount})
+            </button>
+            <button 
+              type="button"
+              onClick={() => { setShowcaseFilter('PRO'); setCarouselIndex(0); }}
+              className={`showcase-tab ${showcaseFilter === 'PRO' ? 'active' : ''}`}
+            >
+              <ShieldCheck size={13} strokeWidth={2.5} style={{ marginRight: '5px', verticalAlign: '-2px' }} />
+              Agences Pro ({proCount})
+            </button>
           </div>
 
           {/* 4 Listing Cards Grid */}
@@ -671,8 +745,8 @@ export const HomePage = () => {
           top: 0;
           left: 0;
           right: 0;
-          /* Stops right at the vertical middle of the search form */
-          bottom: 65px;
+          /* Stops vertically right at the level of the search button */
+          bottom: 82px;
           overflow: hidden;
           z-index: 1;
         }
@@ -782,7 +856,7 @@ export const HomePage = () => {
           top: 0;
           left: 0;
           right: 0;
-          bottom: 65px;
+          bottom: 82px;
           display: flex;
           align-items: center;
           pointer-events: none;
@@ -956,6 +1030,37 @@ export const HomePage = () => {
           border-color: var(--primary-red);
           color: var(--primary-red);
         }
+        .showcase-filter-tabs {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 22px;
+          flex-wrap: wrap;
+        }
+        .showcase-tab {
+          padding: 7px 16px;
+          border-radius: 9999px;
+          font-size: 0.8125rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+          border: 1px solid var(--border-color);
+          background-color: #FFFFFF;
+          color: #4B5563;
+          display: inline-flex;
+          align-items: center;
+        }
+        .showcase-tab:hover {
+          border-color: #9CA3AF;
+          color: var(--obsidian-black);
+          background-color: #F9FAFB;
+        }
+        .showcase-tab.active {
+          background-color: var(--obsidian-black);
+          color: #FFFFFF;
+          border-color: var(--obsidian-black);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
         .showcase-grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -964,35 +1069,35 @@ export const HomePage = () => {
 
         /* ===== 4. SERVICES SECTION ===== */
         .section-services {
-          padding: 80px 0 96px;
+          padding: 60px 0 80px;
           background-color: #FAF5F5;
         }
         .services-section-header {
           text-align: left;
           max-width: 1000px;
-          margin: 0 0 52px 0;
+          margin: 0 0 32px 0;
         }
         .services-tag {
-          font-size: 0.8125rem;
+          font-size: 0.75rem;
           font-weight: 800;
           color: var(--primary-red);
           letter-spacing: 1px;
           text-transform: uppercase;
           display: inline-block;
-          margin-bottom: 12px;
+          margin-bottom: 8px;
         }
         .services-title {
-          font-size: clamp(1.9rem, 3.2vw, 2.75rem);
+          font-size: clamp(1.75rem, 2.8vw, 2.35rem);
           font-weight: 800;
           color: var(--obsidian-black);
-          line-height: 1.25;
-          margin-bottom: 14px;
+          line-height: 1.2;
+          margin-bottom: 8px;
         }
         .services-desc {
-          font-size: 1.05rem;
-          color: #4B5563;
-          line-height: 1.6;
-          max-width: 780px;
+          font-size: 0.9375rem;
+          color: #6B7280;
+          line-height: 1.45;
+          max-width: 850px;
           margin: 0;
         }
 

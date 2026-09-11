@@ -199,11 +199,16 @@ export const PropertyDetailPage = () => {
           agency: (previewData.userRole === 'AGENCE' || previewData.userRole === 'MANDATAIRE') ? "Agence Immobilière Agréée" : "Propriétaire Direct",
           phone: previewData.ownerPhone || "+225 07 00 00 00",
           verified: true
-        }
+        },
+        isPro: previewData.userRole === 'AGENCE' || previewData.userRole === 'MANDATAIRE' || previewData.isPro === true,
+        advertiserType: (previewData.userRole === 'AGENCE' || previewData.userRole === 'MANDATAIRE' || previewData.advertiserType === 'PRO') ? 'PRO' : 'PARTICULIER'
       }
     : (PROPERTIES_DATA.find(p => p.id === id) || PROPERTIES_DATA[0]);
 
   const favorite = isFavorite(property.id);
+  const isVente = property.category === 'VENTE';
+  const isProListing = property.isPro ?? (property.advertiserType === 'PRO' || (property.agent?.agency && property.agent.agency !== 'Particulier' && !property.agent.agency.includes('Direct Propriétaire') && !property.agent.agency.includes('Propriétaire Direct')));
+
 
   // Carousel & Lightbox States
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
@@ -528,9 +533,67 @@ export const PropertyDetailPage = () => {
                   className="pdp-carousel-main-img"
                 />
 
-                {/* Category Badge */}
-                <div style={{ position: 'absolute', top: '16px', left: '16px', zIndex: 5 }}>
-                  <span className="badge-tag badge-location">{property.category}</span>
+                {/* Category & Advertiser Badges */}
+                <div style={{ position: 'absolute', top: '16px', left: '16px', zIndex: 5, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span 
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      padding: '5px 12px',
+                      fontSize: '0.75rem',
+                      fontWeight: 800,
+                      borderRadius: '9999px',
+                      backgroundColor: isVente ? 'var(--primary-red)' : '#111827',
+                      color: '#FFFFFF',
+                      boxShadow: isVente 
+                        ? '0 2px 8px rgba(247, 0, 0, 0.4)' 
+                        : '0 2px 8px rgba(0, 0, 0, 0.3)',
+                      letterSpacing: '0.5px',
+                      textTransform: 'uppercase'
+                    }}
+                  >
+                    {isVente ? 'À VENDRE' : 'À LOUER'}
+                  </span>
+
+                  {isProListing ? (
+                    <span 
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        padding: '5px 11px',
+                        fontSize: '0.72rem',
+                        fontWeight: 800,
+                        borderRadius: '9999px',
+                        backgroundColor: '#2563EB',
+                        color: '#FFFFFF',
+                        boxShadow: '0 2px 8px rgba(37,99,235,0.35)',
+                        letterSpacing: '0.4px'
+                      }}
+                    >
+                      <ShieldCheck size={13} strokeWidth={2.5} />
+                      PRO
+                    </span>
+                  ) : (
+                    <span 
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        padding: '5px 11px',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        borderRadius: '9999px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                        color: '#374151',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                        letterSpacing: '0.4px',
+                        border: '1px solid rgba(0,0,0,0.06)'
+                      }}
+                    >
+                      PARTICULIER
+                    </span>
+                  )}
                 </div>
 
                 {/* Fullscreen Magnify Trigger */}
@@ -729,15 +792,50 @@ export const PropertyDetailPage = () => {
                   />
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                      <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--graphite-gray)', fontWeight: 700 }}>
-                        Agence Immobilière Mandataire
-                      </span>
+                      {isProListing ? (
+                        <span style={{ 
+                          display: 'inline-flex', 
+                          alignItems: 'center', 
+                          gap: '4px',
+                          padding: '3px 8px',
+                          borderRadius: '9999px',
+                          backgroundColor: '#2563EB',
+                          color: '#FFFFFF',
+                          fontSize: '0.7rem', 
+                          textTransform: 'uppercase', 
+                          letterSpacing: '0.5px', 
+                          fontWeight: 800 
+                        }}>
+                          <ShieldCheck size={12} strokeWidth={2.5} />
+                          Agence Professionnelle Partenaire
+                        </span>
+                      ) : (
+                        <span style={{ 
+                          display: 'inline-flex', 
+                          alignItems: 'center', 
+                          gap: '4px',
+                          padding: '3px 8px',
+                          borderRadius: '9999px',
+                          backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                          color: 'var(--graphite-gray)',
+                          fontSize: '0.7rem', 
+                          textTransform: 'uppercase', 
+                          letterSpacing: '0.5px', 
+                          fontWeight: 700 
+                        }}>
+                          Annonce Particulier (Direct Propriétaire)
+                        </span>
+                      )}
                     </div>
                     <h4 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--obsidian-black)', margin: 0 }}>
                       {property.agent.agency}
                     </h4>
                     <div style={{ fontSize: '0.875rem', color: 'var(--graphite-gray)', marginTop: '2px' }}>
-                      Conseiller dédié : <strong>{property.agent.name}</strong>
+                      {isProListing ? (
+                        <>Conseiller dédié : <strong>{property.agent.name}</strong></>
+                      ) : (
+                        <>Contact direct : <strong>{property.agent.name}</strong></>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -748,7 +846,7 @@ export const PropertyDetailPage = () => {
                   style={{ padding: '12px 20px', fontSize: '0.875rem', display: 'inline-flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}
                 >
                   <Phone size={15} />
-                  <span>Contacter l'agence ({property.agent.phone})</span>
+                  <span>{isProListing ? `Contacter l'agence (${property.agent.phone})` : `Contacter le propriétaire (${property.agent.phone})`}</span>
                 </a>
               </div>
             </div>

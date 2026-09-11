@@ -7,7 +7,6 @@ import {
   MapPin, 
   Home, 
   Coins, 
-  SlidersHorizontal, 
   Check, 
   ChevronDown,
   X,
@@ -24,9 +23,7 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [isTypeDropdownOpen, setIsTypeDropdownOpen] = useState(false);
   const [maxBudget, setMaxBudget] = useState(transactionType === "VENTE" ? 150000000 : 2500000);
-  const [minSurface, setMinSurface] = useState("");
   const [selectedAmenities, setSelectedAmenities] = useState([]);
-  const [showAdvancedPanel, setShowAdvancedPanel] = useState(false);
 
   const typeDropdownRef = useRef(null);
 
@@ -76,7 +73,6 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
     if (locationQuery) params.set('location', locationQuery);
     if (selectedTypes.length > 0) params.set('typologies', selectedTypes.join(','));
     if (maxBudget) params.set('budget', maxBudget.toString());
-    if (minSurface) params.set('surfaceMin', minSurface.toString());
     if (selectedAmenities.length > 0) params.set('amenities', selectedAmenities.join(','));
 
     if (onSearchSubmit) {
@@ -85,7 +81,6 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
         locationQuery,
         selectedTypes,
         maxBudget,
-        minSurface,
         selectedAmenities
       });
     } else {
@@ -104,67 +99,89 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
         zIndex: 25
       }}
     >
-      {/* Top Segmented Tabs: Acheter vs Louer */}
+      {/* Top Wave Tabs fused with the Form Card Background */}
       <div 
+        className="search-wave-tabs-bar"
         style={{ 
           display: 'flex', 
-          alignItems: 'center', 
-          gap: '8px', 
-          marginBottom: '6px',
-          marginLeft: '4px'
+          alignItems: 'flex-end', 
+          marginBottom: '-1px', // Crucial: merges and fuses into the white form below
+          position: 'relative',
+          zIndex: 5,
+          marginLeft: '0px'
         }}
       >
-        <button
-          type="button"
-          onClick={() => handleTransactionChange("VENTE")}
+        <div
           style={{
-            padding: '7px 24px',
-            borderRadius: '9999px',
-            fontWeight: 700,
-            fontSize: '0.875rem',
-            backgroundColor: transactionType === "VENTE" ? 'var(--primary-red)' : '#FFFFFF',
-            color: transactionType === "VENTE" ? '#FFFFFF' : '#374151',
-            boxShadow: transactionType === "VENTE" 
-              ? '0 4px 12px rgba(247, 0, 0, 0.3)' 
-              : '0 2px 6px rgba(0, 0, 0, 0.05)',
-            border: transactionType === "VENTE" ? 'none' : '1px solid rgba(0,0,0,0.08)',
-            transition: 'all 0.2s ease',
-            cursor: 'pointer'
+            display: 'inline-flex',
+            alignItems: 'center',
+            backgroundColor: '#FFFFFF',
+            borderRadius: '16px 16px 0 0',
+            border: '1px solid rgba(0, 0, 0, 0.08)',
+            borderBottom: '1px solid #FFFFFF', // Creates unbroken white flow into the form
+            boxShadow: '0 -4px 12px rgba(0, 0, 0, 0.03)',
+            padding: '4px 6px 0 6px',
+            gap: '4px'
           }}
         >
-          Acheter
-        </button>
+          <button
+            type="button"
+            onClick={() => handleTransactionChange("VENTE")}
+            style={{
+              padding: '9px 26px 8px',
+              borderRadius: '12px 12px 0 0',
+              fontWeight: 800,
+              fontSize: '0.875rem',
+              backgroundColor: transactionType === "VENTE" ? '#FFFFFF' : '#F9FAFB',
+              color: transactionType === "VENTE" ? 'var(--primary-red)' : '#6B7280',
+              border: 'none',
+              borderBottom: transactionType === "VENTE" ? '3px solid var(--primary-red)' : '3px solid transparent',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            <span>Acheter</span>
+          </button>
 
-        <button
-          type="button"
-          onClick={() => handleTransactionChange("LOCATION")}
-          style={{
-            padding: '7px 24px',
-            borderRadius: '9999px',
-            fontWeight: 700,
-            fontSize: '0.875rem',
-            backgroundColor: transactionType === "LOCATION" ? 'var(--primary-red)' : '#FFFFFF',
-            color: transactionType === "LOCATION" ? '#FFFFFF' : '#374151',
-            boxShadow: transactionType === "LOCATION" 
-              ? '0 4px 12px rgba(247, 0, 0, 0.3)' 
-              : '0 2px 6px rgba(0, 0, 0, 0.05)',
-            border: transactionType === "LOCATION" ? 'none' : '1px solid rgba(0,0,0,0.08)',
-            transition: 'all 0.2s ease',
-            cursor: 'pointer'
-          }}
-        >
-          Louer
-        </button>
+          <button
+            type="button"
+            onClick={() => handleTransactionChange("LOCATION")}
+            style={{
+              padding: '9px 26px 8px',
+              borderRadius: '12px 12px 0 0',
+              fontWeight: 800,
+              fontSize: '0.875rem',
+              backgroundColor: transactionType === "LOCATION" ? '#FFFFFF' : '#F9FAFB',
+              color: transactionType === "LOCATION" ? 'var(--primary-red)' : '#6B7280',
+              border: 'none',
+              borderBottom: transactionType === "LOCATION" ? '3px solid var(--primary-red)' : '3px solid transparent',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            <span>Louer</span>
+          </button>
+        </div>
       </div>
 
-      {/* Main White Card Container (Sleek, Compact Height) */}
+      {/* Main White Card Container (Fused to the tabs above) */}
       <div
+        className="search-main-card"
         style={{
           backgroundColor: '#FFFFFF',
-          borderRadius: '16px',
+          borderRadius: '18px',
+          borderTopLeftRadius: '0px', // Seamless wave fusion with the tabs
           boxShadow: '0 14px 36px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.04)',
-          border: '1px solid rgba(0, 0, 0, 0.07)',
-          padding: compact ? '12px' : '14px 18px 12px 18px'
+          border: '1px solid rgba(0, 0, 0, 0.08)',
+          padding: compact ? '12px' : '16px 20px 14px 20px',
+          position: 'relative',
+          zIndex: 2
         }}
       >
         <form onSubmit={handleSearch}>
@@ -438,223 +455,83 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
           </div>
         </form>
 
-        {/* Sub-bar: Recherche avancée + Checkbox Filter Pills */}
+        {/* Commodités indispensables en Afrique (Toujours ouvert, options sous le texte) */}
         <div 
           style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'space-between',
-            marginTop: '10px', 
-            paddingTop: '8px',
-            borderTop: '1px solid rgba(0, 0, 0, 0.05)',
-            flexWrap: 'wrap',
-            gap: '10px'
+            marginTop: '14px', 
+            paddingTop: '12px',
+            borderTop: '1px solid rgba(0, 0, 0, 0.06)'
           }}
         >
-          {/* Left: Quick Checkboxes */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap', fontSize: '0.78rem' }}>
-            <button
-              type="button"
-              onClick={() => setShowAdvancedPanel(!showAdvancedPanel)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '5px',
-                color: 'var(--primary-red)',
-                fontWeight: 700,
-                cursor: 'pointer',
-                padding: '1px 0',
-                border: 'none',
-                background: 'none'
-              }}
-            >
-              <SlidersHorizontal size={14} />
-              <span>Recherche avancée</span>
-            </button>
+          {/* Ligne 1: Titre au-dessus */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '6px' }}>
+            <span style={{ 
+              fontSize: '0.74rem', 
+              fontWeight: 800, 
+              color: 'var(--obsidian-black)', 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '6px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
+            }}>
+              <Layers size={14} color="var(--primary-red)" />
+              <span>Commodités indispensables :</span>
+            </span>
 
-            {/* Checkbox item: Type de bien */}
-            <label 
-              style={{ 
-                display: 'inline-flex', 
-                alignItems: 'center', 
-                gap: '5px', 
-                cursor: 'pointer', 
-                color: selectedTypes.length > 0 ? 'var(--primary-red)' : '#4B5563',
-                fontWeight: selectedTypes.length > 0 ? 600 : 500,
-                userSelect: 'none'
-              }}
-              onClick={() => setIsTypeDropdownOpen(true)}
-            >
-              <input 
-                type="checkbox" 
-                checked={selectedTypes.length > 0} 
-                onChange={() => setIsTypeDropdownOpen(!isTypeDropdownOpen)}
-                style={{ accentColor: 'var(--primary-red)', cursor: 'pointer' }} 
-              />
-              <span>Type de bien</span>
-            </label>
-
-            {/* Checkbox item: Prix */}
-            <label 
-              style={{ 
-                display: 'inline-flex', 
-                alignItems: 'center', 
-                gap: '5px', 
-                cursor: 'pointer', 
-                color: '#4B5563',
-                fontWeight: 500,
-                userSelect: 'none'
-              }}
-              onClick={() => setShowAdvancedPanel(true)}
-            >
-              <input 
-                type="checkbox" 
-                checked={Boolean(maxBudget)} 
-                onChange={() => setShowAdvancedPanel(true)}
-                style={{ accentColor: 'var(--primary-red)', cursor: 'pointer' }} 
-              />
-              <span>Prix</span>
-            </label>
-
-            {/* Checkbox item: Surface */}
-            <label 
-              style={{ 
-                display: 'inline-flex', 
-                alignItems: 'center', 
-                gap: '5px', 
-                cursor: 'pointer', 
-                color: minSurface ? 'var(--primary-red)' : '#4B5563',
-                fontWeight: minSurface ? 600 : 500,
-                userSelect: 'none'
-              }}
-              onClick={() => setShowAdvancedPanel(true)}
-            >
-              <input 
-                type="checkbox" 
-                checked={Boolean(minSurface)} 
-                onChange={() => setShowAdvancedPanel(!showAdvancedPanel)}
-                style={{ accentColor: 'var(--primary-red)', cursor: 'pointer' }} 
-              />
-              <span>Surface</span>
-            </label>
-
-            {/* Checkbox item: Équipements */}
-            <label 
-              style={{ 
-                display: 'inline-flex', 
-                alignItems: 'center', 
-                gap: '5px', 
-                cursor: 'pointer', 
-                color: selectedAmenities.length > 0 ? 'var(--primary-red)' : '#4B5563',
-                fontWeight: selectedAmenities.length > 0 ? 600 : 500,
-                userSelect: 'none'
-              }}
-              onClick={() => setShowAdvancedPanel(true)}
-            >
-              <input 
-                type="checkbox" 
-                checked={selectedAmenities.length > 0} 
-                onChange={() => setShowAdvancedPanel(!showAdvancedPanel)}
-                style={{ accentColor: 'var(--primary-red)', cursor: 'pointer' }} 
-              />
-              <span>Équipements</span>
-            </label>
-          </div>
-
-          {/* Right: Quick amenity indicators if any selected */}
-          {selectedAmenities.length > 0 && (
-            <div style={{ fontSize: '0.72rem', color: 'var(--primary-red)', fontWeight: 600 }}>
-              {selectedAmenities.length} commodité(s) active(s)
-            </div>
-          )}
-        </div>
-
-        {/* Expandable Advanced Panel: Surface + High-Value African Luxury Amenities */}
-        {showAdvancedPanel && (
-          <div 
-            style={{
-              marginTop: '14px',
-              paddingTop: '14px',
-              borderTop: '1px solid var(--border-light)',
-              animation: 'fadeIn 0.2s ease-out'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <span style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--obsidian-black)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Layers size={15} color="var(--primary-red)" />
-                <span>Critères et Commodités d'exception</span>
-              </span>
-              <button 
-                type="button" 
-                onClick={() => setShowAdvancedPanel(false)}
-                style={{ fontSize: '0.75rem', color: '#6B7280', cursor: 'pointer', fontWeight: 600, background: 'none', border: 'none' }}
-              >
-                Fermer ✕
-              </button>
-            </div>
-
-            {/* Surface filter */}
-            <div style={{ marginBottom: '14px', maxWidth: '260px' }}>
-              <label 
-                htmlFor="surface-min-input"
-                style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--obsidian-black)', marginBottom: '3px' }}
-              >
-                Surface minimum (m²)
-              </label>
-              <input 
-                id="surface-min-input"
-                type="number" 
-                placeholder="ex: 150 m²" 
-                value={minSurface}
-                onChange={(e) => setMinSurface(e.target.value)}
+            {selectedAmenities.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setSelectedAmenities([])}
                 style={{
-                  width: '100%',
-                  padding: '7px 10px',
-                  borderRadius: '6px',
-                  border: '1px solid var(--border-color)',
-                  fontSize: '0.82rem',
-                  outline: 'none'
+                  fontSize: '0.72rem',
+                  color: 'var(--primary-red)',
+                  fontWeight: 700,
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '3px'
                 }}
-              />
-            </div>
-
-            {/* High-Value African Luxury Amenities Filter Chips */}
-            <div>
-              <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--graphite-gray)', marginBottom: '8px' }}>
-                Commodités indispensables en Afrique
-              </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                {LUXURY_AMENITIES_FILTERS.map((amenity) => {
-                  const isActive = selectedAmenities.includes(amenity);
-                  return (
-                    <button
-                      key={amenity}
-                      type="button"
-                      onClick={() => toggleAmenity(amenity)}
-                      style={{
-                        padding: '5px 12px',
-                        borderRadius: '9999px',
-                        fontSize: '0.78rem',
-                        fontWeight: 600,
-                        border: isActive ? '1px solid var(--primary-red)' : '1px solid var(--border-color)',
-                        backgroundColor: isActive ? 'var(--soft-tint)' : '#F9FAFB',
-                        color: isActive ? 'var(--primary-red)' : 'var(--obsidian-black)',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '5px',
-                        cursor: 'pointer',
-                        transition: 'all 0.15s ease'
-                      }}
-                    >
-                      {isActive && <Check size={12} color="var(--primary-red)" strokeWidth={2.5} />}
-                      <span>{amenity}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+              >
+                <X size={12} />
+                <span>Réinitialiser ({selectedAmenities.length})</span>
+              </button>
+            )}
           </div>
-        )}
+
+          {/* Ligne 2: Options de commodités en-dessous du texte */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {LUXURY_AMENITIES_FILTERS.map((amenity) => {
+              const isActive = selectedAmenities.includes(amenity);
+              return (
+                <button
+                  key={amenity}
+                  type="button"
+                  onClick={() => toggleAmenity(amenity)}
+                  style={{
+                    padding: '5px 14px',
+                    borderRadius: '9999px',
+                    fontSize: '0.76rem',
+                    fontWeight: 600,
+                    border: isActive ? '1px solid var(--primary-red)' : '1px solid var(--border-color)',
+                    backgroundColor: isActive ? 'var(--soft-tint)' : '#F9FAFB',
+                    color: isActive ? 'var(--primary-red)' : 'var(--obsidian-black)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  {isActive && <Check size={12} color="var(--primary-red)" strokeWidth={2.5} />}
+                  <span>{amenity}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       <style>{`

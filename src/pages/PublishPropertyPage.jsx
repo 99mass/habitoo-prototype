@@ -186,7 +186,16 @@ export const PublishPropertyPage = () => {
     ownerAvatar: userAvatar,
     ownerPhone: formData.ownerPhone || currentUser?.phone || '',
     ownerEmail: formData.ownerEmail || currentUser?.email || '',
-    userRole: formData.userRole
+    userRole: formData.userRole,
+    isPro: formData.userRole === 'AGENCE',
+    advertiserType: formData.userRole === 'AGENCE' ? 'PRO' : 'PARTICULIER',
+    agent: {
+      name: userName,
+      agency: formData.userRole === 'AGENCE' ? (formData.agencyName || "Agence Immobilière Agréée") : "Direct Propriétaire",
+      avatar: userAvatar,
+      phone: formData.ownerPhone || currentUser?.phone || '+225 07 00 00 00',
+      verified: true
+    }
   };
 
   // Form submission
