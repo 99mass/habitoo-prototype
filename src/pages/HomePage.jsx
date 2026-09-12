@@ -57,6 +57,8 @@ export const HomePage = () => {
 
   // Measure the vertical position of the search button to stop the background banner exactly at its height
   useEffect(() => {
+
+    document.title = "Habitoo - La Nouvelle Façon de Se Loger"
     const updateBannerBottom = () => {
       const heroEl = heroSectionRef.current;
       const searchBtn = heroEl?.querySelector('button[type="submit"]');
@@ -483,13 +485,14 @@ export const HomePage = () => {
                   Agences, démarcheurs, promoteurs... accédez à des outils puissants pour gérer vos annonces, suivre vos performances et booster votre visibilité.
                 </p>
 
-                <button 
-                  onClick={openAuthModal}
+                <Link 
+                  to="/professionnels"
                   className="btn-primary professionals-cta-btn"
+                  style={{ textDecoration: 'none' }}
                 >
-                  <span>Créer un compte professionnel</span>
+                  <span>Découvrir l'Espace PRO</span>
                   <ArrowRight size={16} />
-                </button>
+                </Link>
               </div>
             {/* Center & Right Column: B2B Arguments & Feature Checklist */}
             <div className="professionals-content">

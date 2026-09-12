@@ -113,16 +113,10 @@ export const Header = () => {
             Conciergerie
           </Link>
           <a 
-            href="#professionnels" 
-            onClick={(e) => {
-              if (location.pathname !== '/') {
-                navigate('/#professionnels');
-              } else {
-                const el = document.getElementById('professionnels');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }
-            }}
-            style={navLinkStyle(false)}
+            href="#/professionnels" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={navLinkStyle(location.pathname === '/professionnels' || location.pathname === '/pro')}
           >
             Professionnels
           </a>
@@ -387,13 +381,11 @@ export const Header = () => {
             Conciergerie
           </Link>
           <a 
-            href="#professionnels" 
-            className="mobile-drawer-link" 
-            onClick={() => {
-              setMobileMenuOpen(false);
-              const el = document.getElementById('professionnels');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
+            href="#/professionnels" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className={`mobile-drawer-link ${(location.pathname === '/professionnels' || location.pathname === '/pro') ? 'active' : ''}`}
+            onClick={() => setMobileMenuOpen(false)}
           >
             Professionnels
           </a>

@@ -178,12 +178,12 @@ export const Footer = () => {
             </h5>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.8125rem' }}>
               <li>
-                <a href="#professionnels" style={{ color: '#9CA3AF', transition: 'color 0.15s' }} onMouseOver={(e) => e.target.style.color = '#FFF'} onMouseOut={(e) => e.target.style.color = '#9CA3AF'}>
+                <a href="#/professionnels" target="_blank" rel="noopener noreferrer" style={{ color: '#9CA3AF', transition: 'color 0.15s' }} onMouseOver={(e) => e.target.style.color = '#FFF'} onMouseOut={(e) => e.target.style.color = '#9CA3AF'}>
                   Nos offres
                 </a>
               </li>
               <li>
-                <a href="#professionnels" style={{ color: '#9CA3AF', transition: 'color 0.15s' }} onMouseOver={(e) => e.target.style.color = '#FFF'} onMouseOut={(e) => e.target.style.color = '#9CA3AF'}>
+                <a href="#/professionnels" target="_blank" rel="noopener noreferrer" style={{ color: '#9CA3AF', transition: 'color 0.15s' }} onMouseOver={(e) => e.target.style.color = '#FFF'} onMouseOut={(e) => e.target.style.color = '#9CA3AF'}>
                   Devenir partenaire
                 </a>
               </li>

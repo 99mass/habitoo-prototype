@@ -1,0 +1,1353 @@
+/* ==========================================================================
+   HABITOO PRO LANDING PAGE STYLES (SCOPED: .habitoo-pro-*)
+   Ultra-Modern Architectural Design System:
+   - Dedicated ProHeader (White Logo + PRO Badge, Dark Obsidian)
+   - Reduced natural paddings (52px desktop / 36px mobile, no artificial emptiness)
+   - Authentic Photography Cards (No heavy black stickers)
+   - Compact Interactive Switcher for Target Audiences (No arrows)
+   - 3 Modern Pricing Cards with Monthly/Annual Billing Switcher (2 mois offerts)
+   - Illustrated Horizontal Step-Flow KYC Timeline
+   - Signature Habitoo Red Mobile App Banner (Exact HomePage Match)
+   - Clean Luxury FAQ Accordion with Plus/Minus Indicators
+   - Final CTA with 32px Cinematic Blurred Background
+   - Zero horizontal overflow, strict 375px - 1440px responsiveness
+   ========================================================================== */
+
+/* ==========================================================================
+   DEDICATED PRO NAVBAR (ProHeader)
+   ========================================================================== */
+.habitoo-pro-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: var(--obsidian-dark, #0D0D0D);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.25s ease;
+}
+
+.habitoo-pro-header--scrolled {
+  background-color: rgba(13, 13, 13, 0.96);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.habitoo-pro-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+}
+
+.habitoo-pro-header-brand-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.habitoo-pro-header-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.habitoo-pro-header-logo {
+  height: 28px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.habitoo-pro-header-badge {
+  background-color: var(--primary-red, #F70000);
+  color: #FFFFFF;
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* Pro Desktop Navigation */
+.habitoo-pro-desktop-nav {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+@media (max-width: 992px) {
+  .habitoo-pro-desktop-nav {
+    display: none;
+  }
+}
+
+.habitoo-pro-nav-link {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #D1D5DB;
+  text-decoration: none;
+  transition: color 0.15s ease;
+  position: relative;
+  padding: 6px 0;
+}
+
+.habitoo-pro-nav-link:hover {
+  color: #FFFFFF;
+}
+
+/* Pro Header Right Actions */
+.habitoo-pro-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.habitoo-pro-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #9CA3AF;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.habitoo-pro-back-link:hover {
+  color: #FFFFFF;
+}
+
+@media (max-width: 768px) {
+  .habitoo-pro-back-link {
+    display: none;
+  }
+}
+
+.habitoo-pro-header-cta {
+  min-height: 40px !important;
+  padding: 0 18px !important;
+  font-size: 0.875rem !important;
+}
+
+@media (max-width: 520px) {
+  .habitoo-pro-header-cta {
+    display: none !important;
+  }
+}
+
+.habitoo-pro-mobile-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  color: #FFFFFF;
+  cursor: pointer;
+  padding: 6px;
+}
+
+@media (max-width: 992px) {
+  .habitoo-pro-mobile-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* Mobile Pro Drawer */
+.habitoo-pro-mobile-drawer {
+  position: absolute;
+  top: 72px;
+  left: 0;
+  width: 100%;
+  background-color: var(--obsidian-dark, #0D0D0D);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 24px 20px 32px 20px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+}
+
+.habitoo-pro-mobile-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.habitoo-pro-mobile-link {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #D1D5DB;
+  text-decoration: none;
+  padding: 6px 0;
+}
+
+.habitoo-pro-mobile-link:hover {
+  color: #FFFFFF;
+}
+
+.habitoo-pro-mobile-footer-actions {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==========================================================================
+   GLOBAL PAGE & SECTIONS LAYOUT (TIGHTENED PADDINGS & MARGINS)
+   ========================================================================== */
+.habitoo-pro-page {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--bg-main, #F8F9FA);
+  color: var(--obsidian-black, #1A1A1A);
+  overflow-x: clip;
+}
+
+.habitoo-pro-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+@media (max-width: 640px) {
+  .habitoo-pro-container {
+    padding: 0 16px;
+  }
+}
+
+/* Tighter Vertical Rhythm (Reduis les paddings / margins) */
+.habitoo-pro-section {
+  padding: 52px 0;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .habitoo-pro-section {
+    padding: 36px 0;
+  }
+}
+
+.habitoo-pro-section-header {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto 28px auto;
+}
+
+@media (max-width: 768px) {
+  .habitoo-pro-section-header {
+    margin-bottom: 24px;
+  }
+}
+
+.habitoo-pro-tag {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--primary-red, #F70000);
+  margin-bottom: 8px;
+}
+
+.habitoo-pro-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.85rem, 3vw, 2.35rem);
+  line-height: 1.2;
+  color: var(--obsidian-black, #1A1A1A);
+  font-weight: 700;
+  margin-bottom: 10px;
+  letter-spacing: -0.01em;
+}
+
+.habitoo-pro-lead {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--graphite-gray, #555555);
+}
+
+/* Buttons System */
+.habitoo-pro-btn-primary,
+.habitoo-pro-btn-secondary,
+.habitoo-pro-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 6px;
+  min-height: 48px;
+  padding: 0 24px;
+  cursor: pointer;
+  transition: all var(--transition-fast, 0.15s ease);
+  box-sizing: border-box;
+}
+
+.habitoo-pro-btn-primary {
+  background-color: var(--primary-red, #F70000);
+  color: #FFFFFF;
+  border: 1px solid var(--primary-red, #F70000);
+  box-shadow: 0 4px 14px rgba(247, 0, 0, 0.18);
+}
+
+.habitoo-pro-btn-primary:hover {
+  background-color: var(--primary-red-hover, #D60000);
+  border-color: var(--primary-red-hover, #D60000);
+  color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.habitoo-pro-btn-secondary {
+  background-color: #FFFFFF;
+  color: var(--obsidian-black, #1A1A1A);
+  border: 1px solid var(--border-color, #E5E7EB);
+}
+
+.habitoo-pro-btn-secondary:hover {
+  border-color: var(--obsidian-black, #1A1A1A);
+  background-color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.habitoo-pro-btn-outline {
+  background-color: transparent;
+  color: var(--obsidian-black, #1A1A1A);
+  border: 1px solid var(--border-color, #E5E7EB);
+  width: 100%;
+}
+
+.habitoo-pro-btn-outline:hover {
+  border-color: var(--obsidian-black, #1A1A1A);
+  background-color: var(--surface-white, #FFFFFF);
+}
+
+/* ==========================================================================
+   1. HERO SECTION
+   ========================================================================== */
+.habitoo-pro-hero {
+  padding: 56px 0 64px 0;
+  background-color: #FFFFFF;
+  border-bottom: 1px solid var(--border-color, #E5E7EB);
+}
+
+@media (max-width: 900px) {
+  .habitoo-pro-hero {
+    padding: 36px 0 48px 0;
+  }
+}
+
+.habitoo-pro-hero-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 48px;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .habitoo-pro-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+.habitoo-pro-hero-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.habitoo-pro-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 6px 14px;
+  background-color: rgba(247, 0, 0, 0.06);
+  border: 1px solid rgba(247, 0, 0, 0.15);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--primary-red, #F70000);
+  margin-bottom: 16px;
+}
+
+.habitoo-pro-hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 3.4vw, 2.75rem);
+  line-height: 1.16;
+  font-weight: 700;
+  color: var(--obsidian-black, #1A1A1A);
+  margin-bottom: 16px;
+  letter-spacing: -0.015em;
+}
+
+.habitoo-pro-hero-subtitle {
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--graphite-gray, #555555);
+  margin-bottom: 28px;
+  max-width: 560px;
+}
+
+.habitoo-pro-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 480px) {
+  .habitoo-pro-hero-actions {
+    flex-direction: column;
+  }
+  .habitoo-pro-hero-actions a {
+    width: 100%;
+  }
+}
+
+/* Trust Metrics Row */
+.habitoo-pro-trust-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color, #E5E7EB);
+}
+
+.habitoo-pro-metric-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background-color: var(--bg-main, #F8F9FA);
+  border: 1px solid var(--border-color, #E5E7EB);
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  color: var(--obsidian-black, #1A1A1A);
+  font-weight: 600;
+}
+
+.habitoo-pro-metric-icon {
+  color: var(--primary-red, #F70000);
+  display: flex;
+  align-items: center;
+}
+
+/* Hero Visual Frame */
+.habitoo-pro-hero-visual {
+  position: relative;
+  width: 100%;
+}
+
+.habitoo-pro-hero-img-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border-color, #E5E7EB);
+  background-color: #F0F2F5;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.habitoo-pro-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.habitoo-pro-hero-floating-card {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.habitoo-pro-floating-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background-color: var(--verified-green-bg, #ECFDF5);
+  color: var(--verified-green, #059669);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.habitoo-pro-floating-text h4 {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--obsidian-black, #1A1A1A);
+  margin: 0;
+}
+
+.habitoo-pro-floating-text p {
+  font-size: 0.6875rem;
+  color: var(--graphite-gray, #555555);
+  margin: 0;
+}
+
+/* ==========================================================================
+   2. STRATEGIC ADVANTAGES (AUTHENTIC CARDS WITH IMAGES ON TOP)
+   ========================================================================== */
+.habitoo-pro-advantages-section {
+  background-color: var(--bg-main, #F8F9FA);
+}
+
+.habitoo-pro-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 1024px) {
+  .habitoo-pro-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .habitoo-pro-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+.habitoo-pro-feature-card {
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color, #E5E7EB);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.habitoo-pro-feature-card:hover {
+  transform: translateY(-3px);
+  border-color: #D1D5DB;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.habitoo-pro-card-image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  background-color: #E5E7EB;
+  overflow: hidden;
+}
+
+.habitoo-pro-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.habitoo-pro-feature-card:hover .habitoo-pro-card-img {
+  transform: scale(1.04);
+}
+
+.habitoo-pro-card-body {
+  padding: 20px 20px 22px 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.habitoo-pro-card-category-tag {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--primary-red, #F70000);
+  margin-bottom: 6px;
+}
+
+.habitoo-pro-card-title {
+  font-family: var(--font-serif);
+  font-size: 1.1875rem;
+  font-weight: 700;
+  color: var(--obsidian-black, #1A1A1A);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.habitoo-pro-card-desc {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--graphite-gray, #555555);
+  margin-bottom: 16px;
+  flex-grow: 1;
+}
+
+.habitoo-pro-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border-color, #E5E7EB);
+  padding-top: 12px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--primary-red, #F70000);
+}
+
+/* ==========================================================================
+   3. DEDICATED APPROACH (COMPACT SWITCHER, NO ARROWS)
+   ========================================================================== */
+.habitoo-pro-carousel-section {
+  background-color: #FFFFFF;
+  border-top: 1px solid var(--border-color, #E5E7EB);
+  border-bottom: 1px solid var(--border-color, #E5E7EB);
+}
+
+/* Tabbed Switcher Bar (Centered, no arrows) */
+.habitoo-pro-carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.habitoo-pro-tabs-wrapper {
+  display: inline-flex;
+  background-color: var(--bg-main, #F8F9FA);
+  border: 1px solid var(--border-color, #E5E7EB);
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.habitoo-pro-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 22px;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--graphite-gray, #555555);
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.habitoo-pro-tab-btn--active {
+  background-color: #FFFFFF;
+  color: var(--obsidian-black, #1A1A1A);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Compact Split-Screen Container */
+.habitoo-pro-slide-container {
+  background-color: var(--bg-main, #F8F9FA);
+  border: 1px solid var(--border-color, #E5E7EB);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.habitoo-pro-slide {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  align-items: stretch;
+}
+
+@media (max-width: 860px) {
+  .habitoo-pro-slide {
+    grid-template-columns: 1fr;
+  }
+}
+
+.habitoo-pro-slide-image-col {
+  position: relative;
+  min-height: 280px;
+  max-height: 340px;
+  background-color: #E5E7EB;
+}
+
+@media (max-width: 860px) {
+  .habitoo-pro-slide-image-col {
+    min-height: 220px;
+  }
+}
+
+.habitoo-pro-slide-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.habitoo-pro-slide-text-col {
+  padding: 32px 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (max-width: 640px) {
+  .habitoo-pro-slide-text-col {
+    padding: 24px 20px;
+  }
+}
+
+.habitoo-pro-slide-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 5px 12px;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color, #E5E7EB);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--obsidian-black, #1A1A1A);
+  margin-bottom: 12px;
+}
+
+.habitoo-pro-slide-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.4rem, 2.2vw, 1.85rem);
+  font-weight: 700;
+  color: var(--obsidian-black, #1A1A1A);
+  margin-bottom: 10px;
+  line-height: 1.25;
+}
+
+.habitoo-pro-slide-desc {
+  font-size: 0.9375rem;
+  color: var(--graphite-gray, #555555);
+  line-height: 1.55;
+  margin-bottom: 20px;
+}
+
+.habitoo-pro-slide-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 0 24px 0;
+  padding: 0;
+}
+
+.habitoo-pro-slide-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.875rem;
+  color: var(--obsidian-black, #1A1A1A);
+  line-height: 1.45;
+}
+
+.habitoo-pro-slide-check {
+  color: var(--primary-red, #F70000);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   4. PRICING (3 MODERN CARDS + MONTHLY/ANNUAL TOGGLE)
+   ========================================================================== */
+.habitoo-pro-pricing-section {
+  background-color: var(--bg-main, #F8F9FA);
+}
+
+/* Billing Toggle Switcher */
+.habitoo-pro-billing-toggle-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 36px;
+}
+
+.habitoo-pro-billing-toggle {
+  display: inline-flex;
+  align-items: center;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color, #E5E7EB);
+  border-radius: 9999px;
+  padding: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.habitoo-pro-toggle-btn {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--graphite-gray, #555555);
+  padding: 8px 20px;
+  border: none;
+  background: transparent;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.habitoo-pro-toggle-btn--active {
+  background-color: var(--obsidian-black, #1A1A1A);
+  color: #FFFFFF;
+}
+
+.habitoo-pro-discount-pill {
+  background-color: var(--primary-red, #F70000);
+  color: #FFFFFF;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+
+/* 3 Modern Cards Grid */
+.habitoo-pro-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .habitoo-pro-pricing-grid {
+    grid-template-columns: 1fr;
+    max-width: 440px;
+    margin: 0 auto;
+    gap: 28px;
+  }
+}
+
+.habitoo-pro-pricing-card {
+  position: relative;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color, #E5E7EB);
+  border-radius: 12px;
+  padding: 32px 26px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.habitoo-pro-pricing-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.habitoo-pro-pricing-card--popular {
+  border: 2px solid var(--primary-red, #F70000);
+  box-shadow: 0 10px 28px rgba(247, 0, 0, 0.1);
+}
+
+.habitoo-pro-popular-badge {
+  position: absolute;
+  top: -13px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--primary-red, #F70000);
+  color: #FFFFFF;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 4px 14px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.habitoo-pro-card-header {
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border-color, #E5E7EB);
+}
+
+.habitoo-pro-card-plan-name {
+  font-family: var(--font-body);
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: var(--obsidian-black, #1A1A1A);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.habitoo-pro-card-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.habitoo-pro-card-price-val {
+  font-family: var(--font-serif);
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--obsidian-black, #1A1A1A);
+  line-height: 1;
+}
+
+.habitoo-pro-card-currency {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--graphite-gray, #555555);
+}
+
+.habitoo-pro-card-period {
+  font-size: 0.8125rem;
+  color: var(--graphite-light, #737373);
+  margin: 0;
+}
+
+.habitoo-pro-card-features-list {
+  list-style: none;
+  margin: 0 0 28px 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-grow: 1;
+}
+
+.habitoo-pro-card-feature-li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--obsidian-black, #1A1A1A);
+}
+
+.habitoo-pro-feature-check-icon {
+  color: var(--verified-green, #059669);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   5. HORIZONTAL ILLUSTRATED KYC STEP FLOW
+   ========================================================================== */
+.habitoo-pro-kyc-section {
+  background-color: #FFFFFF;
+  border-top: 1px solid var(--border-color, #E5E7EB);
+}
+
+.habitoo-pro-flow-wrapper {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.habitoo-pro-flow-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 860px) {
+  .habitoo-pro-flow-steps {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+.habitoo-pro-flow-card {
+  background-color: var(--bg-main, #F8F9FA);
+  border: 1px solid var(--border-color, #E5E7EB);
+  border-radius: 10px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.2s ease;
+}
+
+.habitoo-pro-flow-card:hover {
+  border-color: #D1D5DB;
+}
+
+.habitoo-pro-flow-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.habitoo-pro-flow-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--obsidian-black, #1A1A1A);
+  color: #FFFFFF;
+  font-size: 0.875rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.habitoo-pro-flow-badge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color, #E5E7EB);
+  color: var(--graphite-gray, #555555);
+}
+
+.habitoo-pro-flow-badge--green {
+  background-color: var(--verified-green-bg, #ECFDF5);
+  border-color: var(--verified-green-border, #A7F3D0);
+  color: var(--verified-green, #059669);
+}
+
+.habitoo-pro-flow-card h4 {
+  font-family: var(--font-serif);
+  font-size: 1.1875rem;
+  font-weight: 700;
+  color: var(--obsidian-black, #1A1A1A);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.habitoo-pro-flow-card p {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--graphite-gray, #555555);
+  margin: 0;
+}
+
+.habitoo-pro-audit-guarantee {
+  margin-top: 36px;
+  background-color: var(--bg-main, #F8F9FA);
+  border: 1px solid var(--border-color, #E5E7EB);
+  border-radius: 8px;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.habitoo-pro-guarantee-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--obsidian-black, #1A1A1A);
+}
+
+.habitoo-pro-guarantee-icon {
+  color: var(--verified-green, #059669);
+}
+
+/* ==========================================================================
+   6. MOBILE APP BANNER (EXACT HOMEPAGE MATCH)
+   ========================================================================== */
+.section-mobile-app {
+  padding: 44px 0 52px 0;
+  background-color: #FFFFFF;
+}
+
+.mobile-app-banner {
+  background-color: #E3020A;
+  border-radius: 24px;
+  max-width: 1140px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0 0 0 clamp(24px, 4.5vw, 56px);
+}
+
+.mobile-app-content {
+  padding: clamp(32px, 3.5vw, 44px) 0;
+  max-width: 440px;
+}
+
+.mobile-app-tag {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.92);
+  display: block;
+  margin-bottom: 8px;
+  letter-spacing: 0.2px;
+}
+
+.mobile-app-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.85rem, 3.2vw, 2.5rem);
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1.14;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.mobile-app-desc {
+  font-size: 0.9375rem;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.5;
+}
+
+.mobile-app-visual {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  height: 100%;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 40px, black 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 40px, black 100%);
+}
+
+.mobile-app-mockup-img {
+  width: 100%;
+  max-width: 640px;
+  height: auto;
+  display: block;
+}
+
+@media (max-width: 899px) {
+  .mobile-app-banner {
+    grid-template-columns: 1fr;
+    padding: 32px 20px 0 20px;
+    text-align: center;
+  }
+  .mobile-app-content {
+    padding: 0 0 16px 0;
+    margin: 0 auto;
+    max-width: 100%;
+  }
+  .mobile-app-visual {
+    justify-content: center;
+    width: 100%;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .mobile-app-mockup-img {
+    max-width: 420px;
+    margin: 0 auto;
+  }
+}
+
+/* ==========================================================================
+   7. FAQ SECTION (HOMEPAGE EXACT FORMAT WITH PLUS/MINUS)
+   ========================================================================== */
+.section-faq {
+  padding: 56px 0 52px;
+  background-color: #FFFFFF;
+  border-top: 1px solid var(--border-color, #E5E7EB);
+}
+
+.faq-header {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 32px auto;
+}
+
+.faq-tag {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--primary-red, #F70000);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.faq-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.75rem, 2.8vw, 2.2rem);
+  font-weight: 800;
+  color: var(--obsidian-black, #1A1A1A);
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+
+.faq-subtitle {
+  font-size: 0.9375rem;
+  color: #6B7280;
+  line-height: 1.5;
+}
+
+.faq-list {
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.faq-item {
+  background: #FAFAFA;
+  border: 1px solid var(--border-color, #E5E7EB);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: none;
+}
+
+.faq-item-open {
+  background: #FFFFFF;
+  border-color: #D1D5DB;
+}
+
+.faq-question-btn {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--obsidian-black, #1A1A1A);
+  gap: 16px;
+}
+
+.faq-item-open .faq-question-btn {
+  color: var(--primary-red, #F70000);
+}
+
+.faq-question-text {
+  flex: 1;
+}
+
+.faq-icon-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--obsidian-black, #1A1A1A);
+  flex-shrink: 0;
+}
+
+.faq-item-open .faq-icon-indicator {
+  background-color: rgba(247, 0, 0, 0.08);
+  color: var(--primary-red, #F70000);
+}
+
+.faq-answer {
+  padding: 0 24px 20px 24px;
+  font-size: 0.9375rem;
+  color: #4B5563;
+  line-height: 1.6;
+}
+
+/* ==========================================================================
+   8. FINAL ACTION BANNER (32px CINEMATIC BLURRED BACKGROUND)
+   ========================================================================== */
+.habitoo-pro-final-section {
+  position: relative;
+  padding: 72px 0;
+  background-color: var(--obsidian-dark, #0D0D0D);
+  color: #FFFFFF;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .habitoo-pro-final-section {
+    padding: 52px 0;
+  }
+}
+
+/* 32px Cinematic Blurred Background Layer */
+.habitoo-pro-final-bg-layer {
+  position: absolute;
+  top: -40px;
+  left: -40px;
+  right: -40px;
+  bottom: -40px;
+  background-image: url('/assets/hero-terrace-skyline.jpg');
+  background-size: cover;
+  background-position: center;
+  filter: blur(32px);
+  transform: scale(1.1);
+  opacity: 0.28;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.habitoo-pro-final-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(13, 13, 13, 0.88) 0%, rgba(13, 13, 13, 0.96) 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.habitoo-pro-final-card {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.habitoo-pro-final-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.85rem, 3vw, 2.35rem);
+  line-height: 1.2;
+  color: #FFFFFF;
+  margin-bottom: 14px;
+  font-weight: 700;
+}
+
+.habitoo-pro-final-lead {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #D1D5DB;
+  margin-bottom: 28px;
+}
+
+.habitoo-pro-final-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.habitoo-pro-btn-large {
+  min-height: 52px;
+  padding: 0 38px;
+  font-size: 1.0625rem;
+}

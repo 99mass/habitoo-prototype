@@ -15,6 +15,8 @@ import { ConciergeriePage } from './pages/ConciergeriePage';
 import { PublishPropertyPage } from './pages/PublishPropertyPage';
 import { AboutPage } from './pages/About/AboutPage';
 import { CheckoutPage } from './pages/Checkout/CheckoutPage';
+import { ProLandingPage } from './pages/Professionnels/ProLandingPage';
+import { ProHeader } from './components/ProHeader';
 
 // Auto scroll to top on navigation
 const ScrollToTop = () => {
@@ -30,11 +32,12 @@ const AppContent = () => {
   const isPublishPage = location.pathname === '/publier' || location.pathname === '/publier-une-annonce';
   const isCheckoutPage = location.pathname === '/checkout' || location.pathname === '/reservation/paiement';
   const isDetailPage = location.pathname.startsWith('/bien/');
+  const isProPage = location.pathname === '/professionnels' || location.pathname === '/pro';
   const hideBottomNav = isPublishPage || isCheckoutPage || isDetailPage;
 
   return (
     <div className="app-root-layout" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%', maxWidth: '100%', overflowX: 'clip' }}>
-      <Header />
+      {isProPage ? <ProHeader /> : <Header />}
       
       <main className="app-main-content" style={{ flexGrow: 1, minWidth: 0, width: '100%', overflowX: 'clip' }}>
         <Routes>
@@ -47,6 +50,8 @@ const AppContent = () => {
           <Route path="/conciergerie" element={<ConciergeriePage />} />
           <Route path="/a-propos" element={<AboutPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/professionnels" element={<ProLandingPage />} />
+          <Route path="/pro" element={<ProLandingPage />} />
           <Route path="/publier" element={<PublishPropertyPage />} />
           <Route path="/publier-une-annonce" element={<PublishPropertyPage />} />
           <Route path="*" element={<HomePage />} />
