@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ArrowUpRight, ArrowRight } from 'lucide-react';
+import { Menu, X, ArrowUpRight, ArrowRight, LayoutDashboard } from 'lucide-react';
 
 export const ProHeader = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -64,6 +64,12 @@ export const ProHeader = () => {
 
         {/* Right Actions */}
         <div className="habitoo-pro-header-actions">
+          {/* Bouton Prototypage direct vers Dashboard PRO */}
+          <Link to="/pro/app/dashboard" className="habitoo-pro-dashboard-quicklink" title="Accès direct Dashboard PRO (Démo)">
+            <LayoutDashboard size={14} />
+            <span>Dashboard PRO</span>
+          </Link>
+
           <Link to="/" className="habitoo-pro-back-link" title="Accéder au portail grand public">
             <span>Espace Particuliers</span>
             <ArrowUpRight size={14} />
@@ -110,6 +116,10 @@ export const ProHeader = () => {
               FAQ
             </a>
             <div className="habitoo-pro-mobile-footer-actions">
+              <Link to="/pro/app/dashboard" className="habitoo-pro-btn-secondary" style={{ width: '100%', marginBottom: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <LayoutDashboard size={16} />
+                <span>Dashboard PRO (Démo)</span>
+              </Link>
               <Link to="/pro/inscription" className="habitoo-pro-btn-primary" style={{ width: '100%' }}>
                 <span>Rejoindre Habitoo PRO</span>
                 <ArrowRight size={16} />

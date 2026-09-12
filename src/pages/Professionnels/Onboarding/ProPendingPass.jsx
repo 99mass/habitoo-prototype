@@ -12,7 +12,8 @@ import {
   MapPin,
   Building2,
   UserCheck,
-  Smartphone
+  Smartphone,
+  LayoutDashboard
 } from 'lucide-react';
 import './ProOnboarding.css';
 
@@ -249,13 +250,14 @@ export const ProPendingPass = () => {
 
         {/* Bottom Actions */}
         <div className="habitoo-pending-bottom-actions">
-          <Link to="/professionnels" className="habitoo-reg-btn-ghost">
-            <span>Retour à la présentation des solutions PRO</span>
+          <Link to="/pro/app/dashboard" className="habitoo-reg-btn-primary" style={{ background: '#F70000', color: '#FFFFFF', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+            <LayoutDashboard size={16} />
+            <span>Accéder au Dashboard PRO (Démo)</span>
+            <ArrowRight size={16} />
           </Link>
 
-          <Link to="/" className="habitoo-reg-btn-primary">
-            <span>Explorer le portail grand public Habitoo</span>
-            <ArrowRight size={16} />
+          <Link to="/professionnels" className="habitoo-reg-btn-ghost">
+            <span>Retour aux solutions PRO</span>
           </Link>
         </div>
 

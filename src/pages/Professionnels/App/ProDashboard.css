@@ -1,0 +1,2563 @@
+/* ==========================================================================
+   HABITOO PRO DASHBOARD & APPLICATION SHELL STYLES
+   Design System : Prestige, Rigueur Métier & Architecture Pleine Largeur
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Shell Racine & Conteneur
+   -------------------------------------------------------------------------- */
+.habitoo-dash-shell {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #F8F9FA;
+  color: #1A1A1A;
+  font-family: var(--font-body, 'Quicksand', sans-serif);
+  display: flex;
+  flex-direction: column;
+}
+
+.habitoo-dash-main {
+  flex: 1;
+  width: 100%;
+  padding-bottom: 60px;
+}
+
+.habitoo-dash-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px 28px;
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   1. Bandeau Supérieur Institutionnel (ProTopHeader)
+   -------------------------------------------------------------------------- */
+.habitoo-dash-top-header {
+  width: 100%;
+  background: #FFFFFF;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  height: 68px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 100;
+}
+
+.habitoo-dash-top-header__container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.habitoo-dash-top-header__left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.habitoo-dash-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.habitoo-dash-logo-img {
+  height: 30px;
+  width: auto;
+  object-fit: contain;
+}
+
+.habitoo-dash-logo__tag {
+  background: #1A1A1A;
+  color: #FFFFFF;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.habitoo-dash-divider-v {
+  width: 1px;
+  height: 24px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Sélecteur Pays / Devise */
+.habitoo-dash-currency-select-wrap {
+  position: relative;
+}
+
+.habitoo-dash-currency-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #F4F5F7;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #2B2B2B;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.habitoo-dash-currency-btn:hover {
+  background: #EBECEF;
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.habitoo-dash-currency-city {
+  color: #1A1A1A;
+}
+
+.habitoo-dash-currency-code {
+  color: #737373;
+}
+
+.habitoo-dash-currency-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 220px;
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  padding: 6px;
+  z-index: 120;
+}
+
+.habitoo-dash-currency-opt {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  color: #2B2B2B;
+  cursor: pointer;
+  transition: background 0.12s ease;
+  text-align: left;
+}
+
+.habitoo-dash-currency-opt:hover {
+  background: #F4F5F7;
+}
+
+.habitoo-dash-currency-opt--active {
+  background: #F4F5F7;
+  font-weight: 600;
+}
+
+.habitoo-dash-currency-badge {
+  font-size: 0.72rem;
+  color: #737373;
+  background: #E5E7EB;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+/* Section Droite Header */
+.habitoo-dash-top-header__right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Commutateur Persona Démo */
+.habitoo-dash-persona-switcher {
+  display: flex;
+  align-items: center;
+  background: #F0F2F5;
+  border-radius: 6px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.habitoo-dash-persona-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: transparent;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #555555;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.habitoo-dash-persona-btn:hover {
+  color: #1A1A1A;
+}
+
+.habitoo-dash-persona-btn--active {
+  background: #FFFFFF;
+  color: #1A1A1A;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Widget Crédits Boost */
+.habitoo-dash-credits-widget {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  padding: 4px 6px 4px 10px;
+}
+
+.habitoo-dash-credits-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.habitoo-dash-credits-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #737373;
+  line-height: 1;
+}
+
+.habitoo-dash-credits-amount {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  line-height: 1.2;
+}
+
+.habitoo-dash-credits-icon {
+  color: #F70000;
+}
+
+.habitoo-dash-btn-add-credits {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #1A1A1A;
+  color: #FFFFFF;
+  border: none;
+  padding: 5px 9px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.habitoo-dash-btn-add-credits:hover {
+  background: #2D2D2D;
+}
+
+/* Carte Profil Agent */
+.habitoo-dash-agent-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.habitoo-dash-agent-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.habitoo-dash-agent-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.habitoo-dash-agent-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.habitoo-dash-agent-name {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #1A1A1A;
+}
+
+.habitoo-dash-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.02em;
+}
+
+.habitoo-dash-badge--broker {
+  background: #ECFDF5;
+  color: #059669;
+  border: 1px solid #A7F3D0;
+}
+
+.habitoo-dash-badge--agency {
+  background: #EFF6FF;
+  color: #1E40AF;
+  border: 1px solid #BFDBFE;
+}
+
+.habitoo-dash-agent-role {
+  font-size: 0.72rem;
+  color: #737373;
+}
+
+/* Bouton Publier une annonce */
+.habitoo-dash-btn-publish {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #F70000;
+  color: #FFFFFF;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 9px 16px;
+  border-radius: 6px;
+  transition: background 0.15s ease, transform 0.1s ease;
+  box-shadow: 0 2px 6px rgba(247, 0, 0, 0.2);
+}
+
+.habitoo-dash-btn-publish:hover {
+  background: #D60000;
+}
+
+/* --------------------------------------------------------------------------
+   2. Barre d'Onglets Horizontale (ProTabView)
+   -------------------------------------------------------------------------- */
+.habitoo-dash-tabbar {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 90;
+}
+
+.habitoo-dash-tabbar__inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+}
+
+.habitoo-dash-tabbar__inner::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.habitoo-dash-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 15px 14px;
+  background: transparent;
+  border: none;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #555555;
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+.habitoo-dash-tab:hover {
+  color: #1A1A1A;
+}
+
+.habitoo-dash-tab--active {
+  color: #1A1A1A;
+  font-weight: 700;
+}
+
+.habitoo-dash-tab__indicator {
+  position: absolute;
+  bottom: 0;
+  left: 10px;
+  right: 10px;
+  height: 2.5px;
+  background: #F70000;
+  border-radius: 2px 2px 0 0;
+}
+
+.habitoo-dash-tab__badge-count {
+  background: #E5E7EB;
+  color: #374151;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 999px;
+}
+
+.habitoo-dash-tab__badge-alert {
+  background: #FEE2E2;
+  color: #DC2626;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 1px solid #FECACA;
+}
+
+/* --------------------------------------------------------------------------
+   3. Cartes Communes & Grilles
+   -------------------------------------------------------------------------- */
+.habitoo-dash-section {
+  margin-bottom: 24px;
+}
+
+.habitoo-dash-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  padding: 22px;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.habitoo-dash-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.habitoo-dash-card__title {
+  font-family: var(--font-serif, 'Playfair Display', serif);
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 0 0 3px 0;
+}
+
+.habitoo-dash-card__subtitle {
+  font-size: 0.78rem;
+  color: #737373;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* --------------------------------------------------------------------------
+   Section 1 : KPI Strips (MetricSparkCard)
+   -------------------------------------------------------------------------- */
+.habitoo-dash-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.habitoo-dash-metric-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.habitoo-dash-metric-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.habitoo-dash-metric-card__title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #555555;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.habitoo-dash-metric-card__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.habitoo-dash-metric-card__badge--positive {
+  background: #ECFDF5;
+  color: #059669;
+}
+
+.habitoo-dash-metric-card__badge--red {
+  background: #FFF1F2;
+  color: #E11D48;
+}
+
+.habitoo-dash-metric-card__badge--neutral {
+  background: #F3F4F6;
+  color: #4B5563;
+}
+
+.habitoo-dash-metric-card__middle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.habitoo-dash-metric-card__val {
+  font-family: var(--font-heading, 'Quicksand', sans-serif);
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  line-height: 1.1;
+}
+
+.habitoo-dash-metric-card__spark-wrap {
+  width: 110px;
+  height: 36px;
+}
+
+.habitoo-dash-metric-card__spark-svg {
+  display: block;
+  overflow: visible;
+}
+
+.habitoo-dash-metric-card__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.habitoo-dash-metric-card__sub {
+  font-size: 0.72rem;
+  color: #737373;
+  line-height: 1.3;
+}
+
+.habitoo-dash-metric-card__action {
+  background: transparent;
+  border: none;
+  color: #059669;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  white-space: nowrap;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Section 2 : Grand Panneau Analytique (AreaChart & FunnelChart)
+   -------------------------------------------------------------------------- */
+.habitoo-dash-analytics-grid {
+  display: grid;
+  grid-template-columns: 60% calc(40% - 16px);
+  gap: 16px;
+}
+
+/* Area Chart */
+.habitoo-dash-period-toggle {
+  display: flex;
+  background: #F0F2F5;
+  border-radius: 6px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.habitoo-dash-period-btn {
+  background: transparent;
+  border: none;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #555555;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.habitoo-dash-period-btn--active {
+  background: #FFFFFF;
+  color: #1A1A1A;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.habitoo-dash-chart-legend {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #F0F2F5;
+}
+
+.habitoo-dash-chart-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+}
+
+.habitoo-dash-chart-legend__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.habitoo-dash-chart-legend__dot--views {
+  background: #2B2B2B;
+}
+
+.habitoo-dash-chart-legend__dot--visits {
+  background: #F70000;
+}
+
+.habitoo-dash-chart-legend__name {
+  color: #555555;
+}
+
+.habitoo-dash-chart-legend__value {
+  color: #1A1A1A;
+  font-weight: 700;
+}
+
+.habitoo-dash-chart-legend__value--red {
+  color: #F70000;
+}
+
+.habitoo-dash-chart-canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 280px;
+}
+
+.habitoo-dash-svg-chart {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.habitoo-dash-chart-axis-label {
+  font-size: 11px;
+  fill: #8E8E93;
+  font-family: var(--font-body, sans-serif);
+  font-weight: 500;
+}
+
+.habitoo-dash-chart-axis-label--active {
+  fill: #1A1A1A;
+  font-weight: 700;
+}
+
+.habitoo-dash-chart-tooltip {
+  position: absolute;
+  top: 15px;
+  background: #1A1A1A;
+  color: #FFFFFF;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  pointer-events: none;
+  z-index: 50;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+}
+
+.habitoo-dash-chart-tooltip__date {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #9CA3AF;
+  font-size: 0.68rem;
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  padding-bottom: 3px;
+}
+
+.habitoo-dash-chart-tooltip__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  line-height: 1.4;
+}
+
+.habitoo-dash-chart-tooltip__label {
+  color: #D1D5DB;
+}
+
+.habitoo-dash-chart-tooltip__val {
+  color: #FFFFFF;
+}
+
+.habitoo-dash-chart-tooltip__val--red {
+  color: #FF6B6B;
+}
+
+/* Funnel Chart */
+.habitoo-dash-funnel-global-rate {
+  background: #F4F5F7;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  color: #555555;
+}
+
+.habitoo-dash-funnel-global-rate strong {
+  color: #F70000;
+}
+
+.habitoo-dash-funnel-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.habitoo-dash-funnel-step {
+  display: flex;
+  flex-direction: column;
+}
+
+.habitoo-dash-funnel-step__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.habitoo-dash-funnel-step__info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.habitoo-dash-funnel-step__icon-wrap {
+  width: 26px;
+  height: 26px;
+  background: #F4F5F7;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1A1A1A;
+}
+
+.habitoo-dash-funnel-step__name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.habitoo-dash-funnel-step__sub {
+  font-size: 0.68rem;
+  color: #737373;
+}
+
+.habitoo-dash-funnel-step__metrics {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.habitoo-dash-funnel-step__count {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #1A1A1A;
+}
+
+.habitoo-dash-funnel-step__percent {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #737373;
+}
+
+.habitoo-dash-funnel-bar-track {
+  width: 100%;
+  height: 7px;
+  background: #F0F2F5;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.habitoo-dash-funnel-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.habitoo-dash-funnel-connector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0 2px 14px;
+}
+
+.habitoo-dash-funnel-connector__line {
+  width: 1px;
+  height: 12px;
+  background: #D1D5DB;
+}
+
+.habitoo-dash-funnel-connector__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.64rem;
+  font-weight: 600;
+  color: #555555;
+  background: #F3F4F6;
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   Section 3 : Donut Chart & Top Annonces
+   -------------------------------------------------------------------------- */
+.habitoo-dash-geo-grid {
+  display: grid;
+  grid-template-columns: 42% calc(58% - 16px);
+  gap: 16px;
+}
+
+/* Donut Chart */
+.habitoo-dash-donut-layout {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.habitoo-dash-donut-canvas-wrap {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  flex-shrink: 0;
+}
+
+.habitoo-dash-donut-svg {
+  display: block;
+}
+
+.habitoo-dash-donut-segment {
+  cursor: pointer;
+  transition: stroke-width 0.2s ease, opacity 0.2s ease;
+}
+
+.habitoo-dash-donut-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  pointer-events: none;
+  width: 130px;
+}
+
+.habitoo-dash-donut-center__label {
+  font-size: 0.66rem;
+  color: #737373;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.habitoo-dash-donut-center__val {
+  font-family: var(--font-heading, sans-serif);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  line-height: 1.1;
+}
+
+.habitoo-dash-donut-center__name {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #333333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.habitoo-dash-donut-legend {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.habitoo-dash-donut-legend__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.habitoo-dash-donut-legend__item:hover,
+.habitoo-dash-donut-legend__item--active {
+  background: #F4F5F7;
+}
+
+.habitoo-dash-donut-legend__left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.habitoo-dash-donut-legend__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.habitoo-dash-donut-legend__name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.habitoo-dash-donut-legend__city {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.68rem;
+  color: #737373;
+}
+
+.habitoo-dash-donut-legend__right {
+  text-align: right;
+}
+
+.habitoo-dash-donut-legend__percent {
+  display: block;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #1A1A1A;
+}
+
+.habitoo-dash-donut-legend__leads {
+  font-size: 0.66rem;
+  color: #737373;
+}
+
+/* Top Properties Table */
+.habitoo-dash-top-props-badge {
+  font-size: 0.72rem;
+  color: #555555;
+  background: #F0F2F5;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.habitoo-dash-top-props-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.habitoo-dash-top-prop-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 6px;
+  background: #FAFAFA;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.habitoo-dash-top-prop-item:hover {
+  background: #FFFFFF;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.habitoo-dash-top-prop-item__media {
+  position: relative;
+  width: 72px;
+  height: 52px;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.habitoo-dash-top-prop-item__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.habitoo-dash-top-prop-item__tag {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  font-size: 0.55rem;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.habitoo-dash-top-prop-item__tag--boosted {
+  background: #F70000;
+  color: #FFFFFF;
+}
+
+.habitoo-dash-top-prop-item__tag--active {
+  background: rgba(0, 0, 0, 0.7);
+  color: #FFFFFF;
+}
+
+.habitoo-dash-top-prop-item__details {
+  flex: 1;
+  min-width: 0;
+}
+
+.habitoo-dash-top-prop-item__title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 0 0 2px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.habitoo-dash-top-prop-item__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.72rem;
+}
+
+.habitoo-dash-top-prop-item__loc {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: #737373;
+}
+
+.habitoo-dash-top-prop-item__price {
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.habitoo-dash-top-prop-item__score-col {
+  width: 130px;
+  flex-shrink: 0;
+}
+
+.habitoo-dash-top-prop-item__score-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 3px;
+}
+
+.habitoo-dash-top-prop-item__score-label {
+  font-size: 0.65rem;
+  color: #737373;
+}
+
+.habitoo-dash-top-prop-item__score-val {
+  font-size: 0.72rem;
+  color: #1A1A1A;
+}
+
+.habitoo-dash-top-prop-item__score-bar {
+  width: 100%;
+  height: 5px;
+  background: #E5E7EB;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 3px;
+}
+
+.habitoo-dash-top-prop-item__score-fill {
+  height: 100%;
+  background: #F70000;
+  border-radius: 2px;
+}
+
+.habitoo-dash-top-prop-item__stats-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: #737373;
+}
+
+.habitoo-dash-top-prop-item__stats-row span {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.habitoo-dash-btn-boost {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: #FFFFFF;
+  color: #1A1A1A;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  white-space: nowrap;
+}
+
+.habitoo-dash-btn-boost:hover {
+  background: #F70000;
+  color: #FFFFFF;
+  border-color: #F70000;
+}
+
+.habitoo-dash-btn-boost--active {
+  background: #FFF1F2;
+  color: #E11D48;
+  border-color: #FECDD3;
+}
+
+/* --------------------------------------------------------------------------
+   Section 4 : Visites & Plages de Disponibilité PRO
+   -------------------------------------------------------------------------- */
+.habitoo-dash-visits-grid {
+  display: grid;
+  grid-template-columns: 50% calc(50% - 24px);
+  gap: 24px;
+}
+
+.habitoo-dash-visits-today-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  color: #1A1A1A;
+  background: #F0F2F5;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.habitoo-dash-visits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.habitoo-dash-visit-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #FAFAFA;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 6px;
+}
+
+.habitoo-dash-visit-item--confirmed {
+  border-left: 3px solid #059669;
+}
+
+.habitoo-dash-visit-item__time-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 100px;
+}
+
+.habitoo-dash-visit-item__time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #1A1A1A;
+}
+
+.habitoo-dash-visit-item__status-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 3px;
+  width: fit-content;
+}
+
+.habitoo-dash-visit-item__status-tag--ok {
+  background: #ECFDF5;
+  color: #059669;
+}
+
+.habitoo-dash-visit-item__status-tag--pending {
+  background: #FFFBEB;
+  color: #D97706;
+}
+
+.habitoo-dash-visit-item__info-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.habitoo-dash-visit-item__client {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #1A1A1A;
+  margin-bottom: 2px;
+}
+
+.habitoo-dash-visit-item__client-icon {
+  color: #555555;
+}
+
+.habitoo-dash-visit-item__escrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.66rem;
+  color: #059669;
+  background: #ECFDF5;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.habitoo-dash-visit-item__property {
+  font-size: 0.72rem;
+  color: #555555;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.habitoo-dash-visit-item__dot-sep {
+  margin: 0 4px;
+  color: #9CA3AF;
+}
+
+.habitoo-dash-btn-confirm-visit {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: #1A1A1A;
+  color: #FFFFFF;
+  border: none;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 7px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.12s ease;
+  white-space: nowrap;
+}
+
+.habitoo-dash-btn-confirm-visit:hover {
+  background: #059669;
+}
+
+.habitoo-dash-badge-confirmed-ready {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #059669;
+}
+
+/* Gestionnaire de Disponibilités */
+.habitoo-dash-title-with-sync {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.habitoo-dash-sync-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: #ECFDF5;
+  color: #059669;
+  border: 1px solid #A7F3D0;
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+.habitoo-dash-avail-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.habitoo-dash-avail-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #333333;
+}
+
+.habitoo-dash-avail-hint {
+  font-size: 0.68rem;
+  color: #737373;
+}
+
+.habitoo-dash-avail-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.habitoo-dash-days-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.habitoo-dash-day-btn {
+  flex: 1;
+  padding: 6px 0;
+  background: #F4F5F7;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #555555;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.habitoo-dash-day-btn:hover {
+  background: #E5E7EB;
+}
+
+.habitoo-dash-day-btn--active {
+  background: #1A1A1A;
+  color: #FFFFFF;
+  border-color: #1A1A1A;
+}
+
+.habitoo-dash-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.habitoo-dash-slot-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #FAFAFA;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.habitoo-dash-slot-card:hover {
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.habitoo-dash-slot-card--active {
+  background: #FFFFFF;
+  border-color: #1A1A1A;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.habitoo-dash-slot-checkbox {
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid #9CA3AF;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.habitoo-dash-slot-card--active .habitoo-dash-slot-checkbox {
+  border-color: #1A1A1A;
+}
+
+.habitoo-dash-slot-checkbox-inner {
+  width: 8px;
+  height: 8px;
+  background: #1A1A1A;
+  border-radius: 1.5px;
+}
+
+.habitoo-dash-slot-card__content {
+  display: flex;
+  flex-direction: column;
+}
+
+.habitoo-dash-slot-card__name {
+  font-size: 0.7rem;
+  color: #555555;
+  line-height: 1.2;
+}
+
+.habitoo-dash-slot-card__time {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #1A1A1A;
+}
+
+.habitoo-dash-avail-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #F0F2F5;
+}
+
+.habitoo-dash-duration-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.habitoo-dash-duration-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #555555;
+}
+
+.habitoo-dash-duration-opts {
+  display: flex;
+  gap: 4px;
+}
+
+.habitoo-dash-duration-btn {
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #FFFFFF;
+  color: #555555;
+  cursor: pointer;
+}
+
+.habitoo-dash-duration-btn--active {
+  background: #1A1A1A;
+  color: #FFFFFF;
+  border-color: #1A1A1A;
+}
+
+.habitoo-dash-avail-status-text {
+  font-size: 0.68rem;
+  color: #737373;
+}
+
+/* --------------------------------------------------------------------------
+   4. Modale de Recharge Crédits (BoostCreditsModal)
+   -------------------------------------------------------------------------- */
+.habitoo-dash-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 16px;
+}
+
+.habitoo-dash-modal {
+  background: #FFFFFF;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 480px;
+  padding: 24px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+
+.habitoo-dash-modal__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #737373;
+}
+
+.habitoo-dash-modal__head {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.habitoo-dash-modal__icon {
+  width: 40px;
+  height: 40px;
+  background: #FFF1F2;
+  color: #F70000;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px auto;
+}
+
+.habitoo-dash-modal__title {
+  font-family: var(--font-serif, 'Playfair Display', serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 0 0 4px 0;
+}
+
+.habitoo-dash-modal__desc {
+  font-size: 0.8rem;
+  color: #737373;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.habitoo-dash-packs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.habitoo-dash-pack-card {
+  border: 1.5px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  padding: 12px 8px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.12s ease;
+}
+
+.habitoo-dash-pack-card:hover {
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
+.habitoo-dash-pack-card--active {
+  border-color: #F70000;
+  background: #FFFBFB;
+}
+
+.habitoo-dash-pack-tag {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #F70000;
+  color: #FFFFFF;
+  font-size: 0.58rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.habitoo-dash-pack-credits {
+  display: block;
+  font-size: 0.88rem;
+  color: #1A1A1A;
+  margin-bottom: 3px;
+}
+
+.habitoo-dash-pack-price {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #F70000;
+}
+
+.habitoo-dash-pack-unit {
+  display: block;
+  font-size: 0.65rem;
+  color: #737373;
+}
+
+.habitoo-dash-pay-section {
+  margin-bottom: 18px;
+}
+
+.habitoo-dash-pay-label {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #333333;
+  margin-bottom: 6px;
+}
+
+.habitoo-dash-ops-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.habitoo-dash-op-btn {
+  padding: 6px 0;
+  background: #F4F5F7;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #555555;
+  cursor: pointer;
+}
+
+.habitoo-dash-op-btn--active {
+  background: #1A1A1A;
+  color: #FFFFFF;
+  border-color: #1A1A1A;
+}
+
+.habitoo-dash-phone-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 6px;
+  padding: 8px 12px;
+  background: #FFFFFF;
+}
+
+.habitoo-dash-phone-wrap svg {
+  color: #737373;
+}
+
+.habitoo-dash-phone-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.habitoo-dash-modal-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.habitoo-dash-modal-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.84rem;
+  color: #555555;
+  border-top: 1px solid #F0F2F5;
+  padding-top: 10px;
+}
+
+.habitoo-dash-modal-total strong {
+  font-size: 1.05rem;
+  color: #1A1A1A;
+}
+
+.habitoo-dash-btn-submit-recharge {
+  width: 100%;
+  background: #F70000;
+  color: #FFFFFF;
+  border: none;
+  padding: 11px;
+  border-radius: 6px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.habitoo-dash-btn-submit-recharge:hover {
+  background: #D60000;
+}
+
+.habitoo-dash-modal-success {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.habitoo-dash-modal-success__check {
+  width: 52px;
+  height: 52px;
+  background: #ECFDF5;
+  color: #059669;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px auto;
+}
+
+.habitoo-dash-modal-success__title {
+  font-family: var(--font-serif, 'Playfair Display', serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 0 0 6px 0;
+}
+
+.habitoo-dash-modal-success__desc {
+  font-size: 0.82rem;
+  color: #555555;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* --------------------------------------------------------------------------
+   5. Vues Contextuelles / Placeholders des autres onglets
+   -------------------------------------------------------------------------- */
+.habitoo-dash-tab-placeholder {
+  min-height: 440px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.habitoo-dash-tab-placeholder__card {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  padding: 40px 32px;
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.habitoo-dash-tab-placeholder__icon-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  background: #F4F5F7;
+  color: #1A1A1A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.habitoo-dash-tab-placeholder__icon-wrap--alert {
+  background: #FEF2F2;
+  color: #DC2626;
+}
+
+.habitoo-dash-tab-placeholder__title {
+  font-family: var(--font-serif, 'Playfair Display', serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 0 0 8px 0;
+}
+
+.habitoo-dash-tab-placeholder__desc {
+  font-size: 0.84rem;
+  color: #555555;
+  line-height: 1.5;
+  margin: 0 0 24px 0;
+}
+
+.habitoo-dash-tab-placeholder__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.habitoo-dash-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #1A1A1A;
+  color: #FFFFFF;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.habitoo-dash-btn-primary:hover {
+  background: #333333;
+}
+
+.habitoo-dash-btn-ghost {
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  color: #1A1A1A;
+  padding: 9px 16px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.habitoo-dash-btn-ghost:hover {
+  background: #F4F5F7;
+}
+
+/* --------------------------------------------------------------------------
+   7. Vue d'ensemble : Grille 2 Colonnes & Liens
+   -------------------------------------------------------------------------- */
+.habitoo-dash-twocol-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.habitoo-dash-card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  color: #1A1A1A;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.12s ease;
+}
+
+.habitoo-dash-card-link:hover {
+  color: #F70000;
+}
+
+.habitoo-dash-overview-visits,
+.habitoo-dash-overview-props {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.habitoo-dash-overview-visit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 12px;
+  background: #FAFAFA;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 6px;
+}
+
+.habitoo-dash-overview-visit-time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #1A1A1A;
+  color: #FFFFFF;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.habitoo-dash-overview-visit-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.habitoo-dash-overview-visit-prop {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 0 0 2px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.habitoo-dash-overview-visit-loc {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.72rem;
+  color: #737373;
+  margin-bottom: 6px;
+}
+
+.habitoo-dash-overview-visit-contact {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.72rem;
+  color: #333333;
+}
+
+.habitoo-dash-overview-visit-phone {
+  color: #059669;
+  text-decoration: none;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.habitoo-dash-overview-prop-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #FAFAFA;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 6px;
+}
+
+.habitoo-dash-overview-prop-thumb {
+  width: 56px;
+  height: 42px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.habitoo-dash-overview-prop-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.habitoo-dash-overview-prop-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 0 0 2px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.habitoo-dash-overview-prop-loc {
+  font-size: 0.7rem;
+  color: #737373;
+  display: block;
+}
+
+.habitoo-dash-overview-prop-stats {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.68rem;
+  color: #555555;
+  margin-top: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   8. Vues Mes Annonces (Toolbar & Table)
+   -------------------------------------------------------------------------- */
+.habitoo-dash-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.habitoo-dash-toolbar__left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.habitoo-dash-search-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  padding: 8px 12px;
+  width: 280px;
+}
+
+.habitoo-dash-search-input-wrap svg {
+  color: #737373;
+}
+
+.habitoo-dash-search-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.82rem;
+  color: #1A1A1A;
+  width: 100%;
+}
+
+.habitoo-dash-filter-group {
+  display: flex;
+  gap: 4px;
+  background: #F0F2F5;
+  padding: 3px;
+  border-radius: 6px;
+}
+
+.habitoo-dash-filter-pill {
+  border: none;
+  background: transparent;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #555555;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.habitoo-dash-filter-pill--active {
+  background: #FFFFFF;
+  color: #1A1A1A;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.habitoo-dash-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.habitoo-dash-table th {
+  background: #FAFAFA;
+  padding: 12px 18px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #555555;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.habitoo-dash-table td {
+  padding: 14px 18px;
+  font-size: 0.82rem;
+  color: #333333;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  vertical-align: middle;
+}
+
+.habitoo-dash-table tr:last-child td {
+  border-bottom: none;
+}
+
+.habitoo-dash-table tr:hover td {
+  background: #FAFAFA;
+}
+
+.habitoo-dash-table-prop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.habitoo-dash-table-prop__thumb {
+  width: 58px;
+  height: 44px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.habitoo-dash-table-prop__title {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 0 0 2px 0;
+}
+
+.habitoo-dash-table-prop__loc {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.72rem;
+  color: #737373;
+}
+
+.habitoo-dash-table-type {
+  font-size: 0.78rem;
+  color: #555555;
+}
+
+.habitoo-dash-table-price {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #1A1A1A;
+}
+
+.habitoo-dash-table-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 140px;
+}
+
+.habitoo-dash-table-metrics__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: #555555;
+}
+
+.habitoo-dash-table-metrics__row span {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.habitoo-dash-table-score-bar {
+  width: 100%;
+  height: 4px;
+  background: #E5E7EB;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.habitoo-dash-table-score-fill {
+  height: 100%;
+  background: #F70000;
+  border-radius: 2px;
+}
+
+.habitoo-dash-table-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.habitoo-dash-table-badge--active {
+  background: #F3F4F6;
+  color: #374151;
+}
+
+.habitoo-dash-table-badge--boosted {
+  background: #FFF1F2;
+  color: #E11D48;
+  border: 1px solid #FECDD3;
+}
+
+.habitoo-dash-table-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.habitoo-dash-btn-boost-table {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.habitoo-dash-btn-boost-table:hover {
+  background: #F70000;
+  color: #FFFFFF;
+  border-color: #F70000;
+}
+
+.habitoo-dash-btn-boost-table--active {
+  background: #FFF1F2;
+  color: #E11D48;
+  border-color: #FECDD3;
+}
+
+.habitoo-dash-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  color: #555555;
+  text-decoration: none;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.habitoo-dash-btn-icon:hover {
+  background: #F4F5F7;
+  color: #1A1A1A;
+}
+
+/* --------------------------------------------------------------------------
+   9. Vues Mes Visites (Planning & Disponibilités)
+   -------------------------------------------------------------------------- */
+.habitoo-dash-visits-page-grid {
+  display: grid;
+  grid-template-columns: 58% calc(42% - 16px);
+  gap: 16px;
+}
+
+.habitoo-dash-subtab-toggle {
+  display: flex;
+  background: #F0F2F5;
+  border-radius: 6px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.habitoo-dash-subtab-btn {
+  border: none;
+  background: transparent;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #555555;
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.habitoo-dash-subtab-btn--active {
+  background: #FFFFFF;
+  color: #1A1A1A;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.habitoo-dash-visits-full-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.habitoo-dash-visit-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 12px 14px;
+  background: #FAFAFA;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 6px;
+}
+
+.habitoo-dash-visit-row__time-block {
+  min-width: 120px;
+}
+
+.habitoo-dash-visit-row__date {
+  display: block;
+  font-size: 0.72rem;
+  color: #737373;
+  margin-bottom: 2px;
+}
+
+.habitoo-dash-visit-row__hours {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: #1A1A1A;
+}
+
+.habitoo-dash-visit-row__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.habitoo-dash-visit-row__prop {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 0 0 2px 0;
+}
+
+.habitoo-dash-visit-row__address {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.72rem;
+  color: #737373;
+  margin-bottom: 6px;
+}
+
+.habitoo-dash-visit-row__client {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.74rem;
+  color: #333333;
+}
+
+.habitoo-dash-visit-row__phone {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: #059669;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.habitoo-dash-visit-row__result {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  color: #059669;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.habitoo-dash-visit-status-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+
+.habitoo-dash-visit-status-badge--upcoming {
+  background: #ECFDF5;
+  color: #059669;
+}
+
+.habitoo-dash-visit-status-badge--done {
+  background: #F3F4F6;
+  color: #4B5563;
+}
+
+/* --------------------------------------------------------------------------
+   10. Vues Revenus
+   -------------------------------------------------------------------------- */
+.habitoo-dash-revenue-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.habitoo-dash-card--highlight {
+  border-color: rgba(247, 0, 0, 0.2);
+  background: #FFFFFF;
+}
+
+.habitoo-dash-revenue-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.habitoo-dash-revenue-card-label {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #555555;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.habitoo-dash-revenue-card-amount {
+  display: block;
+  font-family: var(--font-heading, sans-serif);
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin-bottom: 10px;
+}
+
+.habitoo-dash-revenue-card-sub {
+  font-size: 0.72rem;
+  color: #737373;
+}
+
+.habitoo-dash-btn-withdraw {
+  width: 100%;
+  background: #1A1A1A;
+  color: #FFFFFF;
+  border: none;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.habitoo-dash-btn-withdraw:hover {
+  background: #F70000;
+}
+
+.habitoo-dash-tx-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.habitoo-dash-tx-type--in {
+  background: #ECFDF5;
+  color: #059669;
+}
+
+.habitoo-dash-tx-type--out {
+  background: #F3F4F6;
+  color: #374151;
+}
+
+/* --------------------------------------------------------------------------
+   6. Responsive Adaptations
+   -------------------------------------------------------------------------- */
+@media (max-width: 1200px) {
+  .habitoo-dash-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .habitoo-dash-analytics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .habitoo-dash-geo-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .habitoo-dash-visits-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 860px) {
+  .habitoo-dash-top-header__container {
+    padding: 0 16px;
+  }
+
+  .habitoo-dash-container {
+    padding: 16px;
+  }
+
+  .habitoo-dash-persona-switcher {
+    display: none;
+  }
+
+  .habitoo-dash-agent-name {
+    display: none;
+  }
+
+  .habitoo-dash-tabbar__inner {
+    padding: 0 16px;
+  }
+
+  .habitoo-dash-donut-layout {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .habitoo-dash-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .habitoo-dash-top-header__left .habitoo-dash-divider-v,
+  .habitoo-dash-top-header__left .habitoo-dash-currency-select-wrap {
+    display: none;
+  }
+
+  .habitoo-dash-btn-publish span {
+    display: none;
+  }
+
+  .habitoo-dash-btn-publish {
+    padding: 8px 10px;
+  }
+
+  .habitoo-dash-card {
+    padding: 16px;
+  }
+
+  .habitoo-dash-top-prop-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .habitoo-dash-top-prop-item__score-col {
+    width: 100%;
+  }
+
+  .habitoo-dash-top-prop-item__action-col {
+    width: 100%;
+  }
+
+  .habitoo-dash-btn-boost {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .habitoo-dash-slots-grid {
+    grid-template-columns: 1fr;
+  }
+}

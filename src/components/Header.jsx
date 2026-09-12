@@ -14,7 +14,8 @@ import {
   LogOut,
   ShieldCheck,
   Megaphone,
-  Settings
+  Settings,
+  LayoutDashboard
 } from 'lucide-react';
 
 export const Header = () => {
@@ -120,6 +121,21 @@ export const Header = () => {
           >
             Professionnels
           </a>
+          <Link 
+            to="/pro/app/dashboard"
+            style={{ 
+              ...navLinkStyle(location.pathname.startsWith('/pro/app')), 
+              color: '#F70000', 
+              fontWeight: '700',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '5px'
+            }}
+            title="Accéder au Dashboard PRO (Démo)"
+          >
+            <LayoutDashboard size={14} />
+            <span>Dashboard PRO</span>
+          </Link>
           <Link 
             to="/a-propos" 
             style={navLinkStyle(location.pathname === '/a-propos' || location.pathname === '/about')}
@@ -389,6 +405,15 @@ export const Header = () => {
           >
             Professionnels
           </a>
+          <Link 
+            to="/pro/app/dashboard"
+            className="mobile-drawer-link"
+            style={{ color: '#F70000', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px' }}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            <LayoutDashboard size={16} />
+            <span>Dashboard PRO (Démo)</span>
+          </Link>
           <Link 
             to="/a-propos" 
             className={`mobile-drawer-link ${(location.pathname === '/a-propos' || location.pathname === '/about') ? 'active' : ''}`}

@@ -20,6 +20,7 @@ import { ProRegisterPage } from './pages/Professionnels/Onboarding/ProRegisterPa
 import { ProPendingPass } from './pages/Professionnels/Onboarding/ProPendingPass';
 import { ProHeader } from './components/ProHeader';
 import { ProTunnelHeader } from './components/ProTunnelHeader';
+import { ProDashboardLayout } from './pages/Professionnels/App/ProDashboardLayout';
 
 // Auto scroll to top on navigation
 const ScrollToTop = () => {
@@ -37,11 +38,12 @@ const AppContent = () => {
   const isDetailPage = location.pathname.startsWith('/bien/');
   const isProPage = location.pathname === '/professionnels' || location.pathname === '/pro';
   const isProTunnel = location.pathname === '/pro/inscription' || location.pathname === '/pro/en-attente';
-  const hideBottomNav = isPublishPage || isCheckoutPage || isDetailPage || isProPage || isProTunnel;
+  const isProApp = location.pathname.startsWith('/pro/app');
+  const hideBottomNav = isPublishPage || isCheckoutPage || isDetailPage || isProPage || isProTunnel || isProApp;
 
   return (
     <div className="app-root-layout" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%', maxWidth: '100%', overflowX: 'clip' }}>
-      {isProTunnel ? <ProTunnelHeader /> : isProPage ? <ProHeader /> : <Header />}
+      {isProApp ? null : isProTunnel ? <ProTunnelHeader /> : isProPage ? <ProHeader /> : <Header />}
       
       <main className="app-main-content" style={{ flexGrow: 1, minWidth: 0, width: '100%', overflowX: 'clip' }}>
         <Routes>
@@ -58,13 +60,15 @@ const AppContent = () => {
           <Route path="/pro" element={<ProLandingPage />} />
           <Route path="/pro/inscription" element={<ProRegisterPage />} />
           <Route path="/pro/en-attente" element={<ProPendingPass />} />
+          <Route path="/pro/app" element={<ProDashboardLayout />} />
+          <Route path="/pro/app/dashboard" element={<ProDashboardLayout />} />
           <Route path="/publier" element={<PublishPropertyPage />} />
           <Route path="/publier-une-annonce" element={<PublishPropertyPage />} />
           <Route path="*" element={<HomePage />} />
         </Routes>
       </main>
 
-      {!isPublishPage && !isProTunnel && <Footer />}
+      {!isPublishPage && !isProTunnel && !isProApp && <Footer />}
 
       {/* PWA Mobile Bottom Navigation (masquée sur l'Espace PRO, les tunnels transactionnels et la fiche détail) */}
       {!hideBottomNav && <BottomNav />}
@@ -81,7 +85,7 @@ const AppContent = () => {
                 ? 'calc(74px + env(safe-area-inset-bottom, 0px))' 
                 : isPublishPage
                   ? 'calc(80px + env(safe-area-inset-bottom, 0px))'
-                  : (isCheckoutPage || isProPage || isProTunnel)
+                  : (isCheckoutPage || isProPage || isProTunnel || isProApp)
                     ? '0px' 
                     : 'calc(62px + env(safe-area-inset-bottom, 0px))'
             };
