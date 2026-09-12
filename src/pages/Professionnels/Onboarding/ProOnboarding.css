@@ -1,0 +1,1448 @@
+/* ==========================================================================
+   HABITOO PRO ONBOARDING STYLESHEET (REFINED & COMPACT)
+   Centered 100vh layout, zero gratuitous scroll, less AI-generated
+   Strict adherence to .antigravity/rules.md
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Pro Tunnel Header
+   -------------------------------------------------------------------------- */
+.habitoo-tunnel-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--obsidian-dark);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  height: 60px;
+  width: 100%;
+}
+
+.habitoo-tunnel-header-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.habitoo-tunnel-brand {
+  display: flex;
+  align-items: center;
+}
+
+.habitoo-tunnel-brand-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.habitoo-tunnel-logo {
+  height: 26px;
+  width: auto;
+  object-fit: contain;
+}
+
+.habitoo-tunnel-badge {
+  background-color: var(--primary-red);
+  color: var(--surface-white);
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 2px 6px;
+  border-radius: var(--radius-tag);
+}
+
+.habitoo-tunnel-security {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.habitoo-tunnel-security-icon {
+  color: var(--verified-green);
+  flex-shrink: 0;
+}
+
+.habitoo-tunnel-actions {
+  display: flex;
+  align-items: center;
+}
+
+.habitoo-tunnel-exit-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  transition: all var(--transition-fast);
+}
+
+.habitoo-tunnel-exit-link:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--surface-white);
+}
+
+/* --------------------------------------------------------------------------
+   2. Centered Zero-Scroll Layout
+   -------------------------------------------------------------------------- */
+.habitoo-reg-layout--centered {
+  min-height: calc(100vh - 60px);
+  height: calc(100vh - 60px);
+  width: 100%;
+  background-color: var(--bg-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 20px;
+  overflow-y: auto;
+}
+
+.habitoo-reg-workspace {
+  width: 100%;
+  max-width: 760px;
+  background-color: var(--surface-white);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px 32px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* --------------------------------------------------------------------------
+   3. Compact Stepper
+   -------------------------------------------------------------------------- */
+.habitoo-reg-stepper {
+  width: 100%;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.habitoo-reg-stepper-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.habitoo-reg-step-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+
+.habitoo-reg-step-badge {
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background-color: var(--surface-white);
+  border: 1px solid var(--border-color);
+  color: var(--graphite-gray);
+  transition: all var(--transition-fast);
+}
+
+.habitoo-reg-step-item--active .habitoo-reg-step-badge {
+  background-color: var(--primary-red);
+  border-color: var(--primary-red);
+  color: var(--surface-white);
+}
+
+.habitoo-reg-step-item--completed .habitoo-reg-step-badge {
+  background-color: var(--verified-green);
+  border-color: var(--verified-green);
+  color: var(--surface-white);
+}
+
+.habitoo-reg-step-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.habitoo-reg-step-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--obsidian-black);
+}
+
+.habitoo-reg-step-sub {
+  font-size: 0.6875rem;
+  color: var(--graphite-light);
+}
+
+.habitoo-reg-step-item--active .habitoo-reg-step-label {
+  color: var(--primary-red);
+}
+
+.habitoo-reg-step-line {
+  flex: 1;
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 0 12px;
+}
+
+.habitoo-reg-step-line--completed {
+  background-color: var(--verified-green);
+}
+
+/* --------------------------------------------------------------------------
+   4. Step Content Structure & Typography
+   -------------------------------------------------------------------------- */
+.habitoo-reg-step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: habitooFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes habitooFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.habitoo-step-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.habitoo-step-counter {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--primary-red);
+}
+
+.habitoo-step-title {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--obsidian-black);
+  line-height: 1.25;
+}
+
+.habitoo-step-lead {
+  font-size: 0.875rem;
+  color: var(--graphite-gray);
+  line-height: 1.4;
+}
+
+/* Buttons */
+.habitoo-reg-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  background-color: var(--primary-red);
+  color: var(--surface-white);
+  padding: 10px 22px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  transition: all var(--transition-fast);
+}
+
+.habitoo-reg-btn-primary:hover:not(:disabled) {
+  background-color: var(--primary-red-hover);
+  transform: translateY(-1px);
+}
+
+.habitoo-reg-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.habitoo-reg-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  background: transparent;
+  color: var(--obsidian-black);
+  padding: 9px 18px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-pill);
+  transition: all var(--transition-fast);
+}
+
+.habitoo-reg-btn-ghost:hover:not(:disabled) {
+  background-color: var(--bg-main);
+  border-color: var(--obsidian-black);
+}
+
+.habitoo-step-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-light);
+  margin-top: 4px;
+}
+
+.habitoo-step-actions-hint {
+  font-size: 0.75rem;
+  color: var(--graphite-light);
+}
+
+/* --------------------------------------------------------------------------
+   5. Étape 1 : Rôles Métier (Sobre & Épuré)
+   -------------------------------------------------------------------------- */
+.habitoo-role-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.habitoo-role-card {
+  background: var(--surface-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-input);
+  padding: 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.habitoo-role-card:hover {
+  border-color: rgba(247, 0, 0, 0.4);
+}
+
+.habitoo-role-card--active {
+  border-color: var(--primary-red);
+  background-color: var(--soft-tint);
+}
+
+.habitoo-role-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.habitoo-role-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-tag);
+  background-color: var(--surface-white);
+  border: 1px solid var(--border-color);
+  color: var(--primary-red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.habitoo-role-check {
+  color: var(--primary-red);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.habitoo-role-card--active .habitoo-role-check {
+  opacity: 1;
+}
+
+.habitoo-role-title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--obsidian-black);
+}
+
+.habitoo-role-desc {
+  font-size: 0.8125rem;
+  color: var(--graphite-gray);
+  line-height: 1.4;
+}
+
+.habitoo-role-tags {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.habitoo-role-mini-tag {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  background-color: var(--surface-white);
+  border: 1px solid var(--border-color);
+  padding: 3px 8px;
+  border-radius: var(--radius-tag);
+  color: var(--graphite-gray);
+}
+
+/* --------------------------------------------------------------------------
+   6. Étape 2 : Justificatifs & Uploads Compacts
+   -------------------------------------------------------------------------- */
+.habitoo-kyc-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.habitoo-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.habitoo-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.habitoo-field-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--obsidian-black);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.habitoo-field-input {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  padding: 9px 12px;
+  background-color: var(--surface-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-input);
+  color: var(--obsidian-black);
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.habitoo-field-input:focus {
+  border-color: var(--primary-red);
+}
+
+.habitoo-uploads-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.habitoo-compact-upload-slot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background-color: #F8F9FA;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-input);
+  transition: all var(--transition-fast);
+}
+
+.habitoo-compact-upload-slot--uploaded {
+  background-color: var(--verified-green-bg);
+  border-color: var(--verified-green-border);
+}
+
+.habitoo-slot-icon {
+  color: var(--graphite-gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.habitoo-compact-upload-slot--uploaded .habitoo-slot-icon {
+  color: var(--verified-green);
+}
+
+.habitoo-slot-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.habitoo-slot-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--obsidian-black);
+  word-break: break-word;
+}
+
+.habitoo-slot-meta {
+  font-size: 0.6875rem;
+  color: var(--graphite-light);
+}
+
+.habitoo-compact-upload-slot--uploaded .habitoo-slot-meta {
+  color: var(--verified-green);
+}
+
+.habitoo-slot-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: var(--radius-tag);
+  border: 1px solid var(--border-color);
+  background-color: var(--surface-white);
+  color: var(--obsidian-black);
+  transition: all var(--transition-fast);
+}
+
+.habitoo-slot-action-btn:hover {
+  background-color: var(--bg-main);
+}
+
+.habitoo-slot-action-btn--remove {
+  color: #DC2626;
+  border-color: rgba(220, 38, 38, 0.2);
+}
+
+.habitoo-slot-action-btn--remove:hover {
+  background-color: #FEE2E2;
+}
+
+.habitoo-kyc-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #FEF2F2;
+  border: 1px solid #FECACA;
+  color: #DC2626;
+  padding: 8px 12px;
+  border-radius: var(--radius-input);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   7. Étape 3 : Cartes Forfaits Compactes
+   -------------------------------------------------------------------------- */
+.habitoo-cycle-toggle-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2px;
+}
+
+.habitoo-cycle-toggle {
+  display: inline-flex;
+  background-color: var(--bg-main);
+  border: 1px solid var(--border-color);
+  padding: 3px;
+  border-radius: var(--radius-pill);
+}
+
+.habitoo-cycle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--graphite-gray);
+  transition: all var(--transition-fast);
+}
+
+.habitoo-cycle-btn--active {
+  background-color: var(--obsidian-black);
+  color: var(--surface-white);
+}
+
+.habitoo-cycle-discount-tag {
+  background-color: var(--verified-green-bg);
+  color: var(--verified-green);
+  font-size: 0.625rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: var(--radius-tag);
+}
+
+.habitoo-plans-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.habitoo-plan-card {
+  background: var(--surface-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-input);
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  position: relative;
+  transition: all var(--transition-fast);
+}
+
+.habitoo-plan-card:hover {
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.habitoo-plan-card--active {
+  border-color: var(--obsidian-black);
+}
+
+.habitoo-plan-card--popular.habitoo-plan-card--active {
+  border-color: var(--primary-red);
+  background-color: var(--soft-tint);
+}
+
+.habitoo-plan-card--premium {
+  background-color: #111111;
+  color: var(--surface-white);
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+.habitoo-plan-card--premium.habitoo-plan-card--active {
+  border-color: var(--gold-accent);
+}
+
+.habitoo-plan-popular-ribbon {
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--primary-red);
+  color: var(--surface-white);
+  font-size: 0.625rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.habitoo-plan-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.habitoo-plan-name {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--graphite-gray);
+}
+
+.habitoo-plan-card--premium .habitoo-plan-name {
+  color: var(--gold-accent);
+}
+
+.habitoo-plan-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.habitoo-plan-price-val {
+  font-family: var(--font-heading);
+  font-size: 1.375rem;
+  font-weight: 800;
+  color: var(--obsidian-black);
+}
+
+.habitoo-plan-card--premium .habitoo-plan-price-val {
+  color: var(--surface-white);
+}
+
+.habitoo-plan-currency {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--graphite-gray);
+}
+
+.habitoo-plan-card--premium .habitoo-plan-currency {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.habitoo-plan-period {
+  font-size: 0.6875rem;
+  color: var(--graphite-light);
+}
+
+.habitoo-plan-card--premium .habitoo-plan-period {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.habitoo-plan-features-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  border-top: 1px solid var(--border-light);
+  padding-top: 8px;
+}
+
+.habitoo-plan-card--premium .habitoo-plan-features-list {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+.habitoo-plan-features-list li {
+  font-size: 0.6875rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--obsidian-black);
+}
+
+.habitoo-plan-card--premium .habitoo-plan-features-list li {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.habitoo-plan-check-icon {
+  color: var(--verified-green);
+  flex-shrink: 0;
+}
+
+.habitoo-plan-card--premium .habitoo-plan-check-icon {
+  color: var(--gold-accent);
+}
+
+.habitoo-plan-card-footer {
+  margin-top: auto;
+}
+
+.habitoo-plan-select-pill {
+  width: 100%;
+  text-align: center;
+  padding: 6px;
+  border-radius: var(--radius-pill);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  border: 1px solid var(--border-color);
+  color: var(--graphite-gray);
+  background-color: var(--bg-main);
+  transition: all var(--transition-fast);
+}
+
+.habitoo-plan-select-pill--selected {
+  background-color: var(--obsidian-black);
+  color: var(--surface-white);
+  border-color: var(--obsidian-black);
+}
+
+.habitoo-plan-card--popular .habitoo-plan-select-pill--selected {
+  background-color: var(--primary-red);
+  border-color: var(--primary-red);
+}
+
+.habitoo-plan-card--premium .habitoo-plan-select-pill--selected {
+  background-color: var(--gold-accent);
+  color: #000000;
+  border-color: var(--gold-accent);
+}
+
+/* --------------------------------------------------------------------------
+   8. Étape 4 : Règlement Sobre
+   -------------------------------------------------------------------------- */
+.habitoo-checkout-summary {
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-input);
+  padding: 12px 16px;
+}
+
+.habitoo-summary-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.habitoo-summary-plan-label {
+  font-size: 0.8125rem;
+  color: var(--graphite-gray);
+}
+
+.habitoo-summary-plan-title {
+  font-size: 0.875rem;
+  color: var(--obsidian-black);
+}
+
+.habitoo-summary-price {
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: var(--primary-red);
+}
+
+.habitoo-checkout-methods-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.habitoo-checkout-tab {
+  background: var(--surface-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-input);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--obsidian-black);
+  transition: all var(--transition-fast);
+}
+
+.habitoo-checkout-tab--active {
+  border-color: var(--primary-red);
+  background-color: var(--soft-tint);
+  color: var(--primary-red);
+}
+
+.habitoo-checkout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.habitoo-momo-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.habitoo-momo-pill {
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--obsidian-black);
+  transition: all var(--transition-fast);
+}
+
+.habitoo-momo-pill--active {
+  background-color: var(--primary-red);
+  color: var(--surface-white);
+  border-color: var(--primary-red);
+}
+
+/* --------------------------------------------------------------------------
+   9. Auth Gate
+   -------------------------------------------------------------------------- */
+.habitoo-reg-auth-gate {
+  min-height: calc(100vh - 60px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  background-color: var(--bg-main);
+}
+
+.habitoo-auth-gate-card {
+  background: var(--surface-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-input);
+  padding: 40px 32px;
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.habitoo-auth-gate-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-pill);
+  background-color: var(--soft-tint);
+  color: var(--primary-red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.habitoo-auth-gate-tag {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--primary-red);
+}
+
+.habitoo-auth-gate-title {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--obsidian-black);
+}
+
+.habitoo-auth-gate-lead {
+  font-size: 0.8125rem;
+  color: var(--graphite-gray);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.habitoo-auth-gate-btn {
+  width: 100%;
+}
+
+.habitoo-auth-gate-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.6875rem;
+  color: var(--graphite-light);
+  margin-top: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   10. Écran d'Attente 48h (/pro/en-attente) - "Credential Boarding Pass"
+   -------------------------------------------------------------------------- */
+.habitoo-pending-page {
+  min-height: calc(100vh - 60px);
+  background-color: var(--bg-main);
+  padding: 40px var(--space-6) 60px var(--space-6);
+}
+
+.habitoo-pending-container {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.habitoo-pending-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.habitoo-pending-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #FEF3C7;
+  color: #92400E;
+  border: 1px solid #FDE68A;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.habitoo-pending-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #F59E0B;
+}
+
+.habitoo-pending-title {
+  font-family: var(--font-serif);
+  font-size: 1.875rem;
+  font-weight: 600;
+  color: var(--obsidian-black);
+  line-height: 1.25;
+}
+
+.habitoo-pending-lead {
+  font-size: 0.9375rem;
+  color: var(--graphite-gray);
+  max-width: 640px;
+  line-height: 1.5;
+}
+
+.habitoo-boarding-pass {
+  background: var(--surface-white);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+.habitoo-pass-strip {
+  background-color: var(--obsidian-dark);
+  color: var(--surface-white);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.habitoo-pass-strip-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.habitoo-pass-strip-logo {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  font-size: 0.875rem;
+}
+
+.habitoo-pass-strip-badge {
+  background-color: var(--primary-red);
+  font-size: 0.625rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: var(--radius-tag);
+}
+
+.habitoo-pass-strip-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #FCD34D;
+}
+
+.habitoo-pass-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  padding: 20px 24px;
+}
+
+.habitoo-pass-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.habitoo-pass-field-lbl {
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--graphite-light);
+  font-weight: 600;
+}
+
+.habitoo-pass-field-val {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--obsidian-black);
+}
+
+.habitoo-pass-field-val--large {
+  font-size: 1rem;
+}
+
+.habitoo-pass-field-val--mono {
+  font-family: monospace;
+  letter-spacing: 0.06em;
+  color: var(--primary-red);
+}
+
+.habitoo-pass-field-sub {
+  font-size: 0.6875rem;
+  color: var(--graphite-gray);
+}
+
+.habitoo-pass-perforation {
+  position: relative;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  margin: 0 -1px;
+}
+
+.habitoo-pass-notch {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: var(--bg-main);
+  position: absolute;
+  top: 0;
+  border: 1px solid var(--border-color);
+  z-index: 2;
+}
+
+.habitoo-pass-notch--left { left: -8px; }
+.habitoo-pass-notch--right { right: -8px; }
+
+.habitoo-pass-dash-line {
+  width: 100%;
+  border-top: 1px dashed var(--border-color);
+}
+
+.habitoo-pass-bottom {
+  padding: 14px 24px;
+  background-color: #FAFAFA;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.habitoo-pass-stamp {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--verified-green);
+}
+
+.habitoo-pass-barcode {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.habitoo-barcode-lines {
+  width: 110px;
+  height: 20px;
+  background: repeating-linear-gradient(
+    90deg,
+    #111 0px,
+    #111 2px,
+    transparent 2px,
+    transparent 4px,
+    #111 4px,
+    #111 7px,
+    transparent 7px,
+    transparent 9px,
+    #111 9px,
+    #111 10px,
+    transparent 10px,
+    transparent 13px
+  );
+}
+
+.habitoo-barcode-code {
+  font-size: 0.625rem;
+  font-family: monospace;
+  color: var(--graphite-light);
+}
+
+/* Tracker */
+.habitoo-pending-tracker-card {
+  background: var(--surface-white);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.habitoo-tracker-title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--obsidian-black);
+}
+
+.habitoo-tracker-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.habitoo-tracker-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.habitoo-tracker-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid var(--border-color);
+}
+
+.habitoo-tracker-step--done .habitoo-tracker-icon {
+  background-color: var(--verified-green-bg);
+  border-color: var(--verified-green-border);
+  color: var(--verified-green);
+}
+
+.habitoo-tracker-step--current .habitoo-tracker-icon {
+  background-color: #FEF3C7;
+  border-color: #FDE68A;
+  color: #D97706;
+}
+
+.habitoo-tracker-step--upcoming .habitoo-tracker-icon {
+  background-color: var(--bg-main);
+  border-color: var(--border-color);
+  color: var(--graphite-light);
+}
+
+.habitoo-tracker-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.habitoo-tracker-label {
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.habitoo-tracker-step--done .habitoo-tracker-label { color: var(--verified-green); }
+.habitoo-tracker-step--current .habitoo-tracker-label { color: #D97706; }
+.habitoo-tracker-step--upcoming .habitoo-tracker-label { color: var(--graphite-light); }
+
+.habitoo-tracker-heading {
+  font-size: 0.875rem;
+  color: var(--obsidian-black);
+}
+
+.habitoo-tracker-desc {
+  font-size: 0.75rem;
+  color: var(--graphite-gray);
+  line-height: 1.4;
+}
+
+/* Academy */
+.habitoo-pending-academy-card {
+  background: var(--surface-white);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.habitoo-academy-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.habitoo-academy-tag {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--primary-red);
+}
+
+.habitoo-academy-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--obsidian-black);
+  margin-top: 2px;
+}
+
+.habitoo-academy-sub {
+  font-size: 0.8125rem;
+  color: var(--graphite-gray);
+  line-height: 1.4;
+}
+
+.habitoo-academy-teaser-box {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 16px;
+  background-color: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-input);
+  overflow: hidden;
+  align-items: center;
+}
+
+.habitoo-teaser-media {
+  position: relative;
+  height: 100%;
+  min-height: 140px;
+}
+
+.habitoo-teaser-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.habitoo-teaser-play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: rgba(247, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 2px;
+  cursor: pointer;
+}
+
+.habitoo-teaser-duration {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  background-color: rgba(0, 0, 0, 0.75);
+  color: var(--surface-white);
+  font-size: 0.625rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.habitoo-teaser-info {
+  padding: 14px 18px 14px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.habitoo-teaser-module-num {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--primary-red);
+  text-transform: uppercase;
+}
+
+.habitoo-teaser-name {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--obsidian-black);
+}
+
+.habitoo-teaser-summary {
+  font-size: 0.75rem;
+  color: var(--graphite-gray);
+  line-height: 1.4;
+}
+
+.habitoo-pending-bottom-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* --------------------------------------------------------------------------
+   11. Responsive (Mobile)
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .habitoo-reg-layout--centered {
+    padding: 12px 10px;
+    height: auto;
+    min-height: calc(100vh - 60px);
+  }
+
+  .habitoo-reg-workspace {
+    padding: 18px 16px;
+  }
+
+  .habitoo-tunnel-security {
+    display: none;
+  }
+
+  .habitoo-reg-stepper-inner {
+    justify-content: space-between;
+    gap: 2px;
+  }
+
+  .habitoo-reg-step-item {
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .habitoo-reg-step-badge {
+    width: 24px;
+    height: 24px;
+    font-size: 0.625rem;
+  }
+
+  .habitoo-reg-step-line {
+    margin: 0 4px;
+    min-width: 8px;
+  }
+
+  .habitoo-reg-step-sub {
+    display: none;
+  }
+
+  .habitoo-reg-step-item:not(.habitoo-reg-step-item--active) .habitoo-reg-step-label {
+    display: none;
+  }
+
+  .habitoo-reg-step-label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .habitoo-role-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .habitoo-plans-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .habitoo-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .habitoo-pass-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .habitoo-academy-header {
+    flex-direction: column;
+  }
+
+  .habitoo-academy-teaser-box {
+    grid-template-columns: 1fr;
+  }
+
+  .habitoo-teaser-info {
+    padding: 12px;
+  }
+
+  .habitoo-pending-bottom-actions {
+    flex-direction: column;
+  }
+
+  .habitoo-pending-bottom-actions a {
+    width: 100%;
+  }
+}
