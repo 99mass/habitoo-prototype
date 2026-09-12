@@ -1,30 +1,51 @@
 Contexte & Rôle :
 
-Tu interviens sur notre prototype d'agence immobilière de prestige (React / Vite / Vanilla CSS). Nous devons rehausser la direction artistique de la page « À Propos » pour atteindre un standard de luxe architectural, chaleureux et sobre.
+Tu interviens sur notre prototype d'agence immobilière de standing (React / Vite / Vanilla CSS).  Nous devons restructurer la page de détails d'une annonce (PropertyDetail) et implémenter une page dédiée de passerelle de paiement multi-moyens (Checkout).
+
+Applique scrupuleusement la règle de direction artistique définie dans rules.md : style architectural épuré, typographie sobre (Playfair Display pour les montants/titres, Quicksand pour les formulaires/labels), zéro effet glossy/dégradé IA, bordures ultra-fines et respiration par l'espace.
 
 Consigne d'exécution :
 
-Respecte scrupuleusement le protocole pas-à-pas, le skill vanilla-css-scoped et les directives anti-AI. Ne modifie aucun fichier pour l'instant. Propose d'abord une checklist numérotée et attends ma validation avant de démarrer la première tâche.
+Applique scrupuleusement notre protocole pas-à-pas et le skill vanilla-css-scoped. Ne modifie aucun fichier pour l'instant. Propose d'abord une checklist numérotée et attends ma validation avant de démarrer la première tâche.
 
-Spécifications de Refonte & Direction Artistique
-1. Règle Typographique Stricte :
+Spécifications des modifications
+1. Réagencement de la page Détails du bien :
 
-Titres (h1, h2, h3, citations, prix des biens) : Utilise exclusivement 'Playfair Display'.
+Inversion des colonnes :
 
-Textes courants (corps de texte, navigation, labels, boutons, métadonnées) : Utilise exclusivement 'Quicksand'.
+Colonne gauche : Module de réservation / paramétrage du séjour ou de l'acquisition.
 
-Interdiction formelle d'appliquer Quicksand aux titres ou Playfair Display aux longs paragraphes.
+Colonne droite : Informations détaillées du bien, description, équipements et profil de l'agent / propriétaire.
 
-2. Hero Section : Présence Visuelle & Standing :
+Comportement Sticky : Fixe le module de réservation de la colonne gauche (position: sticky; top: ...) pour qu'il reste visible tout au long du défilement de la page, sans casser le layout responsive sur mobile (où il repasse en flux standard ou barre basse).
 
-Sortir de l'aspect fade sans tomber dans le tape-à-l'œil tech/IA.
+Déclenchement : Le bouton principal « Réserver » ou « Poursuivre la transaction » redirige vers la route de paiement dédiée (ex: /checkout ou /reservation/paiement).
 
-Intégrer un visuel architectural plein cadre ou asymétrique haut de gamme (lumière naturelle dorée, villa africaine sobre, ou interieur d'une villa avec un bon design).
+2. Nouvelle page de Passerelle de Paiement (Checkout Prototype) :
 
-Travailler un contraste typographique élégant en Playfair Display avec un léger voile sombre ou minéral maîtrisé pour garantir une lisibilité absolue.
+Sélection du moyen de paiement : Présente une sélection par onglets ou cartes radio sobres inspirée des vraies passerelles (Wave / Orange Money / Mobile Money local, Carte bancaire, PayPal).
 
-5. Page « À Propos » & Navigation Footer :
+Formulaires selon la méthode choisie :
 
-Compléter la page /a-propos pour y intégrer les blocs dédiés « Notre Mission » et « Nos Valeurs » (ancrage local, discrétion, rigueur patrimoniale).
+Carte bancaire : Champs réalistes (Numéro de carte, Date d'expiration, CVC, Nom du titulaire).
 
-Dans le composant Footer, brancher le lien « Notre mission » pour rediriger directement vers cette section (via ancre ou route /a-propos#mission).
+Mobile Money : Champ de saisie du numéro de téléphone et sélection du fournisseur.
+
+PayPal : Bouton direct d'authentification simulée.
+
+Comportement prototype (Sans validation complexe) :
+
+Pas de validation stricte de format ni de persistance en base de données.
+
+Au clic sur le bouton de confirmation final, affichage immédiat d'un écran / encart de confirmation net et élégant : « Votre paiement a bien été pris en compte » avec un résumé succinct de la transaction et un bouton de retour à l'accueil.
+
+Contraintes Techniques & Style
+
+Layout CSS propre en Grid ou Flexbox avec gap sans décalage horizontal.
+
+Aucun rechargement de page brutal ; intégration fluide dans l'arborescence React Router du projet.
+
+Ce que tu dois faire maintenant :
+Découpe cette implémentation en une checklist séquentielle de 4 tâches (Inversion & Sticky sur la page détails ➔ Structure et routage de la page Checkout ➔ Implémentation des 3 vues de paiement ➔ Écran de confirmation & test de fluidité).
+
+Arrête-toi là et attends mon feu vert explicite avant d'écrire le code. 

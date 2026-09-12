@@ -56,7 +56,7 @@ Tu ne dois **JAMAIS** modifier ou créer de fichiers directement lors de ta prem
 - Après chaque modification, vérifie que le serveur de développement Vite ne remonte pas d'erreur d'import ou de syntaxe.
 
 ## 6. Inspection visuelle et navigateur :
-   - Ouvre l'URL locale correspondante (ex: `http://localhost:5173/` ou la route spécifique du composant).
+   - Ouvre l'URL locale correspondante (ex: `http://localhost:3000/` ou la route spécifique du composant).
    - Prends une capture d'écran de la zone modifiée à deux résolutions :
      - Desktop : 1440x900
      - Mobile : 375x812

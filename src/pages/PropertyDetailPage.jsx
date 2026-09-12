@@ -191,7 +191,7 @@ export const PropertyDetailPage = () => {
         chargesBreakdown: {
           copropriete: "À définir",
           securite: "Inclus",
-          depotGarantie: "Caution sous séquestre sécurisé",
+          depotGarantie: "Caution de garantie standard",
           energie: "Compteur individuel"
         },
         agent: {
@@ -217,9 +217,8 @@ export const PropertyDetailPage = () => {
   // Booking Form States
   const [visitDate, setVisitDate] = useState('2025-03-02');
   const [visitTime, setVisitTime] = useState('11:00 - 12:00');
-  const [paymentMethod, setPaymentMethod] = useState('Orange Money');
   const [phoneNumber, setPhoneNumber] = useState('+225 07 88 99 00');
-  const [isBookingSuccess, setIsBookingSuccess] = useState(false);
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   const timeSlots = [
     "09:30 - 10:30",
@@ -228,15 +227,16 @@ export const PropertyDetailPage = () => {
     "16:30 - 17:30"
   ];
 
-  const paymentOptions = [
-    { name: "Mobile money", type: "mobile", badge: "OM", color: "#FF7900" },
-    { name: "Carte Bancaire", type: "card", badge: "CB", color: "#1A1A1A" }
-  ];
-
   const handleBookingSubmit = (e) => {
     e.preventDefault();
-    bookVisit(property, visitDate, visitTime, paymentMethod);
-    setIsBookingSuccess(true);
+    navigate(`/checkout?id=${property.id}`, {
+      state: {
+        property,
+        visitDate,
+        visitTime,
+        amount: 10000
+      }
+    });
   };
 
   // Carousel Navigation
@@ -343,180 +343,12 @@ export const PropertyDetailPage = () => {
         </div>
       </div>
 
-      {/* 2. MAIN 2-COLUMN LAYOUT: Left = Booking Widget, Right = Carousel & Details */}
+      {/* 2. MAIN 2-COLUMN LAYOUT: Left = Carousel & Details, Right = Sticky Booking Widget */}
       <div className="container">
         <div className="pdp-layout-grid">
           
           {/* ========================================================= */}
-          {/* LEFT COLUMN: PLANIFIER UNE VISITE (Sticky Booking Widget) */}
-          {/* ========================================================= */}
-          <div 
-            id="visite"
-            className="pdp-booking-col"
-            style={{
-              position: 'sticky',
-              top: '24px',
-              backgroundColor: 'var(--surface-white)',
-              borderRadius: 'var(--radius-banner)',
-              boxShadow: 'var(--shadow-lg)',
-              padding: '28px',
-              zIndex: 50
-            }}
-          >
-            {isBookingSuccess ? (
-              <div style={{ textAlign: 'center', padding: '12px 0' }}>
-                <div 
-                  style={{
-                    width: '60px',
-                    height: '60px',
-                    borderRadius: '50%',
-                    backgroundColor: 'var(--verified-green-bg)',
-                    color: 'var(--verified-green)',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: '16px'
-                  }}
-                >
-                  <CheckCircle2 size={32} />
-                </div>
-
-                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.25rem', fontWeight: 700, marginBottom: '6px' }}>
-                  Visite Confirmée !
-                </h3>
-
-                <p style={{ fontSize: '0.8125rem', color: 'var(--graphite-gray)', marginBottom: '20px' }}>
-                  Votre visite est programmée pour le <strong>{visitDate}</strong> de <strong>{visitTime}</strong>. L'agent vous contactera pour confirmer les détails.
-                </p>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <button
-                    onClick={() => navigate('/mon-compte')}
-                    className="btn-primary"
-                    style={{ width: '100%' }}
-                  >
-                    Voir dans mon Espace
-                  </button>
-
-                  <button
-                    onClick={() => setIsBookingSuccess(false)}
-                    className="btn-ghost-dark"
-                    style={{ width: '100%', justifyContent: 'center' }}
-                  >
-                    Planifier une autre visite
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <form onSubmit={handleBookingSubmit}>
-                
-                {/* Header */}
-                <div style={{ marginBottom: '20px', paddingBottom: '16px', borderBottom: '2px solid var(--border-light)' }}>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary-red)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    Réservation Sécurisée
-                  </span>
-                  <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.35rem', fontWeight: 700, marginTop: '2px' }}>
-                    Planifier une Visite
-                  </h3>
-                </div>
-
-                {/* Calendar */}
-                <div className="form-group">
-                  <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Calendar size={14} color="var(--primary-red)" />
-                    <span>Choisir la date</span>
-                  </label>
-                  <input
-                    type="date"
-                    className="form-input"
-                    value={visitDate}
-                    min="2025-02-28"
-                    onChange={(e) => setVisitDate(e.target.value)}
-                    required
-                  />
-                </div>
-
-                {/* Time Slots */}
-                <div className="form-group">
-                  <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Clock size={14} color="var(--primary-red)" />
-                    <span>Créneau horaire</span>
-                  </label>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                    {timeSlots.map(slot => (
-                      <button
-                        key={slot}
-                        type="button"
-                        onClick={() => setVisitTime(slot)}
-                        style={{
-                          padding: '8px 4px',
-                          borderRadius: 'var(--radius-input)',
-                          fontSize: '0.75rem',
-                          fontWeight: 600,
-                          border: visitTime === slot ? '2px solid var(--primary-red)' : '1px solid var(--border-color)',
-                          backgroundColor: visitTime === slot ? 'var(--soft-tint)' : 'var(--bg-main)',
-                          color: visitTime === slot ? 'var(--primary-red)' : 'var(--obsidian-black)',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        {slot}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Payment Method */}
-                <div className="form-group">
-                  <label className="form-label">Mode de paiement</label>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', marginBottom: '10px' }}>
-                    {paymentOptions.map(op => {
-                      const isSelected = paymentMethod === op.name;
-                      return (
-                        <button
-                          key={op.name}
-                          type="button"
-                          onClick={() => setPaymentMethod(op.name)}
-                          style={{
-                            padding: '8px 4px',
-                            borderRadius: '6px',
-                            border: isSelected ? '2px solid var(--primary-red)' : '1px solid var(--border-color)',
-                            backgroundColor: isSelected ? 'var(--soft-tint)' : 'var(--surface-white)',
-                            fontSize: '0.6875rem',
-                            fontWeight: 700,
-                            color: isSelected ? 'var(--primary-red)' : 'var(--obsidian-black)',
-                            textAlign: 'center',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          {op.name}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Submit */}
-                <button
-                  type="submit"
-                  className="btn-primary"
-                  style={{ width: '100%', height: '48px', fontSize: '0.9375rem' }}
-                >
-                  <Lock size={15} />
-                  <span>Réserver — 10 000 FCFA</span>
-                </button>
-
-                <div style={{ textAlign: 'center', marginTop: '12px' }}>
-                  <span style={{ fontSize: '0.6875rem', color: 'var(--graphite-gray)' }}>
-                    Annulation sans frais jusqu'à 2h avant la visite
-                  </span>
-                </div>
-
-              </form>
-            )}
-          </div>
-
-          {/* ========================================================= */}
-          {/* RIGHT COLUMN: CAROUSEL, TITLE, SPECS, AGENCY, MINI-MAP   */}
+          {/* LEFT COLUMN: CAROUSEL, TITLE, SPECS, AGENCY, MINI-MAP   */}
           {/* ========================================================= */}
           <div className="pdp-content-col">
             
@@ -866,6 +698,126 @@ export const PropertyDetailPage = () => {
 
           </div>
 
+          {/* ========================================================= */}
+          {/* RIGHT COLUMN: MODULE DE RÉSERVATION (Sticky Widget)       */}
+          {/* ========================================================= */}
+          <div 
+            id="visite"
+            className="pdp-booking-col"
+            style={{
+              position: 'sticky',
+              top: '100px',
+              alignSelf: 'start',
+              height: 'fit-content',
+              backgroundColor: 'var(--surface-white)',
+              borderRadius: 'var(--radius-banner)',
+              boxShadow: '0 8px 25px rgba(0, 0, 0, 0.07)',
+              border: '1px solid rgba(0, 0, 0, 0.08)',
+              padding: '20px 22px',
+              zIndex: 50
+            }}
+          >
+            <form onSubmit={handleBookingSubmit}>
+              
+              {/* Header */}
+              <div style={{ marginBottom: '20px', paddingBottom: '16px', borderBottom: '2px solid var(--border-light)' }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary-red)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  {isVente ? "Acquisition" : "Réservation Directe"}
+                </span>
+                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.35rem', fontWeight: 700, marginTop: '2px' }}>
+                  Planifier une Visite
+                </h3>
+              </div>
+
+              {/* Calendar */}
+              <div className="form-group">
+                <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Calendar size={14} color="var(--primary-red)" />
+                  <span>Choisir la date</span>
+                </label>
+                <input
+                  type="date"
+                  className="form-input"
+                  value={visitDate}
+                  min="2025-02-28"
+                  onChange={(e) => setVisitDate(e.target.value)}
+                  required
+                />
+              </div>
+
+              {/* Time Slots */}
+              <div className="form-group">
+                <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Clock size={14} color="var(--primary-red)" />
+                  <span>Créneau horaire</span>
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                  {timeSlots.map(slot => (
+                    <button
+                      key={slot}
+                      type="button"
+                      onClick={() => setVisitTime(slot)}
+                      style={{
+                        padding: '8px 4px',
+                        borderRadius: 'var(--radius-input)',
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        border: visitTime === slot ? '2px solid var(--primary-red)' : '1px solid var(--border-color)',
+                        backgroundColor: visitTime === slot ? 'var(--soft-tint)' : 'var(--bg-main)',
+                        color: visitTime === slot ? 'var(--primary-red)' : 'var(--obsidian-black)',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {slot}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Transaction Fee Row */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '14px 16px',
+                backgroundColor: 'var(--bg-main)',
+                borderRadius: 'var(--radius-input)',
+                border: '1px solid var(--border-color)',
+                marginTop: '16px',
+                marginBottom: '20px'
+              }}>
+                <div>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--graphite-gray)', display: 'block', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700 }}>
+                    Frais de réservation
+                  </span>
+                  <span style={{ fontSize: '0.8125rem', color: 'var(--obsidian-black)', fontWeight: 600 }}>
+                    Dossier & visite dédiée
+                  </span>
+                </div>
+                <div style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', fontWeight: 700, color: 'var(--obsidian-black)' }}>
+                  10 000 FCFA
+                </div>
+              </div>
+
+              {/* Submit CTA */}
+              <button
+                type="submit"
+                className="btn-primary"
+                style={{ width: '100%', height: '48px', fontSize: '0.9375rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+              >
+                <Lock size={15} />
+                <span>Poursuivre la transaction</span>
+              </button>
+
+              <div style={{ textAlign: 'center', marginTop: '12px' }}>
+                <span style={{ fontSize: '0.6875rem', color: 'var(--graphite-gray)' }}>
+                  Paiement sécurisé multi-moyens (Mobile Money, Carte, PayPal)
+                </span>
+              </div>
+
+            </form>
+          </div>
+
         </div>
       </div>
 
@@ -938,7 +890,133 @@ export const PropertyDetailPage = () => {
         </div>
       )}
 
-      {/* 4. MOBILE STICKY BOOKING BAR */}
+      {/* 4. BOUTON FLOTTANT RESPONSIVE : PETITE FLÈCHE TRANSPARENTE À DROITE */}
+      <button
+        type="button"
+        onClick={() => setIsMobileDrawerOpen(true)}
+        className="mobile-floating-trigger-tab"
+        title="Ouvrir le module de réservation"
+        aria-label="Ouvrir le module de réservation"
+      >
+        <ChevronLeft size={20} />
+      </button>
+
+      {/* 5. VOLET LATÉRAL FLOTTANT (SIDE DRAWER MOBILE) */}
+      <div 
+        className={`mobile-booking-drawer-overlay ${isMobileDrawerOpen ? 'open' : ''}`}
+        onClick={() => setIsMobileDrawerOpen(false)}
+      >
+        <div className="mobile-booking-drawer-panel" onClick={(e) => e.stopPropagation()}>
+          
+          {/* Header du volet */}
+          <div className="mobile-drawer-header">
+            <div>
+              <span style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--primary-red)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                {isVente ? "Acquisition" : "Réservation Directe"}
+              </span>
+              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>
+                Planifier une Visite
+              </h3>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsMobileDrawerOpen(false)}
+              className="mobile-drawer-close-btn"
+              aria-label="Fermer"
+            >
+              <X size={20} />
+            </button>
+          </div>
+
+          {/* Formulaire dans le tiroir */}
+          <form onSubmit={handleBookingSubmit} style={{ padding: '20px' }}>
+            <div className="form-group">
+              <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Calendar size={14} color="var(--primary-red)" />
+                <span>Choisir la date</span>
+              </label>
+              <input
+                type="date"
+                className="form-input"
+                value={visitDate}
+                min="2025-02-28"
+                onChange={(e) => setVisitDate(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Clock size={14} color="var(--primary-red)" />
+                <span>Créneau horaire</span>
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                {timeSlots.map(slot => (
+                  <button
+                    key={slot}
+                    type="button"
+                    onClick={() => setVisitTime(slot)}
+                    style={{
+                      padding: '8px 4px',
+                      borderRadius: 'var(--radius-input)',
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      border: visitTime === slot ? '2px solid var(--primary-red)' : '1px solid var(--border-color)',
+                      backgroundColor: visitTime === slot ? 'var(--soft-tint)' : 'var(--bg-main)',
+                      color: visitTime === slot ? 'var(--primary-red)' : 'var(--obsidian-black)',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {slot}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '12px 14px',
+              backgroundColor: 'var(--bg-main)',
+              borderRadius: 'var(--radius-input)',
+              border: '1px solid var(--border-color)',
+              marginTop: '16px',
+              marginBottom: '18px'
+            }}>
+              <div>
+                <span style={{ fontSize: '0.6875rem', color: 'var(--graphite-gray)', display: 'block', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700 }}>
+                  Frais de réservation
+                </span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--obsidian-black)', fontWeight: 600 }}>
+                  Dossier & visite dédiée
+                </span>
+              </div>
+              <div style={{ fontFamily: 'var(--font-serif)', fontSize: '1.15rem', fontWeight: 700, color: 'var(--obsidian-black)' }}>
+                10 000 FCFA
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="btn-primary"
+              style={{ width: '100%', height: '46px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+            >
+              <Lock size={15} />
+              <span>Poursuivre la transaction</span>
+            </button>
+
+            <div style={{ textAlign: 'center', marginTop: '12px' }}>
+              <span style={{ fontSize: '0.6875rem', color: 'var(--graphite-gray)' }}>
+                Paiement sécurisé multi-moyens (Mobile Money, Carte, PayPal)
+              </span>
+            </div>
+          </form>
+
+        </div>
+      </div>
+
+      {/* 6. MOBILE STICKY BOOKING BAR */}
       <div className="mobile-sticky-booking-bar">
         <div>
           <span className="mobile-sticky-price-label">
@@ -949,12 +1027,7 @@ export const PropertyDetailPage = () => {
           </div>
         </div>
         <button
-          onClick={() => {
-            const el = document.getElementById('visite');
-            if (el) {
-              el.scrollIntoView({ behavior: 'smooth' });
-            }
-          }}
+          onClick={() => setIsMobileDrawerOpen(true)}
           className="btn-primary"
           style={{ padding: '10px 18px', fontSize: '0.875rem', gap: '6px' }}
         >
@@ -968,10 +1041,18 @@ export const PropertyDetailPage = () => {
         /* ===== 2-COLUMN LAYOUT ===== */
         .pdp-layout-grid {
           display: grid;
-          grid-template-columns: 390px minmax(0, 1fr);
-          gap: 40px;
+          grid-template-columns: minmax(0, 1fr) 380px;
+          gap: 36px;
           align-items: start;
           margin-top: 28px;
+          position: relative;
+        }
+
+        .pdp-booking-col {
+          position: sticky;
+          top: 100px;
+          align-self: start;
+          height: fit-content;
         }
 
         /* ===== PHOTO CAROUSEL ===== */
@@ -1202,7 +1283,15 @@ export const PropertyDetailPage = () => {
           transform: scale(1.08);
         }
 
-        /* ===== RESPONSIVE ===== */
+        /* ===== RESPONSIVE & MOBILE FLOATING DRAWER ===== */
+        .mobile-floating-trigger-tab {
+          display: none;
+        }
+
+        .mobile-booking-drawer-overlay {
+          display: none;
+        }
+
         .mobile-sticky-booking-bar {
           display: none;
         }
@@ -1218,13 +1307,108 @@ export const PropertyDetailPage = () => {
             width: 100% !important;
           }
           .pdp-booking-col {
-            order: 2 !important;
-            width: 100% !important;
-            position: static !important;
+            display: none !important;
           }
           .pdp-page-container {
             padding-bottom: 120px !important;
           }
+
+          /* Floating Transparent Trigger Tab on Right Edge */
+          .mobile-floating-trigger-tab {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 48px;
+            background: rgba(26, 26, 26, 0.45);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+            color: #FFFFFF;
+            cursor: pointer;
+            z-index: 800;
+            box-shadow: -2px 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.2s ease;
+          }
+
+          .mobile-floating-trigger-tab:active {
+            background: rgba(26, 26, 26, 0.7);
+            width: 36px;
+          }
+
+          /* Mobile Slide-Out Side Drawer */
+          .mobile-booking-drawer-overlay {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 950;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+          }
+
+          .mobile-booking-drawer-overlay.open {
+            opacity: 1;
+            visibility: visible;
+          }
+
+          .mobile-booking-drawer-panel {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: min(88vw, 380px);
+            background-color: var(--surface-white);
+            box-shadow: -8px 0 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow-y: auto;
+          }
+
+          .mobile-booking-drawer-overlay.open .mobile-booking-drawer-panel {
+            transform: translateX(0);
+          }
+
+          .mobile-drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--surface-white);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+          }
+
+          .mobile-drawer-close-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #F0F2F5;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--obsidian-black);
+            cursor: pointer;
+          }
+
+          /* Bottom Sticky Bar */
           .mobile-sticky-booking-bar {
             position: fixed;
             bottom: 0;

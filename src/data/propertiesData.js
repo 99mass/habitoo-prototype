@@ -104,7 +104,7 @@ export const PROPERTIES_DATA = [
     },
     agent: {
       name: "Alain Gnahoré",
-      agency: "Particulier (Direct Propriétaire)",
+      agency: "Particulier",
       certified: false,
       phone: "+225 01 02 03 04 05",
       avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
@@ -212,7 +212,7 @@ export const PROPERTIES_DATA = [
     },
     agent: {
       name: "Sarah Kalala",
-      agency: "Particulier (Direct Propriétaire)",
+      agency: "Particulier",
       certified: false,
       phone: "+243 89 987 6543",
       avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80"
@@ -317,7 +317,7 @@ export const PROPERTIES_DATA = [
     },
     agent: {
       name: "Grace Mabiala",
-      agency: "Particulier (Direct Propriétaire)",
+      agency: "Particulier",
       certified: false,
       phone: "+242 05 555 4321",
       avatar: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=200&q=80"
@@ -425,7 +425,7 @@ export const PROPERTIES_DATA = [
     },
     agent: {
       name: "Christian Mputu",
-      agency: "Particulier (Direct Propriétaire)",
+      agency: "Particulier",
       certified: false,
       phone: "+243 81 234 5678",
       avatar: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=200&q=80"

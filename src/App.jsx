@@ -14,6 +14,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { ConciergeriePage } from './pages/ConciergeriePage';
 import { PublishPropertyPage } from './pages/PublishPropertyPage';
 import { AboutPage } from './pages/About/AboutPage';
+import { CheckoutPage } from './pages/Checkout/CheckoutPage';
 
 // Auto scroll to top on navigation
 const ScrollToTop = () => {
@@ -29,14 +30,16 @@ const AppContent = () => {
   const isPublishPage = location.pathname === '/publier' || location.pathname === '/publier-une-annonce';
 
   return (
-    <div className="app-root-layout" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%', maxWidth: '100%', overflowX: 'hidden' }}>
+    <div className="app-root-layout" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%', maxWidth: '100%', overflowX: 'clip' }}>
       <Header />
       
-      <main className="app-main-content" style={{ flexGrow: 1, minWidth: 0, width: '100%', overflowX: 'hidden' }}>
+      <main className="app-main-content" style={{ flexGrow: 1, minWidth: 0, width: '100%', overflowX: 'clip' }}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/recherche" element={<SerpPage />} />
           <Route path="/bien/:id" element={<PropertyDetailPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/reservation/paiement" element={<CheckoutPage />} />
           <Route path="/mon-compte" element={<DashboardPage />} />
           <Route path="/conciergerie" element={<ConciergeriePage />} />
           <Route path="/a-propos" element={<AboutPage />} />
