@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import L from 'leaflet';
 import { useHabitoo } from '../context/HabitooContext';
-import { PropertyCard } from '../components/PropertyCard';
 import { PROPERTY_TYPES } from '../data/propertiesData';
 import { 
   CheckCircle2, 
@@ -15,6 +15,15 @@ import {
   Minus, 
   X,
   Lock,
+  Edit3,
+  MapPin,
+  Bed,
+  Bath,
+  Maximize2,
+  ShieldCheck,
+  ChevronLeft,
+  ChevronRight,
+  Navigation,
   Image as ImageIcon
 } from 'lucide-react';
 
@@ -50,8 +59,98 @@ const ALL_AMENITIES = [
 
 const DEFAULT_COVER_IMAGE = 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80';
 
+const CITY_COORDINATES = {
+  'Abidjan': [5.3484, -3.9780],
+  'Kinshasa': [-4.3217, 15.3125],
+  'Brazzaville': [-4.2677, 15.2919]
+};
+
+// Leaflet Mini Map Component pour la prévisualisation en direct
+const PropertyMiniMap = ({ coordinates, address, neighborhood, city }) => {
+  const mapContainerRef = useRef(null);
+  const mapInstanceRef = useRef(null);
+
+  useEffect(() => {
+    if (!mapContainerRef.current) return;
+    if (!coordinates || !Array.isArray(coordinates) || coordinates.length < 2) return;
+
+    if (!mapInstanceRef.current) {
+      const map = L.map(mapContainerRef.current, {
+        center: coordinates,
+        zoom: 14,
+        zoomControl: true,
+        attributionControl: false,
+        scrollWheelZoom: false
+      });
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19,
+        subdomains: 'abcd'
+      }).addTo(map);
+
+      const customIcon = L.divIcon({
+        className: 'custom-property-pin',
+        html: `
+          <div style="
+            width: 34px;
+            height: 34px;
+            background: #F70000;
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px rgba(247,0,0,0.4);
+            border: 2px solid #FFFFFF;
+          ">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transform: rotate(45deg);">
+              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+          </div>
+        `,
+        iconSize: [34, 34],
+        iconAnchor: [17, 34]
+      });
+
+      L.marker(coordinates, { icon: customIcon }).addTo(map);
+      mapInstanceRef.current = map;
+    } else {
+      mapInstanceRef.current.setView(coordinates, 14);
+    }
+
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, [coordinates]);
+
+  return (
+    <div className="preview-map-container">
+      <div ref={mapContainerRef} className="preview-map-instance" />
+      <div className="preview-map-overlay-badge">
+        <div className="preview-map-address">
+          <MapPin size={15} color="var(--primary-red)" style={{ flexShrink: 0 }} />
+          <span>{address || `${neighborhood}, ${city}`}</span>
+        </div>
+        <a
+          href={`https://www.google.com/maps/search/?api=1&query=${coordinates[0]},${coordinates[1]}`}
+          target="_blank"
+          rel="noreferrer"
+          className="preview-map-link"
+        >
+          <Navigation size={12} />
+          <span>Itinéraire</span>
+        </a>
+      </div>
+    </div>
+  );
+};
+
 export const PublishPropertyPage = () => {
-  const { activeCity, currentUser, openAuthModal, addUserProperty } = useHabitoo();
+  const { activeCity, currentUser, openAuthModal, addUserProperty, formatPrice } = useHabitoo();
 
   const SIMULATED_USER_AVATAR = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80";
   const userAvatar = currentUser?.avatar || SIMULATED_USER_AVATAR;
@@ -61,7 +160,7 @@ export const PublishPropertyPage = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [publishedRefNumber, setPublishedRefNumber] = useState('');
 
-  // Form state
+  // Form state - Statut verrouillé de manière fixe à 'PROPRIETAIRE'
   const [formData, setFormData] = useState({
     category: 'LOCATION', // 'LOCATION' | 'VENTE'
     type: "Villa d'architecte",
@@ -80,14 +179,20 @@ export const PublishPropertyPage = () => {
       'Climatisation intégrale',
       'Piscine privée'
     ],
-    userRole: 'PROPRIETAIRE', // 'PROPRIETAIRE' | 'AGENCE'
-    ownerPhone: currentUser?.phone || '',
-    ownerEmail: currentUser?.email || ''
+    userRole: 'PROPRIETAIRE', // Fixe et immuable : Propriétaire (particulier)
+    ownerPhone: currentUser?.phone || '07 08 09 10',
+    ownerEmail: currentUser?.email || 'contact@domaine.ci'
   });
 
-  // Photos state (multi-upload)
+  // Photos state
   const [uploadedPhotos, setUploadedPhotos] = useState([DEFAULT_COVER_IMAGE]);
   const fileInputRef = useRef(null);
+
+  // Active photo index for preview carousel
+  const [activePhotoIndex, setActivePhotoIndex] = useState(0);
+
+  // Mobile drawer state
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   // Amenities dropdown state
   const [isAmenitiesOpen, setIsAmenitiesOpen] = useState(false);
@@ -139,14 +244,12 @@ export const PublishPropertyPage = () => {
     const files = Array.from(e.target.files || []);
     if (files.length > 0) {
       const newUrls = files.map(file => URL.createObjectURL(file));
-      // If only default photo was present, replace it; otherwise append
       if (uploadedPhotos.length === 1 && uploadedPhotos[0] === DEFAULT_COVER_IMAGE) {
         setUploadedPhotos(newUrls);
       } else {
         setUploadedPhotos(prev => [...prev, ...newUrls]);
       }
     }
-    // Reset file input so re-selecting same files works
     if (e.target) e.target.value = '';
   };
 
@@ -155,11 +258,14 @@ export const PublishPropertyPage = () => {
       const updated = prev.filter((_, idx) => idx !== indexToRemove);
       return updated.length === 0 ? [DEFAULT_COVER_IMAGE] : updated;
     });
+    if (activePhotoIndex >= uploadedPhotos.length - 1) {
+      setActivePhotoIndex(0);
+    }
   };
 
   const currencyLabel = formData.city === 'Kinshasa' ? '$' : 'FCFA';
 
-  // Construct property object formatted for PropertyCard and PropertyDetailPage
+  // Construct property object formatted for detailed preview and storage
   const previewProperty = {
     id: 'preview-card',
     title: formData.title || "Titre de l'annonce",
@@ -169,13 +275,13 @@ export const PublishPropertyPage = () => {
     country: formData.city === 'Kinshasa' ? 'RD Congo' : formData.city === 'Brazzaville' ? 'Congo' : "Côte d'Ivoire",
     neighborhood: formData.neighborhood || 'Quartier',
     address: `${formData.neighborhood || 'Quartier'}, ${formData.city}`,
-    description: formData.description || "Propriété d'exception aux finitions de haut standing.",
+    description: formData.description || "Propriété d'exception aux finitions de haut standing, volumes généreux et sécurité maximale.",
     images: uploadedPhotos.length > 0 ? uploadedPhotos : [DEFAULT_COVER_IMAGE],
     specs: {
       bedrooms: formData.bedrooms,
       bathrooms: formData.bathrooms,
       area: formData.area || 0,
-      security: "Sécurité certifiée Habitoo"
+      security: "Gardiennage certifié"
     },
     amenities: formData.amenities || [],
     priceXOF: formData.city === 'Kinshasa' ? null : Number(formData.price || 0),
@@ -186,16 +292,32 @@ export const PublishPropertyPage = () => {
     ownerAvatar: userAvatar,
     ownerPhone: formData.ownerPhone || currentUser?.phone || '',
     ownerEmail: formData.ownerEmail || currentUser?.email || '',
-    userRole: formData.userRole,
-    isPro: formData.userRole === 'AGENCE',
-    advertiserType: formData.userRole === 'AGENCE' ? 'PRO' : 'PARTICULIER',
+    userRole: 'PROPRIETAIRE',
+    isPro: false,
+    advertiserType: 'PARTICULIER',
     agent: {
       name: userName,
-      agency: formData.userRole === 'AGENCE' ? (formData.agencyName || "Agence Immobilière Agréée") : "Direct Propriétaire",
+      agency: "Propriétaire Direct",
       avatar: userAvatar,
       phone: formData.ownerPhone || currentUser?.phone || '+225 07 00 00 00',
       verified: true
     }
+  };
+
+  const currentCoordinates = CITY_COORDINATES[formData.city] || [5.3484, -3.9780];
+
+  // Carousel photo navigation helpers
+  const currentImages = previewProperty.images;
+  const currentPhotoUrl = currentImages[activePhotoIndex] || currentImages[0] || DEFAULT_COVER_IMAGE;
+
+  const handleNextPhoto = (e) => {
+    e?.stopPropagation();
+    setActivePhotoIndex((prev) => (prev + 1) % currentImages.length);
+  };
+
+  const handlePrevPhoto = (e) => {
+    e?.stopPropagation();
+    setActivePhotoIndex((prev) => (prev - 1 + currentImages.length) % currentImages.length);
   };
 
   // Form submission
@@ -209,10 +331,11 @@ export const PublishPropertyPage = () => {
         ref: randomRef
       });
     }
+    setIsDrawerOpen(false);
     setIsSubmitted(true);
   };
 
-  // Sync preview property to localStorage for direct detail page viewing
+  // Sync preview property to localStorage
   useEffect(() => {
     try {
       localStorage.setItem('habitoo_preview_property', JSON.stringify(previewProperty));
@@ -221,17 +344,16 @@ export const PublishPropertyPage = () => {
     }
   }, [formData, uploadedPhotos, userName, userAvatar]);
 
-  // If not logged in, prompt auth modal
+  // Auth gate check
   useEffect(() => {
     if (!currentUser) {
       openAuthModal();
     }
   }, [currentUser]);
 
-  // Auth gate when accessing without active session
   if (!currentUser) {
     return (
-      <div className="publish-viewport-page">
+      <div className="publish-auth-wrapper">
         <div className="publish-auth-gate-card">
           <div className="auth-gate-icon">
             <Lock size={32} color="var(--primary-red)" />
@@ -255,8 +377,501 @@ export const PublishPropertyPage = () => {
     );
   }
 
+  // Composant du formulaire de paramétrage (utilisé dans la colonne droite desktop et dans le tiroir mobile)
+  const renderFormProcess = () => (
+    <div className="publish-process-card">
+
+      {/* Stepper Navigation Ultra-Fin */}
+      <div className="publish-stepper-bar">
+        <button 
+          type="button" 
+          className={`publish-stepper-btn ${step === 1 ? 'active' : step > 1 ? 'done' : ''}`}
+          onClick={() => setStep(1)}
+        >
+          <div className="step-circle">{step > 1 ? <Check size={11} /> : '1'}</div>
+          <span className="step-name">Lieu & Titre</span>
+        </button>
+
+        <div className="publish-stepper-line" />
+
+        <button 
+          type="button" 
+          className={`publish-stepper-btn ${step === 2 ? 'active' : step > 2 ? 'done' : ''}`}
+          onClick={() => setStep(2)}
+        >
+          <div className="step-circle">{step > 2 ? <Check size={11} /> : '2'}</div>
+          <span className="step-name">Caractéristiques</span>
+        </button>
+
+        <div className="publish-stepper-line" />
+
+        <button 
+          type="button" 
+          className={`publish-stepper-btn ${step === 3 ? 'active' : ''}`}
+          onClick={() => setStep(3)}
+        >
+          <div className="step-circle">3</div>
+          <span className="step-name">Photos & Contact</span>
+        </button>
+      </div>
+
+      {/* STEP 1: TYPOLOGIE, LOCALISATION & DESCRIPTION */}
+      {step === 1 && (
+        <div className="publish-step-body animate-fadeIn">
+          
+          {/* Operation Toggle: À Louer / À Vendre */}
+          <div className="compact-form-row">
+            <label className="compact-label" style={{ margin: 0 }}>Opération :</label>
+            <div className="compact-segmented-control">
+              <button
+                type="button"
+                className={`seg-btn ${formData.category === 'LOCATION' ? 'active' : ''}`}
+                onClick={() => setFormData({ ...formData, category: 'LOCATION' })}
+              >
+                À Louer
+              </button>
+              <button
+                type="button"
+                className={`seg-btn ${formData.category === 'VENTE' ? 'active' : ''}`}
+                onClick={() => setFormData({ ...formData, category: 'VENTE' })}
+              >
+                À Vendre
+              </button>
+            </div>
+          </div>
+
+          {/* Typology & Country */}
+          <div className="publish-grid-2">
+            <div className="compact-field">
+              <label className="compact-label">Type de bien</label>
+              <select
+                className="form-select compact-input"
+                value={formData.type}
+                onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+              >
+                {PROPERTY_TYPES.map(t => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="compact-field">
+              <label className="compact-label">Pays</label>
+              <select
+                className="form-select compact-input"
+                value={formData.city}
+                onChange={(e) => {
+                  const newCity = e.target.value;
+                  setFormData({ ...formData, city: newCity });
+                }}
+              >
+                <option value="Abidjan">Côte d'Ivoire</option>
+                <option value="Kinshasa">RDC</option>
+                <option value="Brazzaville">Congo</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Neighborhood */}
+          <div className="compact-field">
+            <label className="compact-label">Quartier précis</label>
+            <input
+              type="text"
+              className="form-input compact-input"
+              placeholder="ex: Riviera Golf, Gombe, Mpila..."
+              value={formData.neighborhood}
+              onChange={(e) => setFormData({ ...formData, neighborhood: e.target.value })}
+              required
+            />
+          </div>
+
+          {/* Title with AI Assistant */}
+          <div className="compact-field">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+              <label className="compact-label" style={{ margin: 0 }}>Titre de l'annonce</label>
+
+            </div>
+            <input
+              type="text"
+              className="form-input compact-input"
+              placeholder="ex: Somptueuse Villa Contemporaine avec Vue Lagune"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              required
+            />
+          </div>
+
+          {/* Description du bien */}
+          <div className="compact-field">
+            <label className="compact-label">Description du bien</label>
+            <textarea
+              rows={3}
+              className="form-textarea compact-textarea"
+              placeholder="Décrivez les atouts majeurs (vue, finitions, standing, sécurité, volumes...)"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            />
+          </div>
+
+          {/* Step 1 Footer */}
+          <div className="compact-step-footer">
+            <span className="step-counter-text">Étape 1 sur 3</span>
+            <button
+              type="button"
+              onClick={() => setStep(2)}
+              className="btn-primary compact-action-btn"
+            >
+              <span>Caractéristiques</span>
+              <ArrowRight size={13} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* STEP 2: CARACTÉRISTIQUES & COMMODITÉS */}
+      {step === 2 && (
+        <div className="publish-step-body animate-fadeIn">
+          
+          {/* Price & Surface */}
+          <div className="publish-grid-2">
+            <div className="compact-field">
+              <label className="compact-label">
+                {formData.category === 'LOCATION' ? 'Loyer mensuel' : 'Prix de vente'} ({currencyLabel})
+              </label>
+              <div className="compact-affix-box">
+                <input
+                  type="number"
+                  className="form-input compact-input"
+                  placeholder="ex: 3500000"
+                  value={formData.price}
+                  onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
+                  required
+                />
+                <span className="affix-badge">{currencyLabel}</span>
+              </div>
+            </div>
+
+            <div className="compact-field">
+              <label className="compact-label">Superficie (m²)</label>
+              <div className="compact-affix-box">
+                <input
+                  type="number"
+                  className="form-input compact-input"
+                  placeholder="ex: 550"
+                  value={formData.area}
+                  onChange={(e) => setFormData({ ...formData, area: Number(e.target.value) })}
+                  required
+                />
+                <span className="affix-badge">m²</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Bedrooms & Bathrooms Counter */}
+          <div className="publish-grid-2">
+            <div className="compact-field">
+              <label className="compact-label">Chambres</label>
+              <div className="compact-counter">
+                <button
+                  type="button"
+                  className="counter-btn"
+                  onClick={() => setFormData(prev => ({ ...prev, bedrooms: Math.max(1, prev.bedrooms - 1) }))}
+                >
+                  <Minus size={12} />
+                </button>
+                <span className="counter-text">{formData.bedrooms} ch.</span>
+                <button
+                  type="button"
+                  className="counter-btn"
+                  onClick={() => setFormData(prev => ({ ...prev, bedrooms: prev.bedrooms + 1 }))}
+                >
+                  <Plus size={12} />
+                </button>
+              </div>
+            </div>
+
+            <div className="compact-field">
+              <label className="compact-label">Salles de bain</label>
+              <div className="compact-counter">
+                <button
+                  type="button"
+                  className="counter-btn"
+                  onClick={() => setFormData(prev => ({ ...prev, bathrooms: Math.max(1, prev.bathrooms - 1) }))}
+                >
+                  <Minus size={12} />
+                </button>
+                <span className="counter-text">{formData.bathrooms} sdb</span>
+                <button
+                  type="button"
+                  className="counter-btn"
+                  onClick={() => setFormData(prev => ({ ...prev, bathrooms: prev.bathrooms + 1 }))}
+                >
+                  <Plus size={12} />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Commodités: Liste déroulante multi-sélection avec tags */}
+          <div className="compact-field" ref={amenitiesDropdownRef} style={{ position: 'relative' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3px' }}>
+              <label className="compact-label" style={{ margin: 0 }}>Commodités</label>
+              <span style={{ fontSize: '0.68rem', color: 'var(--graphite-gray)', fontWeight: 600 }}>
+                {formData.amenities.length} sélectionnée(s)
+              </span>
+            </div>
+
+            <div 
+              className="multi-select-trigger-box" 
+              onClick={() => setIsAmenitiesOpen(!isAmenitiesOpen)}
+            >
+              <div className="multi-select-tags-wrap">
+                {formData.amenities.length === 0 ? (
+                  <span className="multi-placeholder">Sélectionner des commodités...</span>
+                ) : (
+                  formData.amenities.map(item => (
+                    <span key={item} className="amenity-chip-tag">
+                      <span className="chip-text">{item}</span>
+                      <button
+                        type="button"
+                        className="chip-close-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleAmenity(item);
+                        }}
+                      >
+                        <X size={9} />
+                      </button>
+                    </span>
+                  ))
+                )}
+              </div>
+              <ChevronDown size={14} className={`dropdown-chevron ${isAmenitiesOpen ? 'open' : ''}`} />
+            </div>
+
+            {isAmenitiesOpen && (
+              <div className="multi-select-popover">
+                <div className="popover-scroll-area">
+                  {ALL_AMENITIES.map(amenity => {
+                    const isSelected = formData.amenities.includes(amenity);
+                    return (
+                      <button
+                        key={amenity}
+                        type="button"
+                        className={`popover-item ${isSelected ? 'selected' : ''}`}
+                        onClick={() => toggleAmenity(amenity)}
+                      >
+                        <div className="popover-checkbox">
+                          {isSelected && <Check size={10} color="#FFF" />}
+                        </div>
+                        <span className="popover-item-text">{amenity}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Step 2 Footer */}
+          <div className="compact-step-footer">
+            <button
+              type="button"
+              onClick={() => setStep(1)}
+              className="btn-ghost-dark compact-action-btn"
+            >
+              <ArrowLeft size={13} />
+              <span>Précédent</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setStep(3)}
+              className="btn-primary compact-action-btn"
+            >
+              <span>Photos & Contact</span>
+              <ArrowRight size={13} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* STEP 3: TÉLÉVERSEMENT PHOTOS & CONTACT */}
+      {step === 3 && (
+        <form onSubmit={handleSubmit} className="publish-step-body animate-fadeIn">
+          
+          {/* Photo Multi-Upload Dropzone & Thumbnails */}
+          <div className="compact-field">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3px' }}>
+              <label className="compact-label" style={{ margin: 0 }}>Photos du bien</label>
+              <span style={{ fontSize: '0.68rem', color: 'var(--graphite-gray)', fontWeight: 600 }}>
+                {uploadedPhotos.length} photo(s)
+              </span>
+            </div>
+
+            <div 
+              className="compact-upload-dropzone"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Upload size={14} color="var(--primary-red)" />
+              <span className="dropzone-label">Téléverser des photos de standing</span>
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                style={{ display: 'none' }} 
+                accept="image/*" 
+                multiple
+                onChange={handlePhotosUpload}
+              />
+            </div>
+
+            {/* Thumbnails Row with Individual Delete */}
+            <div className="uploaded-thumbnails-bar">
+              {uploadedPhotos.map((url, idx) => (
+                <div key={idx} className="thumb-item">
+                  <img src={url} alt={`Photo ${idx + 1}`} />
+                  {idx === 0 && <span className="thumb-badge-cover">Couverture</span>}
+                  <button
+                    type="button"
+                    className="thumb-del-btn"
+                    title="Supprimer la photo"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removePhoto(idx);
+                    }}
+                  >
+                    <X size={10} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Row 1 Contact: Déclarant & Statut Verrouillé */}
+          <div className="publish-grid-2">
+            <div className="compact-field">
+              <label className="compact-label">Déclarant (Session)</label>
+              <div className="session-user-badge">
+                <img 
+                  src={userAvatar} 
+                  alt={userName} 
+                  className="session-user-img" 
+                />
+                <div className="session-user-info">
+                  <span className="session-user-name">{userName}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* STATUT VERROUILLÉ : Propriétaire (particulier) */}
+            <div className="compact-field">
+              <label className="compact-label">Statut</label>
+              <div className="status-locked-badge-card">
+                <div className="status-locked-header">
+                  <span className="status-locked-title">Propriétaire (particulier)</span>
+                  <span className="status-locked-pill">Fixe</span>
+                </div>
+                <p className="status-locked-help">
+                  Les comptes agences font l'objet d'une certification préalable.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Row 2 Contact: WhatsApp & Email */}
+          <div className="publish-grid-2">
+            <div className="compact-field">
+              <label className="compact-label">WhatsApp direct</label>
+              <div className="compact-phone-bar">
+                <div className="phone-country-dropdown" ref={countryDropdownRef}>
+                  <button
+                    type="button"
+                    className="country-trigger-btn"
+                    onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
+                    aria-expanded={isCountryDropdownOpen}
+                  >
+                    <span className="flag">{selectedCountry?.flag}</span>
+                    <span className="code">{selectedCountry?.code}</span>
+                    <ChevronDown size={11} className={`chev ${isCountryDropdownOpen ? 'open' : ''}`} />
+                  </button>
+
+                  {isCountryDropdownOpen && (
+                    <div className="country-floating-menu">
+                      <div className="floating-scroll">
+                        {COUNTRY_CODES.map((item) => {
+                          const isSelected = item.code === countryCode;
+                          return (
+                            <button
+                              key={item.code}
+                              type="button"
+                              className={`floating-item ${isSelected ? 'selected' : ''}`}
+                              onClick={() => {
+                                setCountryCode(item.code);
+                                setIsCountryDropdownOpen(false);
+                              }}
+                            >
+                              <span>{item.flag}</span>
+                              <span className="c-name">{item.country}</span>
+                              <span className="c-code">{item.code}</span>
+                              {isSelected && <Check size={11} color="var(--primary-red)" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="phone-sep" />
+
+                <input 
+                  type="tel"
+                  required
+                  value={formData.ownerPhone}
+                  onChange={(e) => setFormData({ ...formData, ownerPhone: e.target.value })}
+                  placeholder="07 08 09 10"
+                  className="compact-phone-input"
+                />
+              </div>
+            </div>
+
+            <div className="compact-field">
+              <label className="compact-label">Email de contact</label>
+              <input
+                type="email"
+                required
+                className="form-input compact-input"
+                placeholder="ex: contact@domaine.ci"
+                value={formData.ownerEmail}
+                onChange={(e) => setFormData({ ...formData, ownerEmail: e.target.value })}
+              />
+            </div>
+          </div>
+
+          {/* Step 3 Footer */}
+          <div className="compact-step-footer">
+            <button
+              type="button"
+              onClick={() => setStep(2)}
+              className="btn-ghost-dark compact-action-btn"
+            >
+              <ArrowLeft size={13} />
+              <span>Précédent</span>
+            </button>
+            <button
+              type="submit"
+              className="btn-primary compact-action-btn"
+              style={{ fontWeight: 700 }}
+            >
+              <span>Publier mon annonce</span>
+            </button>
+          </div>
+        </form>
+      )}
+    </div>
+  );
+
   return (
-    <div className="publish-viewport-page">
+    <div className="publish-page-container">
       {isSubmitted ? (
         /* Success Screen */
         <div className="publish-success-wrapper">
@@ -265,14 +880,14 @@ export const PublishPropertyPage = () => {
               <CheckCircle2 size={40} className="publish-success-icon" />
             </div>
             
-            <span className="publish-success-badge">Annonce Validée</span>
+            <span className="publish-success-badge">Annonce Enregistrée</span>
             
             <h2 className="font-serif publish-success-title">
               Félicitations, votre bien est prêt !
             </h2>
 
             <p className="publish-success-desc">
-              Votre annonce <strong>« {formData.title} »</strong> à <strong>{formData.neighborhood}, {formData.city}</strong> a été enregistrée avec succès sous la référence
+              Votre annonce <strong>« {formData.title} »</strong> à <strong>{formData.neighborhood}, {formData.city}</strong> a été enregistrée avec succès sous la référence <span className="publish-ref-tag">{publishedRefNumber}</span>.
             </p>
 
             <div className="publish-success-actions">
@@ -294,588 +909,725 @@ export const PublishPropertyPage = () => {
           </div>
         </div>
       ) : (
-        /* 2-Column Split constrained to 100vh without page scrolling */
-        <div className="publish-split-layout">
+        /* 2-Column Split: Colonne Gauche = Prévisualisation PropertyDetail, Colonne Droite = Formulaire Sticky */
+        <div className="publish-layout-grid">
           
-          {/* COLUMN 1: LE PROCESS (Formulaire compact rehaussé) */}
-          <div className="publish-col-process">
-            <div className="publish-process-card">
+          {/* ========================================================= */}
+          {/* COLONNE GAUCHE : PRÉVISUALISATION EN DIRECT TYPE DETAIL   */}
+          {/* ========================================================= */}
+          <div className="publish-preview-col">
+            <div className="preview-rich-container">
+              
+              {/* 1. CAROUSEL PHOTO & BADGES */}
+              <div className="preview-carousel-card">
+                <div className="preview-carousel-main-wrap">
+                  <img 
+                    src={currentPhotoUrl} 
+                    alt={formData.title} 
+                    className="preview-carousel-main-img" 
+                  />
 
-              {/* Stepper Navigation Ultra-Fin */}
-              <div className="publish-stepper-bar">
-                <button 
-                  type="button" 
-                  className={`publish-stepper-btn ${step === 1 ? 'active' : step > 1 ? 'done' : ''}`}
-                  onClick={() => setStep(1)}
-                >
-                  <div className="step-circle">{step > 1 ? <Check size={11} /> : '1'}</div>
-                  <span className="step-name">Lieu & Titre</span>
-                </button>
+                  {/* Badges Transaction & Statut Particulier */}
+                  <div className="preview-carousel-badges">
+                    <span className={`preview-badge-category ${formData.category === 'VENTE' ? 'vente' : 'location'}`}>
+                      {formData.category === 'VENTE' ? 'À VENDRE' : 'À LOUER'}
+                    </span>
+                    <span className="preview-badge-status">
+                      PARTICULIER
+                    </span>
+                  </div>
 
-                <div className="publish-stepper-line" />
+                  {/* Flèches de navigation photo */}
+                  {currentImages.length > 1 && (
+                    <>
+                      <button 
+                        type="button" 
+                        className="preview-carousel-arrow prev"
+                        onClick={handlePrevPhoto}
+                        title="Photo précédente"
+                      >
+                        <ChevronLeft size={18} />
+                      </button>
+                      <button 
+                        type="button" 
+                        className="preview-carousel-arrow next"
+                        onClick={handleNextPhoto}
+                        title="Photo suivante"
+                      >
+                        <ChevronRight size={18} />
+                      </button>
+                    </>
+                  )}
 
-                <button 
-                  type="button" 
-                  className={`publish-stepper-btn ${step === 2 ? 'active' : step > 2 ? 'done' : ''}`}
-                  onClick={() => setStep(2)}
-                >
-                  <div className="step-circle">{step > 2 ? <Check size={11} /> : '2'}</div>
-                  <span className="step-name">Caractéristiques</span>
-                </button>
+                  {/* Compteur d'images */}
+                  <div className="preview-carousel-counter">
+                    {activePhotoIndex + 1} / {currentImages.length}
+                  </div>
+                </div>
 
-                <div className="publish-stepper-line" />
-
-                <button 
-                  type="button" 
-                  className={`publish-stepper-btn ${step === 3 ? 'active' : ''}`}
-                  onClick={() => setStep(3)}
-                >
-                  <div className="step-circle">3</div>
-                  <span className="step-name">Photos & Contact</span>
-                </button>
+                {/* Vignettes miniatures */}
+                {currentImages.length > 1 && (
+                  <div className="preview-carousel-thumbs-row">
+                    {currentImages.map((imgUrl, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        className={`preview-thumb-btn ${activePhotoIndex === i ? 'active' : ''}`}
+                        onClick={() => setActivePhotoIndex(i)}
+                      >
+                        <img src={imgUrl} alt={`Miniature ${i + 1}`} />
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
-              {/* STEP 1: TYPOLOGIE, LOCALISATION & DESCRIPTION */}
-              {step === 1 && (
-                <div className="publish-step-body animate-fadeIn">
-                  
-                  {/* Operation Toggle: À Louer / À Vendre */}
-                  <div className="compact-form-row">
-                    <label className="compact-label" style={{ margin: 0 }}>Opération :</label>
-                    <div className="compact-segmented-control">
-                      <button
-                        type="button"
-                        className={`seg-btn ${formData.category === 'LOCATION' ? 'active' : ''}`}
-                        onClick={() => setFormData({ ...formData, category: 'LOCATION' })}
-                      >
-                        À Louer
-                      </button>
-                      <button
-                        type="button"
-                        className={`seg-btn ${formData.category === 'VENTE' ? 'active' : ''}`}
-                        onClick={() => setFormData({ ...formData, category: 'VENTE' })}
-                      >
-                        À Vendre
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Typology & Country */}
-                  <div className="publish-grid-2">
-                    <div className="compact-field">
-                      <label className="compact-label">Type de bien</label>
-                      <select
-                        className="form-select compact-input"
-                        value={formData.type}
-                        onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                      >
-                        {PROPERTY_TYPES.map(t => (
-                          <option key={t} value={t}>{t}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="compact-field">
-                      <label className="compact-label">Pays</label>
-                      <select
-                        className="form-select compact-input"
-                        value={formData.city}
-                        onChange={(e) => {
-                          const newCity = e.target.value;
-                          setFormData({ ...formData, city: newCity });
-                        }}
-                      >
-                        <option value="Abidjan">Côte d'Ivoire</option>
-                        <option value="Kinshasa">RDC</option>
-                        <option value="Brazzaville">Congo</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Neighborhood */}
-                  <div className="compact-field">
-                    <label className="compact-label">Quartier précis</label>
-                    <input
-                      type="text"
-                      className="form-input compact-input"
-                      placeholder="ex: Riviera Golf, Gombe, Mpila..."
-                      value={formData.neighborhood}
-                      onChange={(e) => setFormData({ ...formData, neighborhood: e.target.value })}
-                      required
-                    />
-                  </div>
-
-                  {/* Title with AI Assistant */}
-                  <div className="compact-field">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
-                      <label className="compact-label" style={{ margin: 0 }}>Titre de l'annonce</label>
-                    </div>
-                    <input
-                      type="text"
-                      className="form-input compact-input"
-                      placeholder="ex: Somptueuse Villa Contemporaine avec Vue Lagune"
-                      value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      required
-                    />
-                  </div>
-
-                  {/* Description du bien */}
-                  <div className="compact-field">
-                    <label className="compact-label">Description du bien</label>
-                    <textarea
-                      rows={2}
-                      className="form-textarea compact-textarea"
-                      placeholder="Décrivez les atouts majeurs (vue, finitions, standing, sécurité, volumes...)"
-                      value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    />
-                  </div>
-
-                  {/* Step 1 Footer */}
-                  <div className="compact-step-footer">
-                    <span className="step-counter-text">Étape 1 sur 3</span>
-                    <button
-                      type="button"
-                      onClick={() => setStep(2)}
-                      className="btn-primary compact-action-btn"
-                    >
-                      <span>Caractéristiques</span>
-                      <ArrowRight size={13} />
-                    </button>
+              {/* 2. EN-TÊTE : TITRE, ADRESSE ET BANNIÈRE DE PRIX */}
+              <div className="preview-header-card">
+                <div className="preview-header-top">
+                  <span className="preview-type-tag">{formData.type}</span>
+                  <div className="preview-address-row">
+                    <MapPin size={15} color="var(--primary-red)" />
+                    <span>{formData.neighborhood ? `${formData.neighborhood}, ` : ''}{formData.city}</span>
                   </div>
                 </div>
-              )}
 
-              {/* STEP 2: CARACTÉRISTIQUES & COMMODITÉS */}
-              {step === 2 && (
-                <div className="publish-step-body animate-fadeIn">
-                  
-                  {/* Price & Surface */}
-                  <div className="publish-grid-2">
-                    <div className="compact-field">
-                      <label className="compact-label">
-                        {formData.category === 'LOCATION' ? 'Loyer mensuel' : 'Prix de vente'} ({currencyLabel})
-                      </label>
-                      <div className="compact-affix-box">
-                        <input
-                          type="number"
-                          className="form-input compact-input"
-                          placeholder="ex: 3500000"
-                          value={formData.price}
-                          onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
-                          required
-                        />
-                        <span className="affix-badge">{currencyLabel}</span>
-                      </div>
-                    </div>
+                <h1 className="font-serif preview-title-text">
+                  {formData.title || "Titre de l'annonce"}
+                </h1>
 
-                    <div className="compact-field">
-                      <label className="compact-label">Superficie (m²)</label>
-                      <div className="compact-affix-box">
-                        <input
-                          type="number"
-                          className="form-input compact-input"
-                          placeholder="ex: 550"
-                          value={formData.area}
-                          onChange={(e) => setFormData({ ...formData, area: Number(e.target.value) })}
-                          required
-                        />
-                        <span className="affix-badge">m²</span>
-                      </div>
+                {/* Bannière tarifaire architecturale */}
+                <div className="preview-price-banner">
+                  <div>
+                    <span className="preview-price-caption">
+                      {formData.category === 'LOCATION' ? 'Loyer mensuel' : 'Prix de vente'}
+                    </span>
+                    <div className="preview-price-val font-serif">
+                      {formatPrice 
+                        ? formatPrice(previewProperty.priceXOF, previewProperty.priceUSD, previewProperty.priceXAF, previewProperty.period)
+                        : `${Number(formData.price || 0).toLocaleString()} ${currencyLabel}`}
                     </div>
                   </div>
-
-                  {/* Bedrooms & Bathrooms Counter */}
-                  <div className="publish-grid-2">
-                    <div className="compact-field">
-                      <label className="compact-label">Chambres</label>
-                      <div className="compact-counter">
-                        <button
-                          type="button"
-                          className="counter-btn"
-                          onClick={() => setFormData(prev => ({ ...prev, bedrooms: Math.max(1, prev.bedrooms - 1) }))}
-                        >
-                          <Minus size={12} />
-                        </button>
-                        <span className="counter-text">{formData.bedrooms} ch.</span>
-                        <button
-                          type="button"
-                          className="counter-btn"
-                          onClick={() => setFormData(prev => ({ ...prev, bedrooms: prev.bedrooms + 1 }))}
-                        >
-                          <Plus size={12} />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="compact-field">
-                      <label className="compact-label">Salles de bain</label>
-                      <div className="compact-counter">
-                        <button
-                          type="button"
-                          className="counter-btn"
-                          onClick={() => setFormData(prev => ({ ...prev, bathrooms: Math.max(1, prev.bathrooms - 1) }))}
-                        >
-                          <Minus size={12} />
-                        </button>
-                        <span className="counter-text">{formData.bathrooms} sdb</span>
-                        <button
-                          type="button"
-                          className="counter-btn"
-                          onClick={() => setFormData(prev => ({ ...prev, bathrooms: prev.bathrooms + 1 }))}
-                        >
-                          <Plus size={12} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Commodités: Liste déroulante multi-sélection avec tags */}
-                  <div className="compact-field" ref={amenitiesDropdownRef} style={{ position: 'relative' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3px' }}>
-                      <label className="compact-label" style={{ margin: 0 }}>Commodités</label>
-                      <span style={{ fontSize: '0.68rem', color: 'var(--graphite-gray)', fontWeight: 600 }}>
-                        {formData.amenities.length} sélectionnée(s)
-                      </span>
-                    </div>
-
-                    <div 
-                      className="multi-select-trigger-box" 
-                      onClick={() => setIsAmenitiesOpen(!isAmenitiesOpen)}
-                    >
-                      <div className="multi-select-tags-wrap">
-                        {formData.amenities.length === 0 ? (
-                          <span className="multi-placeholder">Cliquez pour choisir des commodités...</span>
-                        ) : (
-                          formData.amenities.map(item => (
-                            <span key={item} className="amenity-chip-tag">
-                              <span className="chip-text">{item}</span>
-                              <button
-                                type="button"
-                                className="chip-close-btn"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleAmenity(item);
-                                }}
-                              >
-                                <X size={9} />
-                              </button>
-                            </span>
-                          ))
-                        )}
-                      </div>
-                      <ChevronDown size={14} className={`dropdown-chevron ${isAmenitiesOpen ? 'open' : ''}`} />
-                    </div>
-
-                    {isAmenitiesOpen && (
-                      <div className="multi-select-popover">
-                        <div className="popover-scroll-area">
-                          {ALL_AMENITIES.map(amenity => {
-                            const isSelected = formData.amenities.includes(amenity);
-                            return (
-                              <button
-                                key={amenity}
-                                type="button"
-                                className={`popover-item ${isSelected ? 'selected' : ''}`}
-                                onClick={() => toggleAmenity(amenity)}
-                              >
-                                <div className="popover-checkbox">
-                                  {isSelected && <Check size={10} color="#FFF" />}
-                                </div>
-                                <span className="popover-item-text">{amenity}</span>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Step 2 Footer */}
-                  <div className="compact-step-footer">
-                    <button
-                      type="button"
-                      onClick={() => setStep(1)}
-                      className="btn-ghost-dark compact-action-btn"
-                    >
-                      <ArrowLeft size={13} />
-                      <span>Précédent</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setStep(3)}
-                      className="btn-primary compact-action-btn"
-                    >
-                      <span>Photos & Contact</span>
-                      <ArrowRight size={13} />
-                    </button>
+                  <div className="preview-charges-box">
+                    <span className="charges-caption">Charges & entretien</span>
+                    <span className="charges-value">Inclus</span>
                   </div>
                 </div>
-              )}
+              </div>
 
-              {/* STEP 3: TÉLÉVERSEMENT PHOTOS & CONTACT */}
-              {step === 3 && (
-                <form onSubmit={handleSubmit} className="publish-step-body animate-fadeIn">
-                  
-                  {/* Photo Multi-Upload Dropzone & Thumbnails */}
-                  <div className="compact-field">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3px' }}>
-                      <label className="compact-label" style={{ margin: 0 }}>Photos du bien</label>
-                      <span style={{ fontSize: '0.68rem', color: 'var(--graphite-gray)', fontWeight: 600 }}>
-                        {uploadedPhotos.length} photo(s)
-                      </span>
-                    </div>
-
-                    <div 
-                      className="compact-upload-dropzone"
-                      onClick={() => fileInputRef.current?.click()}
-                    >
-                      <Upload size={14} color="var(--primary-red)" />
-                      <span className="dropzone-label">Cliquer pour téléverser une ou plusieurs photos</span>
-                      <input 
-                        type="file" 
-                        ref={fileInputRef} 
-                        style={{ display: 'none' }} 
-                        accept="image/*" 
-                        multiple
-                        onChange={handlePhotosUpload}
-                      />
-                    </div>
-
-                    {/* Thumbnails Row with Individual Delete */}
-                    <div className="uploaded-thumbnails-bar">
-                      {uploadedPhotos.map((url, idx) => (
-                        <div key={idx} className="thumb-item">
-                          <img src={url} alt={`Photo ${idx + 1}`} />
-                          {idx === 0 && <span className="thumb-badge-cover">Couverture</span>}
-                          <button
-                            type="button"
-                            className="thumb-del-btn"
-                            title="Supprimer la photo"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removePhoto(idx);
-                            }}
-                          >
-                            <X size={10} />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
+              {/* 3. GRILLE DES 4 CARACTÉRISTIQUES CLÉS */}
+              <div className="preview-specs-grid">
+                <div className="preview-spec-card">
+                  <span className="spec-label">Chambres</span>
+                  <div className="spec-val-row">
+                    <Bed size={17} color="var(--primary-red)" />
+                    <span>{formData.bedrooms} suites</span>
                   </div>
+                </div>
 
-                  {/* Row 1 Contact: Déclarant (Session active) & Statut */}
-                  <div className="publish-grid-2">
-                    <div className="compact-field">
-                      <label className="compact-label">Déclarant (Session active)</label>
-                      <div className="session-user-badge">
-                        <img 
-                          src={userAvatar} 
-                          alt={userName} 
-                          className="session-user-img" 
-                        />
-                        <div className="session-user-info">
-                          <span className="session-user-name">{userName}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="compact-field">
-                      <label className="compact-label">Statut</label>
-                      
-                      {/* Version Desktop : Segmented control */}
-                      <div className="compact-segmented-control status-segmented-desktop" style={{ height: '36px' }}>
-                        <button
-                          type="button"
-                          className={`seg-btn ${formData.userRole === 'PROPRIETAIRE' ? 'active' : ''}`}
-                          onClick={() => setFormData({ ...formData, userRole: 'PROPRIETAIRE' })}
-                          style={{ fontSize: '0.72rem', padding: '4px 8px', flex: 1 }}
-                        >
-                          Propriétaire
-                        </button>
-                        <button
-                          type="button"
-                          className={`seg-btn ${formData.userRole === 'AGENCE' ? 'active' : ''}`}
-                          onClick={() => setFormData({ ...formData, userRole: 'AGENCE' })}
-                          style={{ fontSize: '0.72rem', padding: '4px 8px', flex: 1 }}
-                        >
-                          Agence
-                        </button>
-                      </div>
-
-                      {/* Version Responsif / Mobile : Menu Déroulant (Dropdown) */}
-                      <div className="status-dropdown-mobile">
-                        <select
-                          className="form-select compact-input"
-                          value={formData.userRole}
-                          onChange={(e) => setFormData({ ...formData, userRole: e.target.value })}
-                          style={{ height: '36px', fontSize: '0.75rem', width: '100%' }}
-                        >
-                          <option value="PROPRIETAIRE">Propriétaire</option>
-                          <option value="AGENCE">Agence</option>
-                        </select>
-                      </div>
-                    </div>
+                <div className="preview-spec-card">
+                  <span className="spec-label">Salles de bain</span>
+                  <div className="spec-val-row">
+                    <Bath size={17} color="var(--primary-red)" />
+                    <span>{formData.bathrooms} bains</span>
                   </div>
+                </div>
 
-                  {/* Row 2 Contact: WhatsApp & Email */}
-                  <div className="publish-grid-2">
-                    <div className="compact-field">
-                      <label className="compact-label">WhatsApp direct</label>
-                      <div className="compact-phone-bar">
-                        <div className="phone-country-dropdown" ref={countryDropdownRef}>
-                          <button
-                            type="button"
-                            className="country-trigger-btn"
-                            onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
-                            aria-expanded={isCountryDropdownOpen}
-                          >
-                            <span className="flag">{selectedCountry?.flag}</span>
-                            <span className="code">{selectedCountry?.code}</span>
-                            <ChevronDown size={11} className={`chev ${isCountryDropdownOpen ? 'open' : ''}`} />
-                          </button>
+                <div className="preview-spec-card">
+                  <span className="spec-label">Superficie</span>
+                  <div className="spec-val-row">
+                    <Maximize2 size={17} color="var(--primary-red)" />
+                    <span>{formData.area || 0} m²</span>
+                  </div>
+                </div>
 
-                          {isCountryDropdownOpen && (
-                            <div className="country-floating-menu">
-                              <div className="floating-scroll">
-                                {COUNTRY_CODES.map((item) => {
-                                  const isSelected = item.code === countryCode;
-                                  return (
-                                    <button
-                                      key={item.code}
-                                      type="button"
-                                      className={`floating-item ${isSelected ? 'selected' : ''}`}
-                                      onClick={() => {
-                                        setCountryCode(item.code);
-                                        setIsCountryDropdownOpen(false);
-                                      }}
-                                    >
-                                      <span>{item.flag}</span>
-                                      <span className="c-name">{item.country}</span>
-                                      <span className="c-code">{item.code}</span>
-                                      {isSelected && <Check size={11} color="var(--primary-red)" />}
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          )}
-                        </div>
+                <div className="preview-spec-card">
+                  <span className="spec-label">Sécurité</span>
+                  <div className="spec-val-row" style={{ color: 'var(--verified-green)' }}>
+                    <ShieldCheck size={17} />
+                    <span>Certifiée</span>
+                  </div>
+                </div>
+              </div>
 
-                        <div className="phone-sep" />
+              {/* 4. DESCRIPTION DU BIEN */}
+              <div className="preview-section-card">
+                <h3 className="preview-section-title">
+                  Description du bien
+                </h3>
+                <p className="preview-description-text">
+                  {formData.description || "Propriété d'exception aux volumes généreux, finitions haut de gamme, grand jardin paysager et sécurité maximale."}
+                </p>
+              </div>
 
-                        <input 
-                          type="tel"
-                          required
-                          value={formData.ownerPhone}
-                          onChange={(e) => setFormData({ ...formData, ownerPhone: e.target.value })}
-                          placeholder="07 08 09 10"
-                          className="compact-phone-input"
-                        />
+              {/* 5. COMMODITÉS & PRESTATIONS */}
+              <div className="preview-section-card">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                  <h3 className="preview-section-title" style={{ margin: 0 }}>
+                    Commodités & Équipements
+                  </h3>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--graphite-gray)', fontWeight: 600 }}>
+                    {formData.amenities.length} prestation(s)
+                  </span>
+                </div>
+
+                {formData.amenities.length === 0 ? (
+                  <p style={{ fontSize: '0.8125rem', color: 'var(--graphite-gray)', fontStyle: 'italic', margin: 0 }}>
+                    Aucune commodité sélectionnée pour l'instant.
+                  </p>
+                ) : (
+                  <div className="preview-amenities-grid">
+                    {formData.amenities.map(amenity => (
+                      <div key={amenity} className="preview-amenity-chip">
+                        <CheckCircle2 size={14} color="var(--primary-red)" style={{ flexShrink: 0 }} />
+                        <span>{amenity}</span>
                       </div>
-                    </div>
-
-                    <div className="compact-field">
-                      <label className="compact-label">Email de contact</label>
-                      <input
-                        type="email"
-                        required
-                        className="form-input compact-input"
-                        placeholder="ex: contact@domaine.ci"
-                        value={formData.ownerEmail}
-                        onChange={(e) => setFormData({ ...formData, ownerEmail: e.target.value })}
-                      />
-                    </div>
+                    ))}
                   </div>
+                )}
+              </div>
 
-                  {/* Step 3 Footer */}
-                  <div className="compact-step-footer">
-                    <button
-                      type="button"
-                      onClick={() => setStep(2)}
-                      className="btn-ghost-dark compact-action-btn"
-                    >
-                      <ArrowLeft size={13} />
-                      <span>Précédent</span>
-                    </button>
-                    <button
-                      type="submit"
-                      className="btn-primary compact-action-btn"
-                      style={{ fontWeight: 700 }}
-                    >
-                      <span>Publier mon annonce</span>
-                    </button>
+              {/* 6. LOCALISATION GÉOGRAPHIQUE & MINI CARTE */}
+              <div className="preview-section-card">
+                <h3 className="preview-section-title">
+                  Localisation
+                </h3>
+                <PropertyMiniMap 
+                  coordinates={currentCoordinates}
+                  address={formData.neighborhood ? `${formData.neighborhood}, ${formData.city}` : formData.city}
+                  neighborhood={formData.neighborhood}
+                  city={formData.city}
+                />
+              </div>
+
+              {/* 7. CONTACT & PROFIL DU DÉCLARANT */}
+              <div className="preview-section-card preview-contact-card">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                  <img 
+                    src={userAvatar} 
+                    alt={userName} 
+                    className="preview-agent-avatar" 
+                  />
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                      <span className="preview-agent-name">{userName}</span>
+                      <span className="preview-owner-tag">Propriétaire direct</span>
+                    </div>
+                    <span className="preview-contact-caption">
+                      WhatsApp direct : {formData.ownerPhone || "Numéro certifié"}
+                    </span>
                   </div>
-                </form>
-              )}
+                </div>
+              </div>
+
             </div>
           </div>
 
-          {/* COLUMN 2: VISUALISATION (Direct PropertyCard sans en-tête span) */}
-          <div className="publish-col-preview">
-            <div className="preview-card-wrapper">
-              <PropertyCard property={previewProperty} />
+          {/* ========================================================= */}
+          {/* COLONNE DROITE : MODULE DE SAISIE STICKY (DESKTOP)        */}
+          {/* ========================================================= */}
+          <div className="publish-form-sticky-col">
+            <div className="sticky-form-wrapper">
+              {renderFormProcess()}
             </div>
           </div>
 
         </div>
       )}
 
-      {/* Scoped CSS for 100vh Zero-Scroll Layout */}
+      {/* ========================================================= */}
+      {/* EXPÉRIENCE RESPONSIVE MOBILE (< 1024px)                  */}
+      {/* ========================================================= */}
+      
+      {/* Déclencheur flottant discret ancré sur le bord droit */}
+      {!isSubmitted && (
+        <button 
+          type="button" 
+          className="mobile-drawer-trigger"
+          onClick={() => setIsDrawerOpen(true)}
+          aria-label="Modifier l'annonce"
+          title="Modifier les paramètres de l'annonce"
+        >
+          <Edit3 size={15} />
+          <span className="mobile-drawer-trigger-text">Modifier l'annonce</span>
+        </button>
+      )}
+
+      {/* Tiroir latéral (drawer/sheet) épuré */}
+      {isDrawerOpen && (
+        <div className="mobile-drawer-overlay" onClick={() => setIsDrawerOpen(false)}>
+          <div className="mobile-drawer-panel" onClick={(e) => e.stopPropagation()}>
+            <div className="mobile-drawer-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Edit3 size={16} color="var(--primary-red)" />
+                <span className="font-serif" style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--obsidian-black)' }}>
+                  Paramètres de l'annonce
+                </span>
+              </div>
+              <button 
+                type="button" 
+                className="mobile-drawer-close-btn"
+                onClick={() => setIsDrawerOpen(false)}
+                title="Fermer le volet"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            
+            <div className="mobile-drawer-body">
+              {renderFormProcess()}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Scoped CSS épuré et architectural */}
       <style>{`
-        .publish-viewport-page {
+        .publish-page-container {
           background-color: var(--bg-main);
-          height: calc(100vh - var(--header-height));
-          max-height: calc(100vh - var(--header-height));
-          overflow: hidden;
-          display: flex;
-          align-items: flex-start;
-          justify-content: center;
-        }
-
-        @media (max-width: 992px) {
-          .publish-viewport-page {
-            height: auto;
-            max-height: none;
-            overflow-y: auto;
-          }
-        }
-
-        .publish-split-layout {
-          display: grid;
-          grid-template-columns: 1.15fr 0.85fr;
-          gap: 24px;
-          max-width: 1240px;
+          min-height: calc(100vh - var(--header-height));
           width: 100%;
-          height: 100%;
-          padding: 18px 24px;
           box-sizing: border-box;
+          padding: 24px 20px 48px;
+        }
+
+        .publish-layout-grid {
+          display: grid;
+          grid-template-columns: minmax(0, 1.45fr) minmax(360px, 420px);
+          gap: 28px;
+          max-width: 1280px;
+          margin: 0 auto;
           align-items: flex-start;
+          position: relative;
         }
 
-        @media (max-width: 992px) {
-          .publish-split-layout {
-            grid-template-columns: 1fr;
-            height: auto;
-            padding: 16px;
-          }
-        }
-
-        /* COLUMN 1: PROCESS (REHAUSSÉE) */
-        .publish-col-process {
-          display: flex;
-          flex-direction: column;
+        /* COLONNE GAUCHE : PRÉVISUALISATION EN DIRECT */
+        .publish-preview-col {
           min-width: 0;
           width: 100%;
+        }
+
+        .preview-rich-container {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+        }
+
+        /* 1. CAROUSEL & BADGES */
+        .preview-carousel-card {
+          background-color: var(--surface-white);
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius-card);
+          overflow: hidden;
+          box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+        }
+
+        .preview-carousel-main-wrap {
+          position: relative;
+          width: 100%;
+          height: 390px;
+          background-color: #111111;
+          overflow: hidden;
+        }
+
+        .preview-carousel-main-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+
+        .preview-carousel-badges {
+          position: absolute;
+          top: 14px;
+          left: 14px;
+          z-index: 10;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .preview-badge-category {
+          display: inline-flex;
+          align-items: center;
+          padding: 4px 10px;
+          font-size: 0.7rem;
+          font-weight: 800;
+          letter-spacing: 0.5px;
+          border-radius: var(--radius-pill);
+          color: #FFF;
+        }
+        .preview-badge-category.vente {
+          background-color: var(--primary-red);
+        }
+        .preview-badge-category.location {
+          background-color: #111827;
+        }
+
+        .preview-badge-status {
+          display: inline-flex;
+          align-items: center;
+          padding: 4px 10px;
+          font-size: 0.68rem;
+          font-weight: 700;
+          letter-spacing: 0.5px;
+          border-radius: var(--radius-pill);
+          background-color: rgba(255, 255, 255, 0.95);
+          color: #374151;
+          border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .preview-carousel-arrow {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 34px;
+          height: 34px;
+          border-radius: 50%;
+          background-color: rgba(0, 0, 0, 0.55);
+          color: #FFF;
+          border: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          z-index: 10;
+          transition: background-color 0.15s ease;
+        }
+        .preview-carousel-arrow:hover {
+          background-color: rgba(0, 0, 0, 0.85);
+        }
+        .preview-carousel-arrow.prev { left: 12px; }
+        .preview-carousel-arrow.next { right: 12px; }
+
+        .preview-carousel-counter {
+          position: absolute;
+          bottom: 12px;
+          right: 12px;
+          background: rgba(0, 0, 0, 0.65);
+          color: #FFF;
+          font-size: 0.7rem;
+          font-weight: 600;
+          padding: 3px 9px;
+          border-radius: var(--radius-pill);
+          z-index: 10;
+        }
+
+        .preview-carousel-thumbs-row {
+          display: flex;
+          gap: 8px;
+          padding: 10px 14px;
+          background-color: var(--surface-white);
+          overflow-x: auto;
+          scrollbar-width: thin;
+        }
+
+        .preview-thumb-btn {
+          width: 58px;
+          height: 44px;
+          border-radius: 5px;
+          overflow: hidden;
+          border: 1.5px solid transparent;
+          background: transparent;
+          cursor: pointer;
+          flex-shrink: 0;
+          padding: 0;
+          opacity: 0.65;
+          transition: all 0.15s ease;
+        }
+        .preview-thumb-btn.active {
+          border-color: var(--primary-red);
+          opacity: 1;
+        }
+        .preview-thumb-btn img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+
+        /* 2. EN-TÊTE & PRIX */
+        .preview-header-card {
+          background-color: var(--surface-white);
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius-card);
+          padding: 22px 24px;
+          box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+        }
+
+        .preview-header-top {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 8px;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+
+        .preview-type-tag {
+          font-size: 0.72rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.6px;
+          color: var(--graphite-gray);
+        }
+
+        .preview-address-row {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 0.84rem;
+          color: var(--graphite-gray);
+        }
+
+        .preview-title-text {
+          font-size: clamp(1.45rem, 2.5vw, 1.85rem);
+          line-height: 1.25;
+          color: var(--obsidian-black);
+          margin-bottom: 16px;
+        }
+
+        .preview-price-banner {
+          display: flex;
+          align-items: baseline;
+          justify-content: space-between;
+          padding: 14px 18px;
+          background-color: var(--bg-main);
+          border: 1px solid var(--border-color);
+          border-radius: 8px;
+        }
+
+        .preview-price-caption {
+          font-size: 0.72rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          color: var(--graphite-gray);
+          display: block;
+          font-weight: 600;
+        }
+
+        .preview-price-val {
+          font-size: 1.6rem;
+          font-weight: 800;
+          color: var(--obsidian-black);
+          line-height: 1.2;
+          margin-top: 2px;
+        }
+
+        .preview-charges-box {
+          text-align: right;
+        }
+
+        .charges-caption {
+          display: block;
+          font-size: 0.7rem;
+          color: var(--graphite-gray);
+        }
+
+        .charges-value {
+          font-size: 0.84rem;
+          font-weight: 700;
+          color: var(--obsidian-black);
+        }
+
+        /* 3. GRILLE DES SPÉCIFICATIONS CLÉS */
+        .preview-specs-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 12px;
+        }
+
+        @media (max-width: 680px) {
+          .preview-specs-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+
+        .preview-spec-card {
+          background-color: var(--surface-white);
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius-card);
+          padding: 14px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .spec-label {
+          display: block;
+          font-size: 0.7rem;
+          color: var(--graphite-gray);
+          font-weight: 500;
+        }
+
+        .spec-val-row {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 0.95rem;
+          font-weight: 700;
+          margin-top: 4px;
+          color: var(--obsidian-black);
+        }
+
+        /* 4. BLOCS DE CONTENU */
+        .preview-section-card {
+          background-color: var(--surface-white);
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius-card);
+          padding: 20px 22px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .preview-section-title {
+          font-family: var(--font-heading);
+          font-size: 1.1rem;
+          font-weight: 700;
+          color: var(--obsidian-black);
+          margin-bottom: 12px;
+        }
+
+        .preview-description-text {
+          font-size: 0.875rem;
+          line-height: 1.7;
+          color: var(--graphite-gray);
+          margin: 0;
+          white-space: pre-line;
+        }
+
+        /* 5. COMMODITÉS */
+        .preview-amenities-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 10px;
+        }
+
+        .preview-amenity-chip {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 12px;
+          background-color: var(--bg-main);
+          border: 1px solid var(--border-color);
+          border-radius: 6px;
+          font-size: 0.8125rem;
+          font-weight: 600;
+          color: var(--obsidian-black);
+        }
+
+        /* 6. CARTE LEAFLET */
+        .preview-map-container {
+          border-radius: 8px;
+          overflow: hidden;
+          border: 1px solid var(--border-color);
+          position: relative;
+        }
+
+        .preview-map-instance {
+          width: 100%;
+          height: 240px;
+          background-color: #EAEAE8;
+        }
+
+        .preview-map-overlay-badge {
+          position: absolute;
+          bottom: 12px;
+          left: 12px;
+          right: 12px;
+          background-color: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(8px);
+          padding: 8px 14px;
+          border-radius: 8px;
+          border: 1px solid var(--border-color);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+          z-index: 400;
+          box-shadow: var(--shadow-sm);
+        }
+
+        .preview-map-address {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 0.8125rem;
+          color: var(--obsidian-black);
+          font-weight: 600;
+        }
+
+        .preview-map-link {
+          font-size: 0.72rem;
+          color: var(--primary-red);
+          font-weight: 700;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          white-space: nowrap;
+        }
+
+        /* 7. CONTACT / DÉCLARANT */
+        .preview-contact-card {
+          margin-bottom: 20px;
+        }
+
+        .preview-agent-avatar {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 1.5px solid var(--border-color);
+        }
+
+        .preview-agent-name {
+          font-size: 0.88rem;
+          font-weight: 700;
+          color: var(--obsidian-black);
+        }
+
+        .preview-owner-tag {
+          font-size: 0.65rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.4px;
+          padding: 2px 7px;
+          border-radius: var(--radius-pill);
+          background-color: var(--bg-main);
+          color: var(--graphite-gray);
+          border: 1px solid var(--border-color);
+        }
+
+        .preview-contact-caption {
+          font-size: 0.78rem;
+          color: var(--graphite-gray);
+        }
+
+        /* ========================================================= */
+        /* COLONNE DROITE : MODULE DE SAISIE STICKY                 */
+        /* ========================================================= */
+        .publish-form-sticky-col {
+          position: sticky;
+          top: 86px;
+          align-self: flex-start;
+          max-height: calc(100vh - 100px);
+          overflow-y: auto;
+          scrollbar-width: thin;
+          padding-bottom: 20px;
+        }
+
+        .publish-form-sticky-col::-webkit-scrollbar {
+          width: 4px;
+        }
+        .publish-form-sticky-col::-webkit-scrollbar-thumb {
+          background: rgba(0, 0, 0, 0.15);
+          border-radius: 4px;
         }
 
         .publish-process-card {
           background-color: var(--surface-white);
           border: 1px solid var(--border-color);
-          border-radius: 14px;
-          padding: 16px 20px;
-          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+          border-radius: var(--radius-card);
+          padding: 16px 18px;
+          box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
           box-sizing: border-box;
         }
 
@@ -888,12 +1640,6 @@ export const PublishPropertyPage = () => {
           padding: 5px 8px;
           margin-bottom: 12px;
           border: 1px solid var(--border-color);
-          overflow-x: auto;
-          scrollbar-width: none;
-          -webkit-overflow-scrolling: touch;
-        }
-        .publish-stepper-bar::-webkit-scrollbar {
-          display: none;
         }
         .publish-stepper-btn {
           display: flex;
@@ -906,12 +1652,9 @@ export const PublishPropertyPage = () => {
           padding: 2px 5px;
           transition: all 0.15s ease;
         }
-        .publish-stepper-btn.active {
-          opacity: 1;
-        }
-        .publish-stepper-btn.done {
-          opacity: 0.9;
-        }
+        .publish-stepper-btn.active { opacity: 1; }
+        .publish-stepper-btn.done { opacity: 0.9; }
+        
         .step-circle {
           width: 18px;
           height: 18px;
@@ -935,6 +1678,7 @@ export const PublishPropertyPage = () => {
           border-color: var(--verified-green);
           color: #FFF;
         }
+
         .step-name {
           font-size: 0.72rem;
           font-weight: 600;
@@ -963,12 +1707,12 @@ export const PublishPropertyPage = () => {
           padding: 6px 10px !important;
           font-size: 0.8125rem !important;
           height: 34px !important;
-          border-radius: 7px !important;
+          border-radius: 6px !important;
         }
         .compact-textarea {
           padding: 6px 10px !important;
           font-size: 0.78rem !important;
-          border-radius: 7px !important;
+          border-radius: 6px !important;
           resize: none !important;
           line-height: 1.35;
           width: 100%;
@@ -994,13 +1738,13 @@ export const PublishPropertyPage = () => {
           display: flex;
           background-color: var(--bg-main);
           border: 1px solid var(--border-color);
-          border-radius: 7px;
+          border-radius: 6px;
           padding: 2px;
           gap: 2px;
         }
         .seg-btn {
           padding: 4px 12px;
-          border-radius: 5px;
+          border-radius: 4px;
           border: none;
           background: transparent;
           font-size: 0.72rem;
@@ -1012,23 +1756,6 @@ export const PublishPropertyPage = () => {
         .seg-btn.active {
           background-color: var(--obsidian-black);
           color: #FFF;
-          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
-        }
-
-        .status-segmented-desktop {
-          display: flex;
-        }
-        .status-dropdown-mobile {
-          display: none;
-        }
-
-        @media (max-width: 680px) {
-          .status-segmented-desktop {
-            display: none !important;
-          }
-          .status-dropdown-mobile {
-            display: block !important;
-          }
         }
 
         .publish-grid-2 {
@@ -1053,7 +1780,6 @@ export const PublishPropertyPage = () => {
           color: var(--primary-red);
         }
 
-        /* Affix Box */
         .compact-affix-box {
           position: relative;
           display: flex;
@@ -1071,14 +1797,13 @@ export const PublishPropertyPage = () => {
           pointer-events: none;
         }
 
-        /* Counter */
         .compact-counter {
           display: flex;
           align-items: center;
           justify-content: space-between;
           background-color: var(--bg-main);
           border: 1px solid var(--border-color);
-          border-radius: 7px;
+          border-radius: 6px;
           padding: 2px 7px;
           height: 34px;
           box-sizing: border-box;
@@ -1086,7 +1811,7 @@ export const PublishPropertyPage = () => {
         .counter-btn {
           width: 22px;
           height: 22px;
-          border-radius: 5px;
+          border-radius: 4px;
           background-color: #FFF;
           border: 1px solid var(--border-color);
           display: flex;
@@ -1106,22 +1831,18 @@ export const PublishPropertyPage = () => {
           color: var(--obsidian-black);
         }
 
-        /* COMMODITÉS MULTI-SELECT DROPDOWN AVEC TAGS */
+        /* COMMODITÉS MULTI-SELECT */
         .multi-select-trigger-box {
           display: flex;
           align-items: center;
           justify-content: space-between;
           background-color: var(--bg-main);
           border: 1px solid var(--border-color);
-          border-radius: 7px;
+          border-radius: 6px;
           padding: 4px 8px;
           min-height: 34px;
           cursor: pointer;
           box-sizing: border-box;
-          transition: border-color 0.15s ease;
-        }
-        .multi-select-trigger-box:hover {
-          border-color: var(--obsidian-black);
         }
         .multi-select-tags-wrap {
           display: flex;
@@ -1155,9 +1876,6 @@ export const PublishPropertyPage = () => {
           cursor: pointer;
           padding: 0;
           color: var(--graphite-gray);
-        }
-        .chip-close-btn:hover {
-          color: var(--primary-red);
         }
         .dropdown-chevron {
           color: var(--graphite-gray);
@@ -1195,20 +1913,13 @@ export const PublishPropertyPage = () => {
           padding: 6px 8px;
           border: none;
           background: transparent;
-          border-radius: 5px;
+          border-radius: 4px;
           cursor: pointer;
           font-size: 0.72rem;
           text-align: left;
-          transition: background-color 0.1s ease;
         }
-        .popover-item:hover {
-          background-color: var(--bg-main);
-        }
-        .popover-item.selected {
-          background-color: var(--soft-tint);
-          color: var(--primary-red);
-          font-weight: 600;
-        }
+        .popover-item:hover { background-color: var(--bg-main); }
+        .popover-item.selected { background-color: var(--soft-tint); color: var(--primary-red); font-weight: 600; }
         .popover-checkbox {
           width: 14px;
           height: 14px;
@@ -1224,7 +1935,7 @@ export const PublishPropertyPage = () => {
           border-color: var(--primary-red);
         }
 
-        /* PHOTOS MULTI-UPLOAD DROPZONE */
+        /* PHOTOS MULTI-UPLOAD */
         .compact-upload-dropzone {
           display: flex;
           align-items: center;
@@ -1232,7 +1943,7 @@ export const PublishPropertyPage = () => {
           gap: 6px;
           border: 1.5px dashed var(--border-color);
           background-color: var(--bg-main);
-          border-radius: 7px;
+          border-radius: 6px;
           padding: 8px 12px;
           cursor: pointer;
           transition: all 0.15s ease;
@@ -1248,7 +1959,6 @@ export const PublishPropertyPage = () => {
           color: var(--obsidian-black);
         }
 
-        /* THUMBNAILS BAR */
         .uploaded-thumbnails-bar {
           display: flex;
           gap: 6px;
@@ -1259,7 +1969,7 @@ export const PublishPropertyPage = () => {
           position: relative;
           width: 48px;
           height: 48px;
-          border-radius: 6px;
+          border-radius: 5px;
           overflow: hidden;
           flex-shrink: 0;
           border: 1px solid var(--border-color);
@@ -1297,28 +2007,90 @@ export const PublishPropertyPage = () => {
           justify-content: center;
           padding: 0;
         }
-        .thumb-del-btn:hover {
-          background-color: var(--primary-red);
+
+        /* SESSION BADGE */
+        .session-user-badge {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          height: 38px;
+          padding: 4px 8px;
+          background: #f8fafc;
+          border: 1px solid var(--border-color);
+          border-radius: 6px;
+          box-sizing: border-box;
+        }
+        .session-user-img {
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 1.5px solid var(--primary-red);
+          flex-shrink: 0;
+        }
+        .session-user-info {
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+        }
+        .session-user-name {
+          font-size: 0.74rem;
+          font-weight: 700;
+          color: var(--obsidian-black);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
-        /* Phone input bar */
+        /* STATUT VERROUILLÉ BADGE CARD */
+        .status-locked-badge-card {
+          background-color: #f8fafc;
+          border: 1px solid var(--border-color);
+          border-radius: 6px;
+          padding: 6px 8px;
+          box-sizing: border-box;
+          min-height: 38px;
+        }
+        .status-locked-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 6px;
+        }
+        .status-locked-title {
+          font-size: 0.72rem;
+          font-weight: 700;
+          color: var(--obsidian-black);
+        }
+        .status-locked-pill {
+          font-size: 0.58rem;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.4px;
+          background-color: rgba(0, 0, 0, 0.06);
+          color: var(--graphite-gray);
+          padding: 1px 5px;
+          border-radius: 4px;
+        }
+        .status-locked-help {
+          font-size: 0.62rem;
+          color: var(--graphite-gray);
+          line-height: 1.25;
+          margin: 3px 0 0 0;
+        }
+
+        /* PHONE & EMAIL */
         .compact-phone-bar {
           display: flex;
           align-items: center;
           position: relative;
           background-color: var(--bg-main);
           border: 1px solid var(--border-color);
-          border-radius: 7px;
+          border-radius: 6px;
           height: 34px;
           box-sizing: border-box;
         }
-        .compact-phone-bar:focus-within {
-          border-color: var(--primary-red);
-          background-color: #FFF;
-        }
-        .phone-country-dropdown {
-          position: relative;
-        }
+        .phone-country-dropdown { position: relative; }
         .country-trigger-btn {
           display: flex;
           align-items: center;
@@ -1330,17 +2102,14 @@ export const PublishPropertyPage = () => {
         }
         .flag { font-size: 0.95rem; }
         .code { font-size: 0.72rem; font-weight: 700; color: var(--obsidian-black); }
-        .chev { color: var(--graphite-gray); }
-        .chev.open { transform: rotate(180deg); color: var(--primary-red); }
-
         .country-floating-menu {
           position: absolute;
           top: calc(100% + 4px);
           left: 0;
-          width: 230px;
+          width: 220px;
           background-color: #FFF;
           border: 1px solid var(--border-color);
-          border-radius: 8px;
+          border-radius: 6px;
           box-shadow: 0 8px 24px rgba(0,0,0,0.12);
           z-index: 120;
           overflow: hidden;
@@ -1364,15 +2133,9 @@ export const PublishPropertyPage = () => {
           text-align: left;
         }
         .floating-item:hover { background-color: var(--bg-main); }
-        .floating-item.selected { background-color: var(--soft-tint); color: var(--primary-red); }
         .c-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .c-code { font-weight: 600; color: var(--graphite-gray); font-size: 0.7rem; }
-
-        .phone-sep {
-          width: 1px;
-          height: 16px;
-          background-color: var(--border-color);
-        }
+        .phone-sep { width: 1px; height: 16px; background-color: var(--border-color); }
         .compact-phone-input {
           flex: 1;
           width: 100%;
@@ -1385,57 +2148,219 @@ export const PublishPropertyPage = () => {
           font-weight: 500;
         }
 
-        /* Session User Badge (Déclarant automatique) */
-        .session-user-badge {
+        .compact-step-footer {
           display: flex;
           align-items: center;
-          gap: 10px;
-          height: 36px;
-          padding: 4px 10px;
-          background: #f8fafc;
-          border: 1px solid var(--border-color);
-          border-radius: 8px;
-          box-sizing: border-box;
+          justify-content: space-between;
+          border-top: 1px solid var(--border-color);
+          padding-top: 10px;
+          margin-top: 10px;
         }
-        .session-user-img {
-          width: 26px;
-          height: 26px;
-          border-radius: 50%;
-          object-fit: cover;
-          border: 1.5px solid var(--primary-red);
-          flex-shrink: 0;
+        .step-counter-text {
+          font-size: 0.7rem;
+          color: var(--graphite-gray);
+          font-weight: 500;
         }
-        .session-user-info {
-          display: flex;
-          flex-direction: column;
-          min-width: 0;
-          line-height: 1.2;
-        }
-        .session-user-name {
-          font-size: 0.76rem;
-          font-weight: 700;
-          color: var(--obsidian-black);
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .session-user-status {
-          font-size: 0.62rem;
-          color: var(--verified-green);
-          font-weight: 600;
+        .compact-action-btn {
+          padding: 7px 16px !important;
+          font-size: 0.78rem !important;
+          border-radius: var(--radius-pill) !important;
         }
 
-        /* Auth Gate Card (Connexion requise) */
+        /* ========================================================= */
+        /* RESPONSIVE & MOBILE DRAWER STYLES                        */
+        /* ========================================================= */
+        .mobile-drawer-trigger {
+          display: none;
+        }
+
+        @media (max-width: 1024px) {
+          .publish-layout-grid {
+            grid-template-columns: 1fr;
+          }
+
+          /* Masquer le module sticky dans le flux ordinaire */
+          .publish-form-sticky-col {
+            display: none !important;
+          }
+
+          /* Déclencheur flottant latéral discret */
+          .mobile-drawer-trigger {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: fixed;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 200;
+            background-color: var(--obsidian-black);
+            color: #FFFFFF;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+            padding: 10px 14px;
+            cursor: pointer;
+            box-shadow: -4px 6px 20px rgba(0, 0, 0, 0.25);
+            transition: all 0.2s ease;
+          }
+          .mobile-drawer-trigger:hover {
+            background-color: #000000;
+            padding-right: 18px;
+          }
+          .mobile-drawer-trigger-text {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            white-space: nowrap;
+          }
+
+          .preview-carousel-main-wrap {
+            height: 280px;
+          }
+        }
+
+        /* TIROIR LATÉRAL (DRAWER / SHEET) */
+        .mobile-drawer-overlay {
+          position: fixed;
+          inset: 0;
+          background-color: rgba(0, 0, 0, 0.5);
+          backdrop-filter: blur(4px);
+          z-index: 1000;
+          display: flex;
+          justify-content: flex-end;
+        }
+
+        .mobile-drawer-panel {
+          width: min(440px, 92vw);
+          height: 100%;
+          background-color: var(--surface-white);
+          box-shadow: -8px 0 30px rgba(0, 0, 0, 0.2);
+          display: flex;
+          flex-direction: column;
+          animation: slideInRight 0.2s ease-out;
+        }
+
+        @keyframes slideInRight {
+          from { transform: translateX(100%); }
+          to { transform: translateX(0); }
+        }
+
+        .mobile-drawer-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 16px 20px;
+          border-bottom: 1px solid var(--border-color);
+          background-color: #FAFAFA;
+        }
+
+        .mobile-drawer-close-btn {
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          color: var(--graphite-gray);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 4px;
+          border-radius: 4px;
+        }
+        .mobile-drawer-close-btn:hover {
+          color: var(--primary-red);
+          background-color: rgba(0, 0, 0, 0.04);
+        }
+
+        .mobile-drawer-body {
+          flex: 1;
+          overflow-y: auto;
+          padding: 16px;
+        }
+
+        /* SUCCESS SCREEN */
+        .publish-success-wrapper {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 40px 20px;
+          box-sizing: border-box;
+        }
+        .publish-success-card {
+          max-width: 480px;
+          width: 100%;
+          background-color: var(--surface-white);
+          border: 1px solid var(--border-color);
+          border-radius: 12px;
+          padding: 32px 24px;
+          text-align: center;
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+        }
+        .publish-success-icon-wrap {
+          width: 56px;
+          height: 56px;
+          border-radius: 50%;
+          background-color: var(--verified-green-bg);
+          color: var(--verified-green);
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 14px;
+        }
+        .publish-success-badge {
+          display: inline-block;
+          font-size: 0.68rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          color: var(--verified-green);
+          background-color: var(--verified-green-bg);
+          padding: 3px 10px;
+          border-radius: var(--radius-pill);
+          margin-bottom: 8px;
+        }
+        .publish-success-title {
+          font-size: 1.45rem;
+          color: var(--obsidian-black);
+          margin-bottom: 8px;
+        }
+        .publish-success-desc {
+          font-size: 0.85rem;
+          color: var(--graphite-gray);
+          line-height: 1.5;
+          margin-bottom: 20px;
+        }
+        .publish-ref-tag {
+          font-family: monospace;
+          background-color: var(--bg-main);
+          padding: 2px 6px;
+          border-radius: 4px;
+          font-weight: 700;
+          color: var(--obsidian-black);
+        }
+        .publish-success-actions {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        /* AUTH GATE */
+        .publish-auth-wrapper {
+          min-height: calc(100vh - var(--header-height));
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 24px;
+        }
         .publish-auth-gate-card {
           max-width: 440px;
           width: 100%;
           background: var(--surface-white);
           border: 1px solid var(--border-color);
-          border-radius: 16px;
+          border-radius: 12px;
           padding: 32px 24px;
           text-align: center;
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-          margin: auto;
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
         }
         .auth-gate-icon {
           width: 58px;
@@ -1472,162 +2397,6 @@ export const PublishPropertyPage = () => {
           margin-bottom: 20px;
         }
 
-        /* Step Footer Actions */
-        .compact-step-footer {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          border-top: 1px solid var(--border-color);
-          padding-top: 10px;
-          margin-top: 10px;
-        }
-        .step-counter-text {
-          font-size: 0.7rem;
-          color: var(--graphite-gray);
-          font-weight: 500;
-        }
-        .compact-action-btn {
-          padding: 7px 16px !important;
-          font-size: 0.78rem !important;
-          border-radius: var(--radius-pill) !important;
-        }
-
-        /* COLUMN 2: VISUALISATION / PREVIEW (PropertyCard Compactée) */
-        .publish-col-preview {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          min-width: 0;
-          width: 100%;
-        }
-
-        .preview-card-wrapper {
-          width: 100%;
-          max-width: 380px;
-          border-radius: var(--radius-card);
-          overflow: hidden;
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Compact overrides on PropertyCard to respect 100vh height */
-        .preview-card-wrapper .property-card {
-          box-shadow: none;
-        }
-        .preview-card-wrapper .card-image-wrap {
-          height: 175px !important;
-        }
-        .preview-card-wrapper .card-body {
-          padding: 12px 14px !important;
-        }
-        .preview-card-wrapper h3 {
-          cursor: pointer;
-          transition: color 0.15s ease;
-        }
-        .preview-card-wrapper h3:hover {
-          color: var(--primary-red) !important;
-        }
-        .preview-card-wrapper .property-card-title {
-          font-size: 0.92rem !important;
-          margin-bottom: 4px !important;
-        }
-        .preview-card-wrapper .specs-row {
-          margin-bottom: 8px !important;
-          gap: 10px !important;
-        }
-        .preview-card-wrapper .property-card-price {
-          font-size: 1.05rem !important;
-        }
-        .preview-card-wrapper .card-footer-cta {
-          padding-top: 8px !important;
-          margin-top: 8px !important;
-        }
-
-        /* Success Card */
-        .publish-success-wrapper {
-          width: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          padding: 20px;
-          box-sizing: border-box;
-        }
-        .publish-success-card {
-          max-width: 480px;
-          width: 100%;
-          background-color: var(--surface-white);
-          border: 1px solid var(--border-color);
-          border-radius: 16px;
-          padding: 28px 24px;
-          text-align: center;
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
-        }
-        .publish-success-icon-wrap {
-          width: 56px;
-          height: 56px;
-          border-radius: 50%;
-          background-color: var(--verified-green-bg);
-          color: var(--verified-green);
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          margin-bottom: 12px;
-        }
-        .publish-success-badge {
-          display: inline-block;
-          font-size: 0.68rem;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          color: var(--verified-green);
-          background-color: var(--verified-green-bg);
-          padding: 2px 10px;
-          border-radius: var(--radius-pill);
-          margin-bottom: 6px;
-        }
-        .publish-success-title {
-          font-size: 1.35rem;
-          color: var(--obsidian-black);
-          margin-bottom: 6px;
-        }
-        .publish-success-desc {
-          font-size: 0.8125rem;
-          color: var(--graphite-gray);
-          line-height: 1.45;
-          margin-bottom: 16px;
-        }
-        .publish-ref-tag {
-          font-family: monospace;
-          background-color: var(--bg-main);
-          padding: 2px 5px;
-          border-radius: 4px;
-          font-weight: 700;
-          color: var(--obsidian-black);
-        }
-        .publish-success-recap {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 6px;
-          background-color: var(--bg-main);
-          border-radius: 8px;
-          padding: 10px 12px;
-          margin-bottom: 16px;
-          text-align: left;
-        }
-        .publish-recap-label {
-          display: block;
-          font-size: 0.68rem;
-          color: var(--graphite-gray);
-        }
-        .publish-recap-val {
-          font-size: 0.78rem;
-          color: var(--obsidian-black);
-        }
-        .publish-success-actions {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-        }
-
         .animate-fadeIn {
           animation: fadeIn 0.15s ease-out;
         }
@@ -1639,3 +2408,5 @@ export const PublishPropertyPage = () => {
     </div>
   );
 };
+
+export default PublishPropertyPage;
