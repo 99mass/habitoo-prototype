@@ -104,7 +104,7 @@ const TEAM_MEMBERS = [
   {
     id: "john-john",
     name: "John John",
-    role: "Fondateur e Directeur Général",
+    role: "Fondateur et Directeur Général",
     department: "Direction Générale",
     image: "/assets/team/john-john.jpg",
     linkedin: "https://linkedin.com"
@@ -112,7 +112,7 @@ const TEAM_MEMBERS = [
   {
     id: "aminata-cisse",
     name: "Aminata Cissé",
-    role: "Directrice des Opérations e Expansion",
+    role: "Directrice des Opérations et Expansion",
     department: "Opérations Régionales",
     image: "/assets/team/aminata-cisse.jpg",
     linkedin: "https://linkedin.com"
@@ -120,16 +120,16 @@ const TEAM_MEMBERS = [
   {
     id: "patrick-ngoma",
     name: "Me Patrick Ngoma",
-    role: "Directeur Juridique e Conformité Foncière",
-    department: "Pôle Légal e Notarial",
+    role: "Directeur Juridique et Conformité Foncière",
+    department: "Pôle Légal et Notarial",
     image: "/assets/team/patrick-ngoma.jpg",
     linkedin: "https://linkedin.com"
   },
   {
     id: "sarah-bamba",
     name: "Sarah Bamba",
-    role: "Directrice Conciergerie e Intendance",
-    department: "Hospitality e Private Care",
+    role: "Directrice Conciergerie et Intendance",
+    department: "Hospitality et Private Care",
     image: "/assets/team/sarah-bamba.jpg",
     linkedin: "https://linkedin.com"
   }
