@@ -1,51 +1,40 @@
 Contexte & Rôle :
 
-Tu interviens sur notre prototype d'agence immobilière de standing (React / Vite / Vanilla CSS).  Nous devons restructurer la page de détails d'une annonce (PropertyDetail) et implémenter une page dédiée de passerelle de paiement multi-moyens (Checkout).
+Nouvelle session de travail sur notre prototype d'agence immobilière de prestige (React / Vite / Vanilla CSS). Nous entamons l'étape finale d'audit et d'adaptation mobile en adoptant les codes ergonomiques d'une Web App Progressive (PWA) haut de gamme.
 
-Applique scrupuleusement la règle de direction artistique définie dans rules.md : style architectural épuré, typographie sobre (Playfair Display pour les montants/titres, Quicksand pour les formulaires/labels), zéro effet glossy/dégradé IA, bordures ultra-fines et respiration par l'espace.
+Applique scrupuleusement les règles de rules.md ainsi que les skills vanilla-css-scoped et browser-visual-audit : design architectural épuré, zéro effet gadget IA, polices respectées (Playfair Display pour les titres et Quicksand pour le corps de texte).
 
 Consigne d'exécution :
 
-Applique scrupuleusement notre protocole pas-à-pas et le skill vanilla-css-scoped. Ne modifie aucun fichier pour l'instant. Propose d'abord une checklist numérotée et attends ma validation avant de démarrer la première tâche.
+Respecte impérativement le protocole pas-à-pas. Ne modifie aucun fichier pour l'instant. Propose d'abord une checklist ordonnée par page/vue et attends mon accord avant de traiter la première.
 
-Spécifications des modifications
-1. Réagencement de la page Détails du bien :
+Spécifications du Design PWA & Ergonomie Mobile (375px - 428px)
+1. Standards PWA Mobile :
 
-Inversion des colonnes :
+Navigation basse (Bottom Navigation Bar) : Barre d'onglets fixe en bas d'écran (position: fixed; bottom: 0), ultra-fine et épurée (Accueil, Explorer/Recherche, Publier, Favoris/Profil) avec icônes sobres.
 
-Colonne gauche : Module de réservation / paramétrage du séjour ou de l'acquisition.
+Zones de sécurité (Safe Areas) : Prise en compte des marges physiques mobiles (padding-bottom: env(safe-area-inset-bottom)).
 
-Colonne droite : Informations détaillées du bien, description, équipements et profil de l'agent / propriétaire.
+Comportement tactile : Cibles tactiles d'au moins 44x44px pour les boutons et filtres, sans effet de zoom intempestif sur les formulaires.
 
-Comportement Sticky : Fixe le module de réservation de la colonne gauche (position: sticky; top: ...) pour qu'il reste visible tout au long du défilement de la page, sans casser le layout responsive sur mobile (où il repasse en flux standard ou barre basse).
+2. Audit des Débordements (Anti-Overflow) :
 
-Déclenchement : Le bouton principal « Réserver » ou « Poursuivre la transaction » redirige vers la route de paiement dédiée (ex: /checkout ou /reservation/paiement).
+Élimination stricte de tout défilement horizontal parasite (overflow-x: hidden au niveau racine et vérification des largeurs fixes width: 100vw ou conteneurs non contraints).
 
-2. Nouvelle page de Passerelle de Paiement (Checkout Prototype) :
+Adaptation des grilles en colonnes simples (1fr) et fluidité des conteneurs d'images avec ratio préservé.
 
-Sélection du moyen de paiement : Présente une sélection par onglets ou cartes radio sobres inspirée des vraies passerelles (Wave / Orange Money / Mobile Money local, Carte bancaire, PayPal).
+3. Protocole d'Audit Visuel Page par Page :
+Pour chaque vue de l'application (Accueil, Annonces, Détail du bien, Publication, Checkout, À Propos) :
 
-Formulaires selon la méthode choisie :
+Prendre une capture d'écran mobile via le navigateur headless/intégré.
 
-Carte bancaire : Champs réalistes (Numéro de carte, Date d'expiration, CVC, Nom du titulaire).
+Analyser le rendu : alignements des cartes, lisibilité des typographies, absence de texte tronqué ou d'icône décalée.
 
-Mobile Money : Champ de saisie du numéro de téléphone et sélection du fournisseur.
-
-PayPal : Bouton direct d'authentification simulée.
-
-Comportement prototype (Sans validation complexe) :
-
-Pas de validation stricte de format ni de persistance en base de données.
-
-Au clic sur le bouton de confirmation final, affichage immédiat d'un écran / encart de confirmation net et élégant : « Votre paiement a bien été pris en compte » avec un résumé succinct de la transaction et un bouton de retour à l'accueil.
-
-Contraintes Techniques & Style
-
-Layout CSS propre en Grid ou Flexbox avec gap sans décalage horizontal.
-
-Aucun rechargement de page brutal ; intégration fluide dans l'arborescence React Router du projet.
+Corriger immédiatement les anomalies de style avant de passer à la vue suivante.
 
 Ce que tu dois faire maintenant :
-Découpe cette implémentation en une checklist séquentielle de 4 tâches (Inversion & Sticky sur la page détails ➔ Structure et routage de la page Checkout ➔ Implémentation des 3 vues de paiement ➔ Écran de confirmation & test de fluidité).
+Analyse la structure globale actuelle et liste les composants transversaux à introduire (ex: barre de navigation basse mobile).
 
-Arrête-toi là et attends mon feu vert explicite avant d'écrire le code. 
+Découpe cet audit en une checklist séquentielle ordonnée page par page (Composants globaux PWA ➔ Homepage ➔ Liste & Détail du bien ➔ Page Publication ➔ Checkout & À Propos).
+
+Arrête-toi là et attends mon feu vert explicite avant de modifier le moindre fichier.

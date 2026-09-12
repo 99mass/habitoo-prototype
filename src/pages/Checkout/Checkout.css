@@ -21,6 +21,7 @@
   width: 100%;
   margin: 0 auto;
   padding: 0 24px;
+  box-sizing: border-box;
 }
 
 /* Back Link */
@@ -551,14 +552,38 @@
    ========================================================================== */
 
 @media (max-width: 900px) {
+  .checkout-page {
+    padding: 12px 0 24px;
+  }
+
+  .checkout-container {
+    padding: 0 16px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
   .checkout-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    width: 100%;
   }
   
-  .checkout-summary-card {
-    position: static;
+  .checkout-summary-col {
     order: -1;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .checkout-main-col {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .checkout-summary-card {
+    padding: 16px;
+    box-sizing: border-box;
+    width: 100%;
   }
   
   .checkout-methods-grid {
@@ -567,11 +592,19 @@
   }
 
   .checkout-card {
-    padding: 18px 16px;
+    padding: 16px;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .checkout-total-amount {
+    font-size: 1.18rem;
   }
 
   .checkout-success-wrap {
-    padding: 24px 16px;
+    padding: 20px 16px;
+    box-sizing: border-box;
+    width: 100%;
   }
 
   .checkout-receipt-grid {

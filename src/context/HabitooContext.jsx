@@ -139,10 +139,25 @@ export const HabitooProvider = ({ children }) => {
     amenities: []
   });
 
+const DEFAULT_USER = {
+  id: "usr-google-88219",
+  name: "Marc-Aurèle Kouassi",
+  email: "m.kouassi@gmail.com",
+  phone: "+225 07 78 92 14 00",
+  avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+  authMethod: "google",
+  isVerified: true,
+  memberId: "CI-88219",
+  role: "Propriétaire Déclarant",
+  joinedDate: "Membre depuis Janvier 2025"
+};
+
   // Authentication State
   const [currentUser, setCurrentUser] = useState(() => {
+    const isLoggedOut = localStorage.getItem('habitoo_logged_out') === 'true';
+    if (isLoggedOut) return null;
     const saved = localStorage.getItem('habitoo_user');
-    return saved ? JSON.parse(saved) : null;
+    return saved ? JSON.parse(saved) : DEFAULT_USER;
   });
 
   // Auth Modal & Pending OTP state
@@ -324,6 +339,7 @@ export const HabitooProvider = ({ children }) => {
       role: "Locataire / Investisseur",
       joinedDate: "Membre depuis Janvier 2025"
     };
+    localStorage.removeItem('habitoo_logged_out');
     setCurrentUser(googleUser);
     setIsAuthModalOpen(false);
     setPendingAuth(null);
@@ -380,6 +396,7 @@ export const HabitooProvider = ({ children }) => {
         joinedDate: "À l'instant"
       };
 
+      localStorage.removeItem('habitoo_logged_out');
       setCurrentUser(verifiedUser);
       setIsAuthModalOpen(false);
       setPendingAuth(null);
@@ -398,6 +415,7 @@ export const HabitooProvider = ({ children }) => {
 
   // Logout
   const logout = () => {
+    localStorage.setItem('habitoo_logged_out', 'true');
     setCurrentUser(null);
     setPendingAuth(null);
   };

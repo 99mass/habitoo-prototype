@@ -28,6 +28,9 @@ const ScrollToTop = () => {
 const AppContent = () => {
   const location = useLocation();
   const isPublishPage = location.pathname === '/publier' || location.pathname === '/publier-une-annonce';
+  const isCheckoutPage = location.pathname === '/checkout' || location.pathname === '/reservation/paiement';
+  const isDetailPage = location.pathname.startsWith('/bien/');
+  const hideBottomNav = isPublishPage || isCheckoutPage || isDetailPage;
 
   return (
     <div className="app-root-layout" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%', maxWidth: '100%', overflowX: 'clip' }}>
@@ -52,17 +55,25 @@ const AppContent = () => {
 
       {!isPublishPage && <Footer />}
 
-      {/* PWA Mobile Bottom Navigation */}
-      <BottomNav />
+      {/* PWA Mobile Bottom Navigation (masquée sur les tunnels transactionnels et la fiche détail pour laisser place au Sticky Booking Bar) */}
+      {!hideBottomNav && <BottomNav />}
 
       {/* Global Modals */}
       <DepositModal />
       <AuthModal />
 
       <style>{`
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
           .app-main-content {
-            padding-bottom: 64px;
+            padding-bottom: ${
+              isDetailPage 
+                ? 'calc(74px + env(safe-area-inset-bottom, 0px))' 
+                : isPublishPage
+                  ? 'calc(80px + env(safe-area-inset-bottom, 0px))'
+                  : isCheckoutPage 
+                    ? '0px' 
+                    : 'calc(62px + env(safe-area-inset-bottom, 0px))'
+            };
           }
         }
       `}</style>

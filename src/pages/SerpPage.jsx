@@ -927,16 +927,56 @@ export const SerpPage = () => {
           .serp-mobile-floating-switch {
             display: flex;
             position: fixed;
-            bottom: 24px;
+            bottom: calc(72px + env(safe-area-inset-bottom, 0px));
             left: 50%;
             transform: translateX(-50%);
-            z-index: 500;
+            z-index: 995;
           }
         }
 
         @media (max-width: 768px) {
+          .serp-filter-bar {
+            padding: 8px 12px !important;
+          }
+          .serp-filters-row {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 8px !important;
+          }
+          .serp-filters-left {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            overflow-x: auto !important;
+            padding-bottom: 2px !important;
+            gap: 8px !important;
+            min-width: 0 !important;
+            width: 100% !important;
+            scrollbar-width: none !important;
+            -webkit-overflow-scrolling: touch !important;
+          }
+          .serp-filters-left::-webkit-scrollbar {
+            display: none;
+          }
+          .serp-search-box {
+            min-width: 200px !important;
+            flex-shrink: 0 !important;
+          }
+          .serp-select {
+            flex-shrink: 0 !important;
+            height: 36px !important;
+            font-size: 0.78rem !important;
+          }
+          .serp-filters-right {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            width: 100% !important;
+            padding-top: 4px !important;
+            border-top: 1px solid rgba(0, 0, 0, 0.04) !important;
+          }
           .serp-cards-container {
             grid-template-columns: 1fr !important;
+            padding: 0 4px !important;
           }
         }
       `}</style>

@@ -108,9 +108,9 @@ const PropertyMiniMap = ({ coordinates, address, neighborhood, city }) => {
           boxShadow: 'var(--shadow-sm)'
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8125rem', color: 'var(--obsidian-black)', fontWeight: 600 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8125rem', color: 'var(--obsidian-black)', fontWeight: 600, minWidth: 0, flex: 1 }}>
           <MapPin size={16} color="var(--primary-red)" style={{ flexShrink: 0 }} />
-          <span>{address || `${neighborhood}, ${city}`}</span>
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{address || `${neighborhood}, ${city}`}</span>
         </div>
         <a
           href={`https://www.google.com/maps/search/?api=1&query=${coordinates[0]},${coordinates[1]}`}
@@ -124,7 +124,8 @@ const PropertyMiniMap = ({ coordinates, address, neighborhood, city }) => {
             display: 'inline-flex',
             alignItems: 'center',
             gap: '4px',
-            whiteSpace: 'nowrap'
+            whiteSpace: 'nowrap',
+            flexShrink: 0
           }}
         >
           <Navigation size={13} />
@@ -262,6 +263,32 @@ export const PropertyDetailPage = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isLightboxOpen]);
 
+  // Touch Swipe for Mobile Carousel
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const diff = touchStartX.current - touchEndX.current;
+    if (diff > 40) {
+      // Swiped left -> next
+      nextPhoto();
+    } else if (diff < -40) {
+      // Swiped right -> prev
+      prevPhoto();
+    }
+    touchStartX.current = 0;
+    touchEndX.current = 0;
+  };
+
   return (
     <div className="pdp-page-container" style={{ backgroundColor: 'var(--bg-main)', minHeight: '100vh', paddingBottom: '80px' }}>
       
@@ -285,25 +312,49 @@ export const PropertyDetailPage = () => {
       )}
 
       {/* 1. TOP BREADCRUMB & ACTIONS BAR */}
-      <div style={{ backgroundColor: 'var(--surface-white)', borderBottom: '1px solid var(--border-color)', padding: '14px 0' }}>
-        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+      <div style={{ backgroundColor: 'var(--surface-white)', borderBottom: '1px solid var(--border-color)', padding: '12px 0' }}>
+        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8125rem', color: 'var(--graphite-gray)' }}>
-            <Link to="/" style={{ color: 'var(--graphite-gray)' }}>Accueil</Link>
-            <span>/</span>
-            <Link to={`/recherche?location=${property.city}`} style={{ color: 'var(--graphite-gray)' }}>{property.city}</Link>
-            <span>/</span>
-            <span style={{ color: 'var(--obsidian-black)', fontWeight: 600 }}>{property.neighborhood}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: '1 1 auto' }}>
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                padding: '6px 12px',
+                borderRadius: 'var(--radius-pill)',
+                border: '1px solid var(--border-color)',
+                backgroundColor: 'var(--surface-white)',
+                fontSize: '0.8125rem',
+                fontWeight: 600,
+                color: 'var(--obsidian-black)',
+                cursor: 'pointer',
+                flexShrink: 0
+              }}
+            >
+              <ChevronLeft size={16} />
+              <span>Retour</span>
+            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8125rem', color: 'var(--graphite-gray)', minWidth: 0, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+              <Link to="/" style={{ color: 'var(--graphite-gray)' }}>Accueil</Link>
+              <span>/</span>
+              <Link to={`/recherche?location=${property.city}`} style={{ color: 'var(--graphite-gray)' }}>{property.city}</Link>
+              <span>/</span>
+              <span style={{ color: 'var(--obsidian-black)', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis' }}>{property.neighborhood}</span>
+            </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
             <button
               onClick={() => toggleFavorite(property.id)}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
-                padding: '8px 14px',
+                padding: '7px 12px',
                 borderRadius: 'var(--radius-pill)',
                 border: '1px solid var(--border-color)',
                 backgroundColor: 'var(--surface-white)',
@@ -314,7 +365,7 @@ export const PropertyDetailPage = () => {
               }}
             >
               <Heart size={16} fill={favorite ? 'var(--primary-red)' : 'none'} />
-              <span>{favorite ? "Favori sauvegardé" : "Sauvegarder"}</span>
+              <span>{favorite ? "Favori" : "Sauvegarder"}</span>
             </button>
 
             <button
@@ -326,7 +377,7 @@ export const PropertyDetailPage = () => {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
-                padding: '8px 14px',
+                padding: '7px 12px',
                 borderRadius: 'var(--radius-pill)',
                 border: '1px solid var(--border-color)',
                 backgroundColor: 'var(--surface-white)',
@@ -357,6 +408,9 @@ export const PropertyDetailPage = () => {
               <div 
                 className="pdp-carousel-main-frame"
                 onClick={() => setIsLightboxOpen(true)}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
                 title="Cliquer pour afficher en grand format"
               >
                 <img 
@@ -1313,33 +1367,14 @@ export const PropertyDetailPage = () => {
             padding-bottom: 120px !important;
           }
 
-          /* Floating Transparent Trigger Tab on Right Edge */
+          /* Hide Floating Trigger Tab on Right Edge in favor of dedicated Sticky Bar */
           .mobile-floating-trigger-tab {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: fixed;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 32px;
-            height: 48px;
-            background: rgba(26, 26, 26, 0.45);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            border-right: none;
-            border-radius: 8px 0 0 8px;
-            color: #FFFFFF;
-            cursor: pointer;
-            z-index: 800;
-            box-shadow: -2px 4px 12px rgba(0, 0, 0, 0.15);
-            transition: all 0.2s ease;
+            display: none !important;
           }
 
-          .mobile-floating-trigger-tab:active {
-            background: rgba(26, 26, 26, 0.7);
-            width: 36px;
+          .pdp-carousel-main-frame {
+            height: 250px !important;
+            border-radius: var(--radius-card) !important;
           }
 
           /* Mobile Slide-Out Side Drawer */
@@ -1353,7 +1388,7 @@ export const PropertyDetailPage = () => {
             background-color: rgba(0, 0, 0, 0.45);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
-            z-index: 950;
+            z-index: 1050;
             opacity: 0;
             visibility: hidden;
             transition: all 0.25s ease;
@@ -1414,14 +1449,16 @@ export const PropertyDetailPage = () => {
             bottom: 0;
             left: 0;
             right: 0;
-            background-color: var(--surface-white);
+            background-color: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-top: 1px solid var(--border-color);
-            padding: 12px 20px;
+            padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px)) 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            z-index: 850;
-            box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+            z-index: 950;
+            box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.08);
           }
           .mobile-sticky-price-label {
             display: block;

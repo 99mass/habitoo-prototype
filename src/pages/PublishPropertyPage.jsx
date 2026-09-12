@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import L from 'leaflet';
 import { useHabitoo } from '../context/HabitooContext';
 import { PROPERTY_TYPES } from '../data/propertiesData';
@@ -150,7 +150,16 @@ const PropertyMiniMap = ({ coordinates, address, neighborhood, city }) => {
 };
 
 export const PublishPropertyPage = () => {
+  const navigate = useNavigate();
   const { activeCity, currentUser, openAuthModal, addUserProperty, formatPrice } = useHabitoo();
+
+  const handleGoBack = () => {
+    if (window.history.length > 2) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
 
   const SIMULATED_USER_AVATAR = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80";
   const userAvatar = currentUser?.avatar || SIMULATED_USER_AVATAR;
@@ -191,8 +200,16 @@ export const PublishPropertyPage = () => {
   // Active photo index for preview carousel
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
 
+  const [searchParams] = useSearchParams();
+
   // Mobile drawer state
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(() => searchParams.get('edit') === '1');
+
+  useEffect(() => {
+    if (searchParams.get('edit') === '1') {
+      setIsDrawerOpen(true);
+    }
+  }, [searchParams]);
 
   // Amenities dropdown state
   const [isAmenitiesOpen, setIsAmenitiesOpen] = useState(false);
@@ -872,6 +889,20 @@ export const PublishPropertyPage = () => {
 
   return (
     <div className="publish-page-container">
+      {/* Top Return CTA / Breadcrumb */}
+      <div className="publish-top-nav-bar">
+        <button
+          type="button"
+          onClick={handleGoBack}
+          className="publish-back-btn"
+          aria-label="Retour"
+        >
+          <ChevronLeft size={16} />
+          <span>Retour</span>
+        </button>
+        <span className="publish-top-nav-title">Publication d'une annonce</span>
+      </div>
+
       {isSubmitted ? (
         /* Success Screen */
         <div className="publish-success-wrapper">
@@ -1183,12 +1214,46 @@ export const PublishPropertyPage = () => {
 
       {/* Scoped CSS épuré et architectural */}
       <style>{`
+        .publish-top-nav-bar {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 16px;
+          max-width: 1280px;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        .publish-back-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 7px 14px;
+          border-radius: var(--radius-pill);
+          border: 1px solid var(--border-color);
+          background-color: var(--surface-white);
+          color: var(--obsidian-black);
+          font-size: 0.8125rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.15s ease;
+          box-shadow: var(--shadow-sm);
+        }
+        .publish-back-btn:hover {
+          border-color: var(--obsidian-black);
+          background-color: #FAFAFA;
+        }
+        .publish-top-nav-title {
+          font-size: 0.8125rem;
+          color: var(--graphite-gray);
+          font-weight: 500;
+        }
+
         .publish-page-container {
           background-color: var(--bg-main);
           min-height: calc(100vh - var(--header-height));
           width: 100%;
           box-sizing: border-box;
-          padding: 24px 20px 48px;
+          padding: 16px 20px 48px;
         }
 
         .publish-layout-grid {
@@ -2184,39 +2249,80 @@ export const PublishPropertyPage = () => {
             display: none !important;
           }
 
-          /* Déclencheur flottant latéral discret */
+          /* Déclencheur flottant ergonomique (Action Pill en bas) */
           .mobile-drawer-trigger {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             position: fixed;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 200;
+            bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+            right: 20px;
+            z-index: 500;
             background-color: var(--obsidian-black);
             color: #FFFFFF;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-right: none;
-            border-radius: 8px 0 0 8px;
-            padding: 10px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-pill);
+            padding: 12px 20px;
             cursor: pointer;
-            box-shadow: -4px 6px 20px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
             transition: all 0.2s ease;
           }
           .mobile-drawer-trigger:hover {
             background-color: #000000;
-            padding-right: 18px;
+            transform: translateY(-2px);
           }
           .mobile-drawer-trigger-text {
-            font-size: 0.75rem;
+            font-size: 0.8125rem;
             font-weight: 700;
             letter-spacing: 0.4px;
             white-space: nowrap;
           }
 
           .preview-carousel-main-wrap {
-            height: 280px;
+            height: 250px;
+            border-radius: var(--radius-card);
+          }
+
+          /* Volet plein écran latéral (100vw) pour éliminer tout débordement */
+          .mobile-drawer-panel {
+            width: 100vw !important;
+            max-width: 100vw !important;
+          }
+          .mobile-drawer-body {
+            padding: 12px !important;
+          }
+          .mobile-drawer-panel .publish-process-card {
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+          }
+          .publish-stepper-bar {
+            padding: 6px 6px !important;
+            gap: 2px !important;
+            justify-content: space-between !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+          }
+          .publish-stepper-btn {
+            padding: 2px 2px !important;
+            gap: 4px !important;
+            flex-shrink: 0;
+          }
+          .publish-stepper-line {
+            min-width: 4px !important;
+            margin: 0 2px !important;
+          }
+          .step-name {
+            font-size: 0.65rem !important;
+            letter-spacing: -0.2px;
+          }
+          .step-circle {
+            width: 16px !important;
+            height: 16px !important;
+            font-size: 0.62rem !important;
           }
         }
 
@@ -2226,13 +2332,14 @@ export const PublishPropertyPage = () => {
           inset: 0;
           background-color: rgba(0, 0, 0, 0.5);
           backdrop-filter: blur(4px);
-          z-index: 1000;
+          z-index: 1500;
           display: flex;
           justify-content: flex-end;
         }
 
         .mobile-drawer-panel {
-          width: min(440px, 92vw);
+          width: 100vw;
+          max-width: 100vw;
           height: 100%;
           background-color: var(--surface-white);
           box-shadow: -8px 0 30px rgba(0, 0, 0, 0.2);

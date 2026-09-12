@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useHabitoo } from '../context/HabitooContext';
-import { Home, Search, Heart, User } from 'lucide-react';
+import { Home, Search, Heart, User, PlusCircle } from 'lucide-react';
 
 export const BottomNav = () => {
   const location = useLocation();
@@ -10,6 +10,7 @@ export const BottomNav = () => {
 
   const isHome = location.pathname === '/';
   const isSearch = location.pathname === '/recherche';
+  const isPublish = location.pathname === '/publier' || location.pathname === '/publier-une-annonce';
   const isAccount = location.pathname === '/mon-compte';
 
   const handleNav = (item) => {
@@ -30,10 +31,24 @@ export const BottomNav = () => {
     },
     {
       id: 'search',
-      label: 'Rechercher',
+      label: 'Explorer',
       icon: Search,
       active: isSearch,
       path: '/recherche'
+    },
+    {
+      id: 'publish',
+      label: 'Publier',
+      icon: PlusCircle,
+      active: isPublish,
+      isSpecial: true,
+      action: () => {
+        if (currentUser) {
+          navigate('/publier');
+        } else {
+          openAuthModal(() => navigate('/publier'));
+        }
+      }
     },
     {
       id: 'favorites',
@@ -71,14 +86,20 @@ export const BottomNav = () => {
                 key={item.id}
                 type="button"
                 onClick={() => handleNav(item)}
-                className={`pwa-nav-item ${item.active ? 'active' : ''}`}
+                className={`pwa-nav-item ${item.active ? 'active' : ''} ${item.isSpecial ? 'pwa-nav-special' : ''}`}
                 aria-label={item.label}
               >
                 <div className="pwa-nav-icon-wrap">
                   <Icon 
-                    size={21} 
-                    strokeWidth={item.active ? 2.5 : 1.9} 
-                    color={item.active ? 'var(--primary-red)' : '#6B7280'} 
+                    size={item.isSpecial ? 22 : 20} 
+                    strokeWidth={item.active ? 2.4 : 1.8} 
+                    color={
+                      item.isSpecial 
+                        ? '#FFFFFF' 
+                        : item.active 
+                        ? 'var(--primary-red)' 
+                        : '#6B7280'
+                    } 
                   />
                   {item.badge && (
                     <span className="pwa-nav-badge">{item.badge}</span>
@@ -96,17 +117,19 @@ export const BottomNav = () => {
           display: none;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
           .pwa-bottom-nav {
             display: block;
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background-color: #FFFFFF;
-            border-top: 1px solid #E5E7EB;
-            z-index: 1000;
-            box-shadow: 0 -3px 14px rgba(0, 0, 0, 0.06);
+            background-color: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border-color);
+            z-index: 990;
+            box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.04);
             padding-bottom: env(safe-area-inset-bottom, 0px);
           }
 
@@ -114,10 +137,10 @@ export const BottomNav = () => {
             display: flex;
             align-items: center;
             justify-content: space-around;
-            height: 58px;
-            max-width: 480px;
+            height: 60px;
+            max-width: 520px;
             margin: 0 auto;
-            padding: 0 12px;
+            padding: 0 8px;
           }
 
           .pwa-nav-item {
@@ -125,13 +148,15 @@ export const BottomNav = () => {
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 3px;
+            gap: 2px;
             background: none;
             border: none;
-            padding: 6px 12px;
+            padding: 4px 6px;
             cursor: pointer;
             text-decoration: none;
             flex: 1;
+            min-height: 48px;
+            min-width: 44px;
             transition: transform 0.15s ease;
             -webkit-tap-highlight-color: transparent;
           }
@@ -146,6 +171,17 @@ export const BottomNav = () => {
             align-items: center;
             justify-content: center;
             height: 24px;
+            width: 24px;
+          }
+
+          /* Special Center Tab: Publier */
+          .pwa-nav-item.pwa-nav-special .pwa-nav-icon-wrap {
+            background-color: var(--primary-red);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(247, 0, 0, 0.35);
+            margin-bottom: 2px;
           }
 
           .pwa-nav-badge {
@@ -167,14 +203,23 @@ export const BottomNav = () => {
             font-weight: 600;
             color: #6B7280;
             transition: color 0.15s ease;
+            line-height: 1;
           }
 
           .pwa-nav-item.active .pwa-nav-label {
             color: var(--primary-red);
             font-weight: 700;
           }
+
+          .pwa-nav-item.pwa-nav-special .pwa-nav-label {
+            font-weight: 700;
+            color: var(--obsidian-black);
+          }
         }
       `}</style>
     </>
   );
 };
+
+export default BottomNav;
+

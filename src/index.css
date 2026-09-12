@@ -434,16 +434,45 @@ button {
 
 @media (max-width: 768px) {
   :root {
-    --header-height: 68px;
+    --header-height: 64px;
   }
   .btn-primary, .btn-dark, .btn-white {
     padding: 10px 18px;
     font-size: 0.875rem;
   }
+
+  /* PWA Touch & Input Standards: Anti-Zoom iOS & cibles tactiles */
+  input, select, textarea, .form-input, .form-select, .form-textarea {
+    font-size: 16px !important; /* Désactive le zoom automatique intrusif sur iOS/Android */
+  }
+
+  .btn-primary, .btn-secondary, .btn-ghost, .btn-dark, .btn-white, .btn-outline, .btn-header-cta, .checkout-btn-confirm {
+    min-height: 44px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Ronds parfaits stricts pour les boutons d'icônes (Favoris, Cloche, Menu, Appareil photo) */
+  .icon-circle-btn, .avatar-edit-fab, .mobile-notif-btn, .header-icon-btn, .mobile-menu-btn, .card-favorite-btn {
+    min-height: unset !important;
+    aspect-ratio: 1 / 1 !important;
+    border-radius: 50% !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Anti-débordement horizontal strict */
+  html, body, #root, .app-root-layout, .app-main-content {
+    overflow-x: clip !important;
+    max-width: 100vw !important;
+  }
 }
 
 @media (max-width: 480px) {
   .container, .container-wide {
-    padding: 0 12px;
+    padding: 0 14px;
   }
 }
+

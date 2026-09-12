@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useHabitoo } from '../context/HabitooContext';
 import { CITIES } from '../data/propertiesData';
 import { 
@@ -28,9 +28,10 @@ export const Header = () => {
     logout
   } = useHabitoo();
 
+  const [searchParams] = useSearchParams();
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(() => searchParams.get('menu') === '1');
   const [isScrolled, setIsScrolled] = useState(false);
   const dropdownRef = useRef(null);
   const userDropdownRef = useRef(null);
@@ -47,6 +48,15 @@ export const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Close mobile menu on route change unless menu=1 query param is set
+  useEffect(() => {
+    if (searchParams.get('menu') === '1') {
+      setMobileMenuOpen(true);
+    } else {
+      setMobileMenuOpen(false);
+    }
+  }, [location, searchParams]);
+
   // Close dropdowns on click outside
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -61,10 +71,7 @@ export const Header = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Close mobile menu on route change
-  useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [location]);
+  // Scoped mobile menu handling managed via searchParams and location above
 
   const navLinkStyle = (active) => ({
     fontWeight: 600,
@@ -78,7 +85,7 @@ export const Header = () => {
   });
 
   return (
-    <header className={`site-header ${isHome ? 'is-home' : ''} ${isScrolled ? 'is-scrolled' : ''}`}>
+    <header className={`site-header ${isHome ? 'is-home' : ''} ${isScrolled ? 'is-scrolled' : ''} ${mobileMenuOpen ? 'menu-open' : ''}`}>
       <div className="container-wide header-inner">
         
         {/* Brand Logo — Red version with brand name + motto */}
@@ -788,21 +795,28 @@ export const Header = () => {
           color: var(--primary-red);
         }
 
+        .site-header.menu-open {
+          z-index: 2200 !important;
+          background-color: var(--surface-white) !important;
+        }
+
         /* Mobile drawer */
         .mobile-drawer {
-          position: absolute;
+          position: fixed;
           top: var(--header-height);
           left: 0;
           right: 0;
+          bottom: 0;
+          height: calc(100vh - var(--header-height));
+          width: 100vw;
           background-color: var(--surface-white);
-          border-bottom: 1px solid var(--border-color);
+          border-bottom: none;
           padding: 24px;
           display: flex;
           flex-direction: column;
           gap: 4px;
           box-shadow: var(--shadow-lg);
-          z-index: 999;
-          max-height: calc(100vh - var(--header-height));
+          z-index: 2200;
           overflow-y: auto;
           -webkit-overflow-scrolling: touch;
         }
@@ -830,9 +844,11 @@ export const Header = () => {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            min-height: unset !important;
+            aspect-ratio: 1 / 1 !important;
+            border-radius: 50% !important;
             background-color: #FFFFFF;
             border: 1px solid rgba(0, 0, 0, 0.08);
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
@@ -841,6 +857,19 @@ export const Header = () => {
             padding: 0;
             flex-shrink: 0;
             -webkit-tap-highlight-color: transparent;
+          }
+
+          .header-icon-btn, .mobile-menu-btn {
+            width: 38px;
+            height: 38px;
+            min-height: unset !important;
+            aspect-ratio: 1 / 1 !important;
+            border-radius: 50% !important;
+            flex-shrink: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
           }
 
           .notif-red-dot {

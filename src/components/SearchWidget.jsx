@@ -621,6 +621,18 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
             font-size: 0.72rem !important;
           }
         }
+        @media (max-width: 540px) {
+          .search-main-grid {
+            grid-template-columns: 1fr !important;
+            gap: 8px !important;
+          }
+          .search-budget-box {
+            grid-column: span 1 !important;
+          }
+          .search-main-grid > div:last-child {
+            grid-column: span 1 !important;
+          }
+        }
       `}</style>
     </div>
   );

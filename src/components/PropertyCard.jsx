@@ -149,26 +149,34 @@ export const PropertyCard = ({ property, onHover = null, isHighlighted = false }
             e.stopPropagation();
             toggleFavorite(property.id);
           }}
+          className="card-favorite-btn icon-circle-btn"
           style={{
             position: 'absolute',
             top: '12px',
             right: '12px',
-            width: '34px',
-            height: '34px',
+            width: '36px',
+            height: '36px',
+            minHeight: 'unset',
+            aspectRatio: '1 / 1',
             borderRadius: '50%',
-            backgroundColor: 'rgba(255, 255, 255, 0.92)',
-            backdropFilter: 'blur(4px)',
+            backgroundColor: 'rgba(255, 255, 255, 0.94)',
+            backdropFilter: 'blur(6px)',
+            WebkitBackdropFilter: 'blur(6px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             color: favorite ? 'var(--primary-red)' : 'var(--obsidian-black)',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.14)',
+            border: 'none',
+            padding: 0,
+            cursor: 'pointer',
             zIndex: 2,
-            transition: 'transform 0.15s ease'
+            transition: 'transform 0.15s ease',
+            flexShrink: 0
           }}
           title={favorite ? "Retirer des favoris" : "Ajouter aux favoris"}
         >
-          <Heart size={16} fill={favorite ? 'var(--primary-red)' : 'none'} color={favorite ? 'var(--primary-red)' : 'var(--obsidian-black)'} />
+          <Heart size={17} fill={favorite ? 'var(--primary-red)' : 'none'} color={favorite ? 'var(--primary-red)' : 'var(--obsidian-black)'} />
         </button>
       </Link>
 

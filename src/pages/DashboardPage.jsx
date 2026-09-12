@@ -955,17 +955,22 @@ export const DashboardPage = () => {
           position: absolute;
           bottom: -2px;
           right: -2px;
-          width: 28px;
-          height: 28px;
-          border-radius: 50%;
+          width: 30px;
+          height: 30px;
+          min-height: unset !important;
+          aspect-ratio: 1 / 1 !important;
+          border-radius: 50% !important;
           background-color: var(--primary-red);
           color: #FFF;
           border: 2px solid #FFF;
+          padding: 0;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
+          flex-shrink: 0;
           transition: transform 0.15s ease;
+          box-shadow: 0 2px 6px rgba(247, 0, 0, 0.35);
         }
         .avatar-edit-fab:hover {
           transform: scale(1.1);
