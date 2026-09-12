@@ -15,17 +15,39 @@ import {
   ChevronRight, 
   Camera, 
   Sparkles, 
-  Rotate3d, 
   Award, 
   CreditCard, 
   FileText,
   BarChart3,
   ChevronRight as ChevronRightIcon,
   CheckCircle2,
-  ClipboardCheck,
   ShieldCheck,
-  Users
+  Plus,
+  Minus,
+  Mail,
+  Phone,
+  Clock,
+  Send
 } from 'lucide-react';
+
+const FAQ_ITEMS = [
+  {
+    question: "Comment Habitoo sécurise-t-il les transactions immobilières ?",
+    answer: "Audit juridique systématique (titre foncier, certificat de propriété foncière, conformité technique), séquestre notarié des fonds et vérification physique contradictoire avant toute signature."
+  },
+  {
+    question: "Quelles sont les prestations incluses dans la conciergerie et l'intendance privée ?",
+    answer: "Gestion locative intégrale, sélection rigoureuse des locataires, états des lieux certifiés, ménage hôtelier, entretien préventif des équipements (groupes électrogènes, climatisation) et reversement garanti des loyers."
+  },
+  {
+    question: "Quels sont les honoraires et frais appliqués par Habitoo ?",
+    answer: "Une transparence tarifaire absolue : nos commissions et forfaits de gestion respectent rigoureusement les barèmes professionnels locaux et sont formalisés par mandat préalable, sans aucun coût caché."
+  },
+  {
+    question: "Puis-je bénéficier d'un service de recherche personnalisée pour un bien d'exception ?",
+    answer: "Oui. Nos conseillers privés assurent une prise en charge sur-mesure de votre cahier des charges, avec accès privilégié à des opportunités \"off-market\" (hors marché public) et accompagnement juridique complet."
+  }
+];
 
 export const HomePage = () => {
   const { openAuthModal } = useHabitoo();
@@ -104,6 +126,43 @@ export const HomePage = () => {
 
   const displayedProperties = filteredProperties.slice(carouselIndex, carouselIndex + itemsPerPage);
 
+  // FAQ Accordion State (Exclusive, instant toggle with 0 animation)
+  const [openFaqIndex, setOpenFaqIndex] = useState(0);
+  const toggleFaq = (index) => {
+    setOpenFaqIndex(prev => (prev === index ? null : index));
+  };
+
+  // Contact Form State
+  const [contactForm, setContactForm] = useState({
+    fullName: '',
+    phone: '',
+    email: '',
+    projectType: 'Achat',
+    message: ''
+  });
+  const [contactSubmitted, setContactSubmitted] = useState(false);
+
+  const handleContactChange = (e) => {
+    const { name, value } = e.target;
+    setContactForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleContactSubmit = (e) => {
+    e.preventDefault();
+    setContactSubmitted(true);
+  };
+
+  const handleResetContact = () => {
+    setContactSubmitted(false);
+    setContactForm({
+      fullName: '',
+      phone: '',
+      email: '',
+      projectType: 'Achat',
+      message: ''
+    });
+  };
+
   return (
     <div className="habitoo-homepage" style={{ position: 'relative', overflowX: 'hidden', backgroundColor: '#FFFFFF' }}>
       
@@ -151,38 +210,6 @@ export const HomePage = () => {
               <p className="hero-subheadline">
                 Maisons, appartements, terrains... en location ou en vente à Brazzaville, Kinshasa et Abidjan.
               </p>
-
-              {/* 3 Trust Highlights matching mockup */}
-              <div className="hero-trust-badges">
-                <div className="hero-trust-badge">
-                  <div className="hero-trust-icon-box">
-                    <ShieldCheck size={15} strokeWidth={2.2} />
-                  </div>
-                  <span>Annonces vérifiées</span>
-                </div>
-
-                <div className="hero-trust-badge">
-                  <div className="hero-trust-icon-box">
-                    <Users size={15} strokeWidth={2.2} />
-                  </div>
-                  <span>Particuliers et professionnels</span>
-                </div>
-
-                <div className="hero-trust-badge">
-                  <div className="hero-trust-icon-box">
-                    <Home size={15} strokeWidth={2.2} />
-                  </div>
-                  <span>Un accompagnement de confiance</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Right: Floating Balcony Glass Pill matching mockup */}
-            <div className="hero-balcony-target">
-              <div className="hero-floating-glass-pill">
-                <span className="hero-pill-red-dash" />
-                <span>Un chez-vous pour une meilleure vie</span>
-              </div>
             </div>
 
           </div>
@@ -396,7 +423,7 @@ export const HomePage = () => {
               <div className="service-text-col">
                 <div className="service-badge-chip">
                   <Home size={15} color="var(--primary-red)" />
-                  <span>01 • Conciergerie & Intendance</span>
+                  <span>Conciergerie & Intendance</span>
                 </div>
                 <h3 className="font-serif service-row-title">
                   Confiez-nous la gestion complète de votre bien
@@ -431,102 +458,84 @@ export const HomePage = () => {
               </div>
             </div>
 
-            {/* SERVICE 2: Inspection de bien (DISPOSITION INVERSÉE: Texte GAUCHE, Image DROITE) */}
-            <div className="service-split-row service-split-reverse">
-              <div className="service-text-col">
-                <div className="service-badge-chip">
-                  <ClipboardCheck size={15} color="var(--primary-red)" />
-                  <span>02 • Inspection de bien & État des lieux</span>
-                </div>
-                <h3 className="font-serif service-row-title">
-                  Un état des lieux fiable pour une location en toute confiance
-                </h3>
-                <p className="service-row-desc">
-                  Nos inspecteurs certifiés réalisent un audit complet et contradictoire de votre propriété. Sécurisez votre investissement et prévenez tout litige grâce à un rapport d'expertise numérique avec photos HD horodatées.
-                </p>
-                <ul className="service-features-list">
-                  <li>
-                    <CheckCircle2 size={18} className="service-check-icon" />
-                    <span>Audit complet des pièces, surfaces, électricité & plomberie</span>
-                  </li>
-                  <li>
-                    <CheckCircle2 size={18} className="service-check-icon" />
-                    <span>Vérification de l'état des murs, plafonds, portes et menuiseries</span>
-                  </li>
-                  <li>
-                    <CheckCircle2 size={18} className="service-check-icon" />
-                    <span>Contrôle approfondi de la sécurité et conformité des équipements</span>
-                  </li>
-                  <li>
-                    <CheckCircle2 size={18} className="service-check-icon" />
-                    <span>Rapport d'inspection numérique détaillé avec photos et signature</span>
-                  </li>
-                </ul>
-                <div className="service-action-wrapper">
-                  <Link to="/conciergerie" className="service-cta-link">
-                    <span>Demander une inspection</span>
-                    <ArrowRight size={16} />
-                  </Link>
-                </div>
-              </div>
+          </div>
+        </div>
+      </section>
 
-              <div className="service-img-col">
-                <Link to="/conciergerie" className="service-img-wrapper" style={{ display: 'block', textDecoration: 'none' }}>
-                  <img 
-                    src="/assets/inspection-service.jpg" 
-                    alt="Inspection de bien et état des lieux Habitoo" 
-                    className="service-img" 
-                  />
-                </Link>
+
+      {/* =========================================================================
+          5. PROFESSIONNELS B2B SECTION (Positionné immédiatement sous Conciergerie)
+          ========================================================================= */}
+      <section id="professionnels" className="section-professionals">
+        <div className="container">
+          <div className="professionals-split">
+            
+            {/* Left Column: Authentic African Business Real Estate Image */}
+           
+    <div>
+                <span className="professionals-tag">
+                  PROFESSIONNELS
+                </span>
+                <h2 className="font-serif professionals-title">
+                  Développez votre activité avec Habitoo
+                </h2>
+                <p className="professionals-desc">
+                  Agences, démarcheurs, promoteurs... accédez à des outils puissants pour gérer vos annonces, suivre vos performances et booster votre visibilité.
+                </p>
+
+                <button 
+                  onClick={openAuthModal}
+                  className="btn-primary professionals-cta-btn"
+                >
+                  <span>Créer un compte professionnel</span>
+                  <ArrowRight size={16} />
+                </button>
               </div>
+            {/* Center & Right Column: B2B Arguments & Feature Checklist */}
+            <div className="professionals-content">
+           <div className="professionals-image-wrapper">
+              <img 
+                src="/assets/pro-african-business.jpg" 
+                alt="Partenariat Professionnels de l'immobilier Habitoo" 
+                className="professionals-img"
+              />
             </div>
 
-            {/* SERVICE 3: Visite virtuelle 360° (AINSI DE SUITE: Image GAUCHE, Texte DROITE) */}
-            <div className="service-split-row">
-              <div className="service-img-col">
-                <Link to="/conciergerie#visite-360" className="service-img-wrapper" style={{ display: 'block', textDecoration: 'none' }}>
-                  <img 
-                    src="/assets/visite-360-service.jpg" 
-                    alt="Visite virtuelle 360 immersive Habitoo" 
-                    className="service-img" 
-                  />
-                </Link>
-              </div>
-
-              <div className="service-text-col">
-                <div className="service-badge-chip">
-                  <Rotate3d size={15} color="var(--primary-red)" />
-                  <span>03 • Visite Virtuelle 360°</span>
+              {/* 5 Feature Checklist with Red Outline Icons */}
+              <div className="professionals-features-list">
+                <div className="pro-feature-item">
+                  <div className="pro-feature-icon">
+                    <FileText size={18} color="var(--primary-red)" />
+                  </div>
+                  <span>Tableau de bord personnalisé</span>
                 </div>
-                <h3 className="font-serif service-row-title">
-                  Découvrez un bien comme si vous y étiez, où que vous soyez
-                </h3>
-                <p className="service-row-desc">
-                  Offrez une expérience immersive ultra-réaliste pour prendre des décisions en toute sérénité. Idéal pour séduire les acheteurs et la diaspora sans déplacement, avec un partage instantané de la visite à vos proches.
-                </p>
-                <ul className="service-features-list">
-                  <li>
-                    <CheckCircle2 size={18} className="service-check-icon" />
-                    <span>Immersion totale : explorez chaque pièce et chaque détail à 360°</span>
-                  </li>
-                  <li>
-                    <CheckCircle2 size={18} className="service-check-icon" />
-                    <span>Gain de temps : visitez à distance en quelques clics 24h/24</span>
-                  </li>
-                  <li>
-                    <CheckCircle2 size={18} className="service-check-icon" />
-                    <span>Vision réaliste et fidèle des volumes, de la luminosité et des finitions</span>
-                  </li>
-                  <li>
-                    <CheckCircle2 size={18} className="service-check-icon" />
-                    <span>Compatible smartphone, tablette, ordinateur et mode Casque VR</span>
-                  </li>
-                </ul>
-                <div className="service-action-wrapper">
-                  <Link to="/conciergerie#visite-360" className="service-cta-link">
-                    <span>Découvrir la visite 360°</span>
-                    <ArrowRight size={16} />
-                  </Link>
+
+                <div className="pro-feature-item">
+                  <div className="pro-feature-icon">
+                    <Award size={18} color="var(--primary-red)" />
+                  </div>
+                  <span>Badge PRO vérifié</span>
+                </div>
+
+                <div className="pro-feature-item">
+                  <div className="pro-feature-icon">
+                    <BarChart3 size={18} color="var(--primary-red)" />
+                  </div>
+                  <span>Statistiques de performance (vues, clics, contacts)</span>
+                </div>
+
+                <div className="pro-feature-item">
+                  <div className="pro-feature-icon">
+                    <Sparkles size={18} color="var(--primary-red)" />
+                  </div>
+                  <span>Options de mise en avant</span>
+                </div>
+
+                <div className="pro-feature-item">
+                  <div className="pro-feature-icon">
+                    <CreditCard size={18} color="var(--primary-red)" />
+                  </div>
+                  <span>Formules d'abonnement</span>
                 </div>
               </div>
             </div>
@@ -635,86 +644,6 @@ export const HomePage = () => {
       </section>
 
 
-      {/* =========================================================================
-          6. PROFESSIONNELS B2B SECTION (Two Pros with Laptop + Perks)
-          ========================================================================= */}
-      <section id="professionnels" className="section-professionals">
-        <div className="container">
-          <div className="professionals-split">
-            
-            {/* Left Column: Authentic African Real Estate Pros Image */}
-            <div className="professionals-image-wrapper">
-              <img 
-                src="/assets/pro-african-agents.jpg" 
-                alt="Professionnels de l'immobilier Habitoo" 
-                className="professionals-img"
-              />
-            </div>
-
-            {/* Center & Right Column: B2B Arguments & Feature Checklist */}
-            <div className="professionals-content">
-              <div>
-                <span className="professionals-tag">
-                  PROFESSIONNELS
-                </span>
-                <h2 className="font-serif professionals-title">
-                  Développez votre activité avec Habitoo
-                </h2>
-                <p className="professionals-desc">
-                  Agences, démarcheurs, promoteurs... accédez à des outils puissants pour gérer vos annonces, suivre vos performances et booster votre visibilité.
-                </p>
-
-                <button 
-                  onClick={openAuthModal}
-                  className="btn-primary professionals-cta-btn"
-                >
-                  <span>Créer un compte professionnel</span>
-                  <ArrowRight size={16} />
-                </button>
-              </div>
-
-              {/* 5 Feature Checklist with Red Outline Icons */}
-              <div className="professionals-features-list">
-                <div className="pro-feature-item">
-                  <div className="pro-feature-icon">
-                    <FileText size={18} color="var(--primary-red)" />
-                  </div>
-                  <span>Tableau de bord personnalisé</span>
-                </div>
-
-                <div className="pro-feature-item">
-                  <div className="pro-feature-icon">
-                    <Award size={18} color="var(--primary-red)" />
-                  </div>
-                  <span>Badge PRO vérifié</span>
-                </div>
-
-                <div className="pro-feature-item">
-                  <div className="pro-feature-icon">
-                    <BarChart3 size={18} color="var(--primary-red)" />
-                  </div>
-                  <span>Statistiques de performance (vues, clics, contacts)</span>
-                </div>
-
-                <div className="pro-feature-item">
-                  <div className="pro-feature-icon">
-                    <Sparkles size={18} color="var(--primary-red)" />
-                  </div>
-                  <span>Options de mise en avant</span>
-                </div>
-
-                <div className="pro-feature-item">
-                  <div className="pro-feature-icon">
-                    <CreditCard size={18} color="var(--primary-red)" />
-                  </div>
-                  <span>Formules d'abonnement</span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
 
 
       {/* =========================================================================
@@ -744,6 +673,233 @@ export const HomePage = () => {
                 alt="Habitoo sur mobile - Restez connecté à vos projets !" 
                 className="mobile-app-mockup-img"
               />
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+
+      {/* =========================================================================
+          8. FAQ SECTION (Interactive Accordion, Pur React, Zéro Animation)
+          ========================================================================= */}
+      <section id="faq" className="section-faq">
+        <div className="container">
+          <div className="faq-header">
+            <span className="faq-tag">FAQ & AIDE</span>
+            <h2 className="font-serif faq-title">Questions fréquentes</h2>
+            <p className="faq-subtitle">
+              Tout ce que vous devez savoir pour vos projets d'acquisition, de location et d'intendance de standing.
+            </p>
+          </div>
+
+          <div className="faq-list">
+            {FAQ_ITEMS.map((item, index) => {
+              const isOpen = openFaqIndex === index;
+              return (
+                <div key={index} className={`faq-item ${isOpen ? 'faq-item-open' : ''}`}>
+                  <button
+                    type="button"
+                    className="faq-question-btn"
+                    onClick={() => toggleFaq(index)}
+                    aria-expanded={isOpen}
+                  >
+                    <span className="faq-question-text">{item.question}</span>
+                    <span className="faq-icon-indicator">
+                      {isOpen ? <Minus size={18} /> : <Plus size={18} />}
+                    </span>
+                  </button>
+                  {isOpen && (
+                    <div className="faq-answer">
+                      <p>{item.answer}</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+
+      {/* =========================================================================
+          9. CONTACT SECTION (Deux Colonnes Épurées & Réassurance Privée)
+          ========================================================================= */}
+      <section id="contact" className="section-contact">
+        <div className="container">
+          <div className="contact-grid">
+            
+            {/* Colonne Gauche : Coordonnées Directes & Représentations */}
+            <div className="contact-info-panel">
+              <span className="contact-tag">CONTACT & SERVICE PRIVÉ</span>
+              <h2 className="font-serif contact-title">
+                Échangez avec nos conseillers privés
+              </h2>
+              <p className="contact-desc">
+                Un projet d'acquisition, de vente ou de mise en gestion de standing ? Nos experts vous répondent sous 24h ouvrées.
+              </p>
+
+              <div className="contact-details-list">
+                <div className="contact-detail-item">
+                  <div className="contact-detail-icon">
+                    <MapPin size={20} />
+                  </div>
+                  <div>
+                    <h4 className="contact-detail-title">Siège & Bureau Principal</h4>
+                    <p className="contact-detail-text">Cocody Ambassades, Boulevard de France</p>
+                    <p className="contact-detail-sub">Abidjan, Côte d'Ivoire</p>
+                  </div>
+                </div>
+
+                <div className="contact-detail-item">
+                  <div className="contact-detail-icon">
+                    <Building2 size={20} />
+                  </div>
+                  <div>
+                    <h4 className="contact-detail-title">Bureaux de liaison régionaux</h4>
+                    <p className="contact-detail-text">Brazzaville : Quartier Mpila</p>
+                    <p className="contact-detail-text">Kinshasa : Boulevard du 30 Juin, Gombe</p>
+                  </div>
+                </div>
+
+                <div className="contact-detail-item">
+                  <div className="contact-detail-icon">
+                    <Phone size={20} />
+                  </div>
+                  <div>
+                    <h4 className="contact-detail-title">Téléphone direct</h4>
+                    <a href="tel:+2252722001122" className="contact-link">+225 27 22 00 11 22</a>
+                  </div>
+                </div>
+
+                <div className="contact-detail-item">
+                  <div className="contact-detail-icon">
+                    <Mail size={20} />
+                  </div>
+                  <div>
+                    <h4 className="contact-detail-title">Courriel direct</h4>
+                    <a href="mailto:contact@habitoo.com" className="contact-link">contact@habitoo.com</a>
+                  </div>
+                </div>
+
+                <div className="contact-detail-item">
+                  <div className="contact-detail-icon">
+                    <Clock size={20} />
+                  </div>
+                  <div>
+                    <h4 className="contact-detail-title">Horaires d'ouverture</h4>
+                    <p className="contact-detail-text">Lundi – Vendredi : 08h30 – 18h30</p>
+                    <p className="contact-detail-sub">Samedi : 09h00 – 14h00</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Colonne Droite : Formulaire Rapide In-Situ */}
+            <div className="contact-form-panel">
+              {contactSubmitted ? (
+                <div className="contact-success-box">
+                  <div className="contact-success-icon">
+                    <CheckCircle2 size={44} color="var(--verified-green)" />
+                  </div>
+                  <h3 className="contact-success-title">Demande transmise avec succès</h3>
+                  <p className="contact-success-text">
+                    Merci pour votre confiance. Un conseiller dédié Habitoo étudie vos éléments et prendra contact avec vous sous 24h ouvrées.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleResetContact}
+                    className="btn-primary"
+                    style={{ marginTop: '20px' }}
+                  >
+                    Envoyer une autre demande
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleContactSubmit} className="contact-form">
+                  <h3 className="contact-form-title">Transmettez-nous votre demande</h3>
+                  
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="contact-fullName">Nom et prénom *</label>
+                    <input
+                      id="contact-fullName"
+                      type="text"
+                      name="fullName"
+                      value={contactForm.fullName}
+                      onChange={handleContactChange}
+                      required
+                      placeholder="Ex: Jean-Marc Kouassi"
+                      className="form-input"
+                    />
+                  </div>
+
+                  <div className="contact-form-row">
+                    <div className="form-group" style={{ flex: 1 }}>
+                      <label className="form-label" htmlFor="contact-phone">Téléphone *</label>
+                      <input
+                        id="contact-phone"
+                        type="tel"
+                        name="phone"
+                        value={contactForm.phone}
+                        onChange={handleContactChange}
+                        required
+                        placeholder="+225 07 00 00 00 00"
+                        className="form-input"
+                      />
+                    </div>
+
+                    <div className="form-group" style={{ flex: 1 }}>
+                      <label className="form-label" htmlFor="contact-email">Email *</label>
+                      <input
+                        id="contact-email"
+                        type="email"
+                        name="email"
+                        value={contactForm.email}
+                        onChange={handleContactChange}
+                        required
+                        placeholder="votre@email.com"
+                        className="form-input"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="contact-projectType">Nature de votre projet *</label>
+                    <select
+                      id="contact-projectType"
+                      name="projectType"
+                      value={contactForm.projectType}
+                      onChange={handleContactChange}
+                      className="form-select"
+                    >
+                      <option value="Achat">Achat de bien d'exception</option>
+                      <option value="Location">Location résidentielle de prestige</option>
+                      <option value="Vente">Vente / Mandat d'un bien de standing</option>
+                      <option value="Conciergerie">Conciergerie & Intendance privée</option>
+                      <option value="Partenariat">Partenariat professionnel / Promoteur</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="contact-message">Votre message ou cahier des charges *</label>
+                    <textarea
+                      id="contact-message"
+                      name="message"
+                      rows={4}
+                      value={contactForm.message}
+                      onChange={handleContactChange}
+                      required
+                      placeholder="Précisez votre recherche, localisation souhaitée, budget ou question..."
+                      className="form-textarea"
+                    />
+                  </div>
+
+                  <button type="submit" className="btn-primary contact-submit-btn">
+                    <Send size={16} />
+                    <span>Envoyer ma demande</span>
+                  </button>
+                </form>
+              )}
             </div>
 
           </div>
@@ -830,22 +986,6 @@ export const HomePage = () => {
             line-height: 1.35 !important;
             margin-bottom: 8px !important;
           }
-          .hero-trust-badges {
-            display: flex !important;
-            flex-wrap: wrap !important;
-            gap: 6px !important;
-            margin-bottom: 6px !important;
-          }
-          .hero-trust-badge {
-            font-size: 0.72rem !important;
-            padding: 3px 8px !important;
-            border-radius: 9999px !important;
-            gap: 5px !important;
-          }
-          .hero-trust-badge svg {
-            width: 13px !important;
-            height: 13px !important;
-          }
         }
         .hero-content-container {
           position: relative;
@@ -897,86 +1037,6 @@ export const HomePage = () => {
           margin-bottom: 14px;
           max-width: 500px;
           font-weight: 600;
-        }
-        .hero-trust-badges {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          flex-wrap: wrap;
-        }
-        .hero-trust-badge {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          font-size: 0.78rem;
-          font-weight: 700;
-          color: var(--obsidian-black);
-          background: rgba(255, 255, 255, 0.88);
-          border: 1px solid rgba(0, 0, 0, 0.08);
-          padding: 4px 8px;
-          border-radius: 6px;
-          box-shadow: none;
-        }
-        .hero-trust-icon-box {
-          color: var(--primary-red);
-          display: flex;
-          align-items: center;
-        }
-
-        /* Floating badge centered vertically with respect to the background banner */
-        .hero-balcony-target {
-          display: flex;
-          align-items: center;
-          justify-content: flex-end;
-          flex-shrink: 0;
-        }
-        @media (max-width: 960px) {
-          .hero-balcony-target {
-            display: none !important;
-          }
-        }
-        .hero-pill-red-dash {
-          display: inline-block;
-          width: 14px;
-          height: 3px;
-          background-color: var(--primary-red);
-          border-radius: 2px;
-          margin-right: 8px;
-          vertical-align: middle;
-        }
-        .hero-bg-center-target {
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 82px;
-          display: flex;
-          align-items: center;
-          pointer-events: none;
-          z-index: 10;
-        }
-        @media (max-width: 960px) {
-          .hero-bg-center-target {
-            display: none !important;
-          }
-        }
-        .hero-bg-badge-flex {
-          display: flex;
-          justify-content: flex-end;
-          padding-right: clamp(16px, 4vw, 52px);
-          width: 100%;
-        }
-        .hero-floating-glass-pill {
-          pointer-events: auto;
-          background: rgba(18, 18, 18, 0.88);
-          color: #FFFFFF;
-          padding: 10px 22px;
-          border-radius: 10px;
-          font-size: 0.84rem;
-          font-weight: 600;
-          box-shadow: none;
-          border: 1px solid rgba(255, 255, 255, 0.18);
-          white-space: nowrap;
         }
 
         .hero-search-anchor {
@@ -1220,7 +1280,7 @@ export const HomePage = () => {
 
         /* ===== 4. SERVICES SECTION ===== */
         .section-services {
-          padding: 60px 0 80px;
+          padding: 64px 0 60px;
           background-color: #FAF5F5;
         }
         .services-header,
@@ -1430,15 +1490,6 @@ export const HomePage = () => {
           box-shadow: none;
         }
 
-        /* Mobile responsive ordering for inverted row: ensure image is on top */
-        @media (max-width: 959px) {
-          .service-split-reverse .service-img-col {
-            order: 1;
-          }
-          .service-split-reverse .service-text-col {
-            order: 2;
-          }
-        }
 
         /* ===== 5. CITIES SECTION ===== */
         .section-cities {
@@ -1554,9 +1605,9 @@ export const HomePage = () => {
           color: var(--primary-red);
         }
 
-        /* ===== 6. PROFESSIONALS B2B SECTION ===== */
+        /* ===== 5. PROFESSIONALS B2B SECTION ===== */
         .section-professionals {
-          padding: 68px 0;
+          padding: 60px 0 68px;
           background-color: #FFFFFF;
         }
         .professionals-split {
@@ -1740,6 +1791,242 @@ export const HomePage = () => {
           .mobile-app-mockup-img {
             max-width: 480px;
           }
+        }
+
+        /* ===== 8. FAQ SECTION (ZERO ANIMATION, SHARP BORDERS) ===== */
+        .section-faq {
+          padding: 72px 0 64px;
+          background-color: #FFFFFF;
+          border-top: 1px solid var(--border-color);
+        }
+        .faq-header {
+          text-align: center;
+          max-width: 700px;
+          margin: 0 auto 40px auto;
+        }
+        .faq-tag {
+          font-size: 0.75rem;
+          font-weight: 800;
+          color: var(--primary-red);
+          letter-spacing: 0.8px;
+          text-transform: uppercase;
+          display: block;
+          margin-bottom: 8px;
+        }
+        .faq-title {
+          font-size: clamp(1.8rem, 3vw, 2.3rem);
+          font-weight: 800;
+          color: var(--obsidian-black);
+          line-height: 1.2;
+          margin-bottom: 12px;
+        }
+        .faq-subtitle {
+          font-size: 0.95rem;
+          color: #6B7280;
+          line-height: 1.5;
+        }
+        .faq-list {
+          max-width: 860px;
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        .faq-item {
+          background: #FAFAFA;
+          border: 1px solid var(--border-color);
+          border-radius: 10px;
+          overflow: hidden;
+          transition: none;
+        }
+        .faq-item-open {
+          background: #FFFFFF;
+          border-color: #D1D5DB;
+        }
+        .faq-question-btn {
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 18px 24px;
+          text-align: left;
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          font-family: var(--font-heading);
+          font-size: 1rem;
+          font-weight: 700;
+          color: var(--obsidian-black);
+          gap: 16px;
+          transition: none;
+        }
+        .faq-item-open .faq-question-btn {
+          color: var(--primary-red);
+        }
+        .faq-question-text {
+          flex: 1;
+        }
+        .faq-icon-indicator {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background-color: rgba(0, 0, 0, 0.05);
+          color: var(--obsidian-black);
+          flex-shrink: 0;
+          transition: none;
+        }
+        .faq-item-open .faq-icon-indicator {
+          background-color: var(--primary-red-light);
+          color: var(--primary-red);
+        }
+        .faq-answer {
+          padding: 0 24px 20px 24px;
+          font-size: 0.9375rem;
+          color: #4B5563;
+          line-height: 1.6;
+          transition: none;
+        }
+
+        /* ===== 9. CONTACT SECTION (TWO-COLUMN CORPORATE) ===== */
+        .section-contact {
+          padding: 72px 0 80px;
+          background-color: #F8F9FA;
+          border-top: 1px solid var(--border-color);
+        }
+        .contact-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 36px;
+          align-items: start;
+        }
+        @media (min-width: 960px) {
+          .contact-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+          }
+        }
+        .contact-info-panel, .contact-form-panel {
+          background: #FFFFFF;
+          border: 1px solid var(--border-color);
+          border-radius: 16px;
+          padding: clamp(24px, 3.5vw, 40px);
+          box-shadow: var(--shadow-sm);
+        }
+        .contact-tag {
+          font-size: 0.75rem;
+          font-weight: 800;
+          color: var(--primary-red);
+          letter-spacing: 0.8px;
+          text-transform: uppercase;
+          display: block;
+          margin-bottom: 8px;
+        }
+        .contact-title {
+          font-size: clamp(1.6rem, 2.5vw, 2rem);
+          font-weight: 800;
+          color: var(--obsidian-black);
+          line-height: 1.25;
+          margin-bottom: 12px;
+        }
+        .contact-desc {
+          font-size: 0.9375rem;
+          color: #4B5563;
+          line-height: 1.55;
+          margin-bottom: 28px;
+        }
+        .contact-details-list {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+        }
+        .contact-detail-item {
+          display: flex;
+          gap: 16px;
+          align-items: flex-start;
+        }
+        .contact-detail-icon {
+          width: 40px;
+          height: 40px;
+          border-radius: 10px;
+          background: var(--soft-tint);
+          color: var(--primary-red);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        .contact-detail-title {
+          font-size: 0.9rem;
+          font-weight: 700;
+          color: var(--obsidian-black);
+          margin-bottom: 2px;
+        }
+        .contact-detail-text {
+          font-size: 0.875rem;
+          color: #4B5563;
+          line-height: 1.4;
+        }
+        .contact-detail-sub {
+          font-size: 0.8125rem;
+          color: #6B7280;
+        }
+        .contact-link {
+          color: var(--obsidian-black);
+          font-weight: 600;
+          font-size: 0.9375rem;
+          text-decoration: none;
+          transition: color 0.15s;
+        }
+        .contact-link:hover {
+          color: var(--primary-red);
+          text-decoration: underline;
+        }
+        .contact-form-title {
+          font-size: 1.25rem;
+          font-weight: 700;
+          color: var(--obsidian-black);
+          margin-bottom: 20px;
+        }
+        .contact-form-row {
+          display: flex;
+          gap: 16px;
+        }
+        @media (max-width: 600px) {
+          .contact-form-row {
+            flex-direction: column;
+            gap: 0;
+          }
+        }
+        .contact-submit-btn {
+          width: 100%;
+          margin-top: 8px;
+          cursor: pointer;
+          border: none;
+        }
+        .contact-success-box {
+          text-align: center;
+          padding: 32px 16px;
+        }
+        .contact-success-icon {
+          margin-bottom: 16px;
+          display: flex;
+          justify-content: center;
+        }
+        .contact-success-title {
+          font-size: 1.3rem;
+          font-weight: 700;
+          color: var(--obsidian-black);
+          margin-bottom: 8px;
+        }
+        .contact-success-text {
+          font-size: 0.9375rem;
+          color: #4B5563;
+          line-height: 1.5;
+          max-width: 440px;
+          margin: 0 auto;
         }
       `}</style>
     </div>

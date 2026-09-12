@@ -1,15 +1,30 @@
-# some updates In "user space" page
-on va restructure cette page
-d'abord la bande afficher le nom et le bouton deconnexion va disparaitre,
+Contexte & Rôle :
 
-on va avoir un tabview ou on aura une partie par defaut avec les infos personnelles aue le user pourra modifier (nom, renom, adresse, photo, etc...),
+Tu interviens sur notre prototype d'agence immobilière de prestige (React / Vite / Vanilla CSS). Nous devons rehausser la direction artistique de la page « À Propos » pour atteindre un standard de luxe architectural, chaleureux et sobre.
 
-un onglet pour les annonces que le user a publier
+Consigne d'exécution :
 
-un onglet params avec des parametrages basique
+Respecte scrupuleusement le protocole pas-à-pas, le skill vanilla-css-scoped et les directives anti-AI. Ne modifie aucun fichier pour l'instant. Propose d'abord une checklist numérotée et attends ma validation avant de démarrer la première tâche.
 
-un onglet pour lister les notifications
+Spécifications de Refonte & Direction Artistique
+1. Règle Typographique Stricte :
 
-enleves l'onglet tableau de bord
+Titres (h1, h2, h3, citations, prix des biens) : Utilise exclusivement 'Playfair Display'.
 
-Je veux un rendu bien epure et coherent avec la plateforme. n'oublies pas l'aspect responsif
+Textes courants (corps de texte, navigation, labels, boutons, métadonnées) : Utilise exclusivement 'Quicksand'.
+
+Interdiction formelle d'appliquer Quicksand aux titres ou Playfair Display aux longs paragraphes.
+
+2. Hero Section : Présence Visuelle & Standing :
+
+Sortir de l'aspect fade sans tomber dans le tape-à-l'œil tech/IA.
+
+Intégrer un visuel architectural plein cadre ou asymétrique haut de gamme (lumière naturelle dorée, villa africaine sobre, ou interieur d'une villa avec un bon design).
+
+Travailler un contraste typographique élégant en Playfair Display avec un léger voile sombre ou minéral maîtrisé pour garantir une lisibilité absolue.
+
+5. Page « À Propos » & Navigation Footer :
+
+Compléter la page /a-propos pour y intégrer les blocs dédiés « Notre Mission » et « Nos Valeurs » (ancrage local, discrétion, rigueur patrimoniale).
+
+Dans le composant Footer, brancher le lien « Notre mission » pour rediriger directement vers cette section (via ancre ou route /a-propos#mission).

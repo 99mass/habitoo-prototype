@@ -13,6 +13,7 @@ import { PropertyDetailPage } from './pages/PropertyDetailPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { ConciergeriePage } from './pages/ConciergeriePage';
 import { PublishPropertyPage } from './pages/PublishPropertyPage';
+import { AboutPage } from './pages/About/AboutPage';
 
 // Auto scroll to top on navigation
 const ScrollToTop = () => {
@@ -38,6 +39,8 @@ const AppContent = () => {
           <Route path="/bien/:id" element={<PropertyDetailPage />} />
           <Route path="/mon-compte" element={<DashboardPage />} />
           <Route path="/conciergerie" element={<ConciergeriePage />} />
+          <Route path="/a-propos" element={<AboutPage />} />
+          <Route path="/about" element={<AboutPage />} />
           <Route path="/publier" element={<PublishPropertyPage />} />
           <Route path="/publier-une-annonce" element={<PublishPropertyPage />} />
           <Route path="*" element={<HomePage />} />

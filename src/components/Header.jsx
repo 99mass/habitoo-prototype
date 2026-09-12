@@ -106,20 +106,6 @@ export const Header = () => {
             Conciergerie
           </Link>
           <a 
-            href="#services" 
-            onClick={(e) => {
-              if (location.pathname !== '/') {
-                navigate('/#services');
-              } else {
-                const el = document.getElementById('services');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }
-            }}
-            style={navLinkStyle(false)}
-          >
-            Visite 360°
-          </a>
-          <a 
             href="#professionnels" 
             onClick={(e) => {
               if (location.pathname !== '/') {
@@ -131,18 +117,14 @@ export const Header = () => {
             }}
             style={navLinkStyle(false)}
           >
-            Nos partenaires
+            Professionnels
           </a>
-          <a 
-            href="#a-propos" 
-            onClick={(e) => {
-              const el = document.getElementById('a-propos') || document.querySelector('footer');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
-            style={navLinkStyle(false)}
+          <Link 
+            to="/a-propos" 
+            style={navLinkStyle(location.pathname === '/a-propos' || location.pathname === '/about')}
           >
             À propos
-          </a>
+          </Link>
         </nav>
 
         {/* Right Actions */}
@@ -398,17 +380,6 @@ export const Header = () => {
             Conciergerie
           </Link>
           <a 
-            href="#services" 
-            className="mobile-drawer-link" 
-            onClick={() => {
-              setMobileMenuOpen(false);
-              const el = document.getElementById('services');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
-          >
-            Visite 360°
-          </a>
-          <a 
             href="#professionnels" 
             className="mobile-drawer-link" 
             onClick={() => {
@@ -417,19 +388,15 @@ export const Header = () => {
               if (el) el.scrollIntoView({ behavior: 'smooth' });
             }}
           >
-            Nos partenaires
+            Professionnels
           </a>
-          <a 
-            href="#a-propos" 
-            className="mobile-drawer-link" 
-            onClick={() => {
-              setMobileMenuOpen(false);
-              const el = document.getElementById('a-propos') || document.querySelector('footer');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
+          <Link 
+            to="/a-propos" 
+            className={`mobile-drawer-link ${(location.pathname === '/a-propos' || location.pathname === '/about') ? 'active' : ''}`}
+            onClick={() => setMobileMenuOpen(false)}
           >
             À propos
-          </a>
+          </Link>
 
           <button
             onClick={() => {

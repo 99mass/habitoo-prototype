@@ -207,17 +207,17 @@ export const Footer = () => {
             </h5>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.8125rem' }}>
               <li>
-                <a href="#mission" style={{ color: '#9CA3AF', transition: 'color 0.15s' }} onMouseOver={(e) => e.target.style.color = '#FFF'} onMouseOut={(e) => e.target.style.color = '#9CA3AF'}>
+                <Link to="/a-propos#mission" style={{ color: '#9CA3AF', transition: 'color 0.15s' }} onMouseOver={(e) => e.target.style.color = '#FFF'} onMouseOut={(e) => e.target.style.color = '#9CA3AF'}>
                   Notre mission
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#contact" style={{ color: '#9CA3AF', transition: 'color 0.15s' }} onMouseOver={(e) => e.target.style.color = '#FFF'} onMouseOut={(e) => e.target.style.color = '#9CA3AF'}>
+                <a href="/#contact" style={{ color: '#9CA3AF', transition: 'color 0.15s' }} onMouseOver={(e) => e.target.style.color = '#FFF'} onMouseOut={(e) => e.target.style.color = '#9CA3AF'}>
                   Contact
                 </a>
               </li>
               <li>
-                <a href="#faq" style={{ color: '#9CA3AF', transition: 'color 0.15s' }} onMouseOver={(e) => e.target.style.color = '#FFF'} onMouseOut={(e) => e.target.style.color = '#9CA3AF'}>
+                <a href="/#faq" style={{ color: '#9CA3AF', transition: 'color 0.15s' }} onMouseOver={(e) => e.target.style.color = '#FFF'} onMouseOut={(e) => e.target.style.color = '#9CA3AF'}>
                   FAQ
                 </a>
               </li>
