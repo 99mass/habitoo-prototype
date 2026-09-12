@@ -13,82 +13,64 @@ export const ProHero = () => {
 
   return (
     <header className="habitoo-pro-hero">
+      {/* Background Media & Directional Dark Luxury Gradient */}
+      <div className="habitoo-pro-hero-bg-wrapper">
+        <img 
+          src="/assets/pro-african-business.jpg" 
+          alt="Partenaires d'affaires immobiliers Habitoo PRO" 
+          className="habitoo-pro-hero-bg-img"
+        />
+        <div className="habitoo-pro-hero-overlay" />
+      </div>
+
       <div className="habitoo-pro-container">
-        <div className="habitoo-pro-hero-grid">
+        {/* Left: Value Proposition & Authority (Editorial Alignment) */}
+        <div className="habitoo-pro-hero-content">
+          <h1 className="habitoo-pro-hero-title">
+            Développez votre activité immobilière
+          </h1>
           
-          {/* Left: Value Proposition & Authority */}
-          <div className="habitoo-pro-hero-content">
-            <span className="habitoo-pro-hero-badge">
-              Écosystème Professionnel Habitoo
-            </span>
-            
-            <h1 className="habitoo-pro-hero-title">
-              Développez votre activité immobilière avec l'écosystème de référence en Afrique
-            </h1>
-            
-            <p className="habitoo-pro-hero-subtitle">
-              La force d'un réseau vérifié pour les démarcheurs indépendants et la puissance 
-              d'outils digitaux exclusifs pour les agences immobilières.
-            </p>
+          <p className="habitoo-pro-hero-subtitle">
+            La force d'un réseau vérifié pour les démarcheurs indépendants et la puissance 
+            d'outils digitaux exclusifs pour les agences immobilières.
+          </p>
 
-            {/* CTAs */}
-            <div className="habitoo-pro-hero-actions">
-              <Link to="/pro/inscription" className="habitoo-pro-btn-primary">
-                <span>Rejoindre Habitoo PRO</span>
-                <ArrowRight size={18} />
-              </Link>
-              <a 
-                href="#tarifs" 
-                onClick={scrollToPricing} 
-                className="habitoo-pro-btn-secondary"
-              >
-                Voir les offres & forfaits
-              </a>
-            </div>
-
-            {/* Trust Metrics */}
-            <div className="habitoo-pro-trust-row">
-              <div className="habitoo-pro-metric-pill">
-                <span className="habitoo-pro-metric-icon">
-                  <ShieldCheck size={16} />
-                </span>
-                <span>Vérification officielle sous 48h</span>
-              </div>
-              <div className="habitoo-pro-metric-pill">
-                <span className="habitoo-pro-metric-icon">
-                  <CreditCard size={16} />
-                </span>
-                <span>Commissions Mobile Money</span>
-              </div>
-              <div className="habitoo-pro-metric-pill">
-                <span className="habitoo-pro-metric-icon">
-                  <Globe size={16} />
-                </span>
-                <span>Réseau actif : Côte d'Ivoire, RDC, Congo</span>
-              </div>
-            </div>
+          {/* CTAs */}
+          <div className="habitoo-pro-hero-actions">
+            <Link to="/pro/inscription" className="habitoo-pro-btn-primary">
+              <span>Rejoindre Habitoo PRO</span>
+              <ArrowRight size={18} />
+            </Link>
+            <a 
+              href="#tarifs" 
+              onClick={scrollToPricing} 
+              className="habitoo-pro-btn-secondary"
+            >
+              Voir les offres & forfaits
+            </a>
           </div>
 
-          {/* Right: Architectural Hero Visual */}
-          <div className="habitoo-pro-hero-visual">
-            <div className="habitoo-pro-hero-img-frame">
-              <img 
-                src="/assets/pro-african-business.jpg" 
-                alt="Partenaires professionnels de l'immobilier Habitoo" 
-                className="habitoo-pro-hero-img"
-              />
-              <div className="habitoo-pro-hero-floating-card">
-                <div className="habitoo-pro-floating-icon">
-                  <ShieldCheck size={20} />
-                </div>
-                <div className="habitoo-pro-floating-text">
-                  <h4>Partenaire Certifié</h4>
-                  <p>Identité & mandats audités</p>
-                </div>
-              </div>
+          {/* Trust Metrics in Dark Glassmorphism */}
+          <div className="habitoo-pro-trust-row">
+            <div className="habitoo-pro-metric-pill">
+              <span className="habitoo-pro-metric-icon">
+                <ShieldCheck size={16} />
+              </span>
+              <span>Vérification officielle sous 48h</span>
+            </div>
+            <div className="habitoo-pro-metric-pill">
+              <span className="habitoo-pro-metric-icon">
+                <CreditCard size={16} />
+              </span>
+              <span>Commissions Mobile Money</span>
+            </div>
+            <div className="habitoo-pro-metric-pill">
+              <span className="habitoo-pro-metric-icon">
+                <Globe size={16} />
+              </span>
+              <span>Réseau actif : Côte d'Ivoire, RDC, Congo</span>
             </div>
           </div>
-
         </div>
       </div>
     </header>

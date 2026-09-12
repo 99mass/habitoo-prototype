@@ -33,7 +33,7 @@ const AppContent = () => {
   const isCheckoutPage = location.pathname === '/checkout' || location.pathname === '/reservation/paiement';
   const isDetailPage = location.pathname.startsWith('/bien/');
   const isProPage = location.pathname === '/professionnels' || location.pathname === '/pro';
-  const hideBottomNav = isPublishPage || isCheckoutPage || isDetailPage;
+  const hideBottomNav = isPublishPage || isCheckoutPage || isDetailPage || isProPage;
 
   return (
     <div className="app-root-layout" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%', maxWidth: '100%', overflowX: 'clip' }}>
@@ -60,7 +60,7 @@ const AppContent = () => {
 
       {!isPublishPage && <Footer />}
 
-      {/* PWA Mobile Bottom Navigation (masquée sur les tunnels transactionnels et la fiche détail pour laisser place au Sticky Booking Bar) */}
+      {/* PWA Mobile Bottom Navigation (masquée sur l'Espace PRO, les tunnels transactionnels et la fiche détail) */}
       {!hideBottomNav && <BottomNav />}
 
       {/* Global Modals */}
@@ -75,7 +75,7 @@ const AppContent = () => {
                 ? 'calc(74px + env(safe-area-inset-bottom, 0px))' 
                 : isPublishPage
                   ? 'calc(80px + env(safe-area-inset-bottom, 0px))'
-                  : isCheckoutPage 
+                  : (isCheckoutPage || isProPage)
                     ? '0px' 
                     : 'calc(62px + env(safe-area-inset-bottom, 0px))'
             };
