@@ -15,7 +15,8 @@ import {
   MapPin,
   Home,
   Building,
-  RotateCcw
+  RotateCcw,
+  SlidersHorizontal
 } from 'lucide-react';
 
 const LOCATION_SUGGESTIONS = [
@@ -53,6 +54,16 @@ export const SerpPage = () => {
   const [showMap, setShowMap] = useState(true);
   const [isMapExpanded, setIsMapExpanded] = useState(false);
   const [mobileTab, setMobileTab] = useState('list'); // 'list' | 'map'
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
+
+  // Active filter criteria count for mobile badge
+  const activeCriteriaCount = useMemo(() => {
+    let count = 0;
+    if (typeParam !== 'ALL') count++;
+    if (propertyTypeParam !== 'ALL') count++;
+    if (countryParam !== 'ALL') count++;
+    return count;
+  }, [typeParam, propertyTypeParam, countryParam]);
 
   // Location search state & suggestions
   const [locationInput, setLocationInput] = useState(locationParam);
@@ -336,7 +347,7 @@ export const SerpPage = () => {
             <select
               value={typeParam}
               onChange={handleTypeChange}
-              className={`serp-select ${typeParam !== 'ALL' ? 'active-filter' : ''}`}
+              className={`serp-select serp-filter-desktop-only ${typeParam !== 'ALL' ? 'active-filter' : ''}`}
               title="Projet : Louer ou Acheter"
             >
               <option value="ALL">Transaction</option>
@@ -348,7 +359,7 @@ export const SerpPage = () => {
             <select
               value={propertyTypeParam}
               onChange={handlePropertyTypeChange}
-              className={`serp-select ${propertyTypeParam !== 'ALL' ? 'active-filter' : ''}`}
+              className={`serp-select serp-filter-desktop-only ${propertyTypeParam !== 'ALL' ? 'active-filter' : ''}`}
               title="Type de bien"
             >
               <option value="ALL">Type de Maison</option>
@@ -362,14 +373,29 @@ export const SerpPage = () => {
             <select
               value={countryParam}
               onChange={handleCountryChange}
-              className={`serp-select ${countryParam !== 'ALL' ? 'active-filter' : ''}`}
+              className={`serp-select serp-filter-desktop-only ${countryParam !== 'ALL' ? 'active-filter' : ''}`}
               title="Filtrer par pays"
             >
               <option value="ALL">Pays : Tous</option>
-              <option value="Côte d'Ivoire">🇨🇮 Côte d'Ivoire</option>
-              <option value="RDC">🇨🇩 RDC</option>
-              <option value="Congo">🇨🇬 Congo</option>
+              <option value="Côte d'Ivoire">Côte d'Ivoire</option>
+              <option value="RDC">RDC</option>
+              <option value="Congo">Congo</option>
             </select>
+
+            {/* Mobile Filter Toggle Button */}
+            <button
+              type="button"
+              className={`serp-mobile-filter-btn ${activeCriteriaCount > 0 ? 'has-active' : ''} ${isMobileFiltersOpen ? 'open' : ''}`}
+              onClick={() => setIsMobileFiltersOpen(!isMobileFiltersOpen)}
+              aria-expanded={isMobileFiltersOpen}
+              title="Filtrer les annonces"
+            >
+              <SlidersHorizontal size={15} />
+              <span>Filtres</span>
+              {activeCriteriaCount > 0 && (
+                <span className="serp-filter-badge">{activeCriteriaCount}</span>
+              )}
+            </button>
 
           </div>
 
@@ -419,6 +445,125 @@ export const SerpPage = () => {
 
           </div>
         </div>
+
+        {/* Mobile Collapsible Filters Accordion Drawer */}
+        {isMobileFiltersOpen && (
+          <div className="serp-mobile-filters-drawer">
+            <div className="serp-drawer-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <SlidersHorizontal size={14} color="var(--obsidian-black)" />
+                <span className="serp-drawer-title">Critères de recherche</span>
+                {activeCriteriaCount > 0 && (
+                  <span className="serp-drawer-badge">
+                    {activeCriteriaCount} actif{activeCriteriaCount > 1 ? 's' : ''}
+                  </span>
+                )}
+              </div>
+              {activeCriteriaCount > 0 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newParams = new URLSearchParams(searchParams);
+                    newParams.delete('type');
+                    newParams.delete('propertyType');
+                    newParams.delete('country');
+                    setSearchParams(newParams);
+                  }}
+                  className="serp-drawer-reset-btn"
+                >
+                  <RotateCcw size={12} />
+                  <span>Réinitialiser</span>
+                </button>
+              )}
+            </div>
+
+            <div className="serp-drawer-body">
+              {/* 1. Transaction (Acheter / Louer / Tous) */}
+              <div className="serp-drawer-field">
+                <label className="serp-drawer-label">Projet / Transaction</label>
+                <div className="serp-drawer-segmented">
+                  <button
+                    type="button"
+                    className={`serp-seg-btn ${typeParam === 'ALL' ? 'active' : ''}`}
+                    onClick={() => {
+                      const newParams = new URLSearchParams(searchParams);
+                      newParams.delete('type');
+                      setSearchParams(newParams);
+                    }}
+                  >
+                    Tous
+                  </button>
+                  <button
+                    type="button"
+                    className={`serp-seg-btn ${typeParam === 'VENTE' ? 'active' : ''}`}
+                    onClick={() => {
+                      const newParams = new URLSearchParams(searchParams);
+                      newParams.set('type', 'VENTE');
+                      setSearchParams(newParams);
+                    }}
+                  >
+                    Acheter
+                  </button>
+                  <button
+                    type="button"
+                    className={`serp-seg-btn ${typeParam === 'LOCATION' ? 'active' : ''}`}
+                    onClick={() => {
+                      const newParams = new URLSearchParams(searchParams);
+                      newParams.set('type', 'LOCATION');
+                      setSearchParams(newParams);
+                    }}
+                  >
+                    Louer
+                  </button>
+                </div>
+              </div>
+
+              {/* 2. Type de bien */}
+              <div className="serp-drawer-field">
+                <label className="serp-drawer-label" htmlFor="mobile-filter-property-type">Type de bien</label>
+                <select
+                  id="mobile-filter-property-type"
+                  value={propertyTypeParam}
+                  onChange={handlePropertyTypeChange}
+                  className="serp-drawer-select"
+                >
+                  <option value="ALL">Tous les types de biens</option>
+                  <option value="villa">Maison et Villa</option>
+                  <option value="appartement">Appartement</option>
+                  <option value="penthouse">Penthouse</option>
+                  <option value="residence">Résidence sécurisée</option>
+                </select>
+              </div>
+
+              {/* 3. Pays */}
+              <div className="serp-drawer-field">
+                <label className="serp-drawer-label" htmlFor="mobile-filter-country">Pays</label>
+                <select
+                  id="mobile-filter-country"
+                  value={countryParam}
+                  onChange={handleCountryChange}
+                  className="serp-drawer-select"
+                >
+                  <option value="ALL">Tous les pays</option>
+                  <option value="Côte d'Ivoire">Côte d'Ivoire</option>
+                  <option value="RDC">RDC</option>
+                  <option value="Congo">Congo</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Drawer Footer: Voir les biens / Replier */}
+            <div className="serp-drawer-footer">
+              <button
+                type="button"
+                className="serp-drawer-apply-btn"
+                onClick={() => setIsMobileFiltersOpen(false)}
+              >
+                <span>Afficher les {filteredProperties.length} bien{filteredProperties.length > 1 ? 's' : ''}</span>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Active Filter Pills Row */}
         {hasActiveFilters && (
@@ -934,7 +1079,216 @@ export const SerpPage = () => {
           }
         }
 
+        /* Mobile filter toggle button (hidden on desktop) */
+        .serp-mobile-filter-btn {
+          display: none;
+          align-items: center;
+          gap: 6px;
+          height: 40px;
+          padding: 0 14px;
+          border-radius: var(--radius-pill);
+          border: 1px solid var(--border-color);
+          background-color: var(--surface-white);
+          font-size: 0.8125rem;
+          font-weight: 700;
+          color: var(--obsidian-black);
+          cursor: pointer;
+          transition: all 0.2s ease;
+          flex-shrink: 0;
+        }
+        .serp-mobile-filter-btn:hover {
+          border-color: var(--obsidian-black);
+        }
+        .serp-mobile-filter-btn.has-active {
+          border-color: var(--primary-red);
+          background-color: var(--soft-tint);
+          color: var(--primary-red);
+        }
+        .serp-mobile-filter-btn.open {
+          background-color: var(--obsidian-black);
+          color: #FFFFFF;
+          border-color: var(--obsidian-black);
+        }
+        .serp-mobile-filter-btn.open .serp-filter-badge {
+          background-color: #FFFFFF;
+          color: var(--obsidian-black);
+        }
+        .serp-filter-badge {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          background-color: var(--primary-red);
+          color: #FFFFFF;
+          font-size: 0.6875rem;
+          font-weight: 800;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          line-height: 1;
+        }
+
+        /* Mobile Collapsible Filters Accordion Drawer */
+        .serp-mobile-filters-drawer {
+          background: var(--surface-white);
+          border: 1px solid var(--border-color);
+          border-radius: 12px;
+          margin-top: 10px;
+          padding: 14px;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+          animation: serpDrawerSlideDown 0.2s ease-out;
+        }
+
+        @keyframes serpDrawerSlideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .serp-drawer-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding-bottom: 12px;
+          border-bottom: 1px solid var(--border-color);
+          margin-bottom: 14px;
+        }
+        .serp-drawer-title {
+          font-size: 0.875rem;
+          font-weight: 800;
+          color: var(--obsidian-black);
+        }
+        .serp-drawer-badge {
+          font-size: 0.6875rem;
+          font-weight: 700;
+          padding: 2px 8px;
+          background-color: var(--soft-tint);
+          color: var(--primary-red);
+          border-radius: var(--radius-pill);
+          border: 1px solid rgba(229, 62, 62, 0.2);
+        }
+        .serp-drawer-reset-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 0.75rem;
+          font-weight: 700;
+          color: var(--primary-red);
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 4px 6px;
+        }
+        .serp-drawer-reset-btn:hover {
+          text-decoration: underline;
+        }
+
+        .serp-drawer-body {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        .serp-drawer-field {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+        .serp-drawer-label {
+          font-size: 0.75rem;
+          font-weight: 700;
+          color: var(--graphite-gray);
+          text-transform: uppercase;
+          letter-spacing: 0.4px;
+        }
+
+        /* Segmented control for transaction */
+        .serp-drawer-segmented {
+          display: flex;
+          background-color: #F3F4F6;
+          padding: 3px;
+          border-radius: 10px;
+          gap: 3px;
+        }
+        .serp-seg-btn {
+          flex: 1;
+          height: 36px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border: none;
+          background: transparent;
+          font-size: 0.8125rem;
+          font-weight: 600;
+          color: var(--graphite-gray);
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+        .serp-seg-btn.active {
+          background-color: #FFFFFF;
+          color: var(--obsidian-black);
+          font-weight: 700;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Selects in drawer */
+        .serp-drawer-select {
+          width: 100%;
+          height: 42px;
+          padding: 0 32px 0 14px;
+          border-radius: 10px;
+          border: 1px solid var(--border-color);
+          background-color: var(--surface-white);
+          font-size: 0.84rem;
+          font-weight: 600;
+          color: var(--obsidian-black);
+          outline: none;
+          cursor: pointer;
+          appearance: none;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%234A4A4A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: right 14px center;
+          transition: border-color 0.15s;
+        }
+        .serp-drawer-select:focus {
+          border-color: var(--obsidian-black);
+        }
+
+        .serp-drawer-footer {
+          margin-top: 14px;
+          padding-top: 12px;
+          border-top: 1px solid var(--border-color);
+        }
+        .serp-drawer-apply-btn {
+          width: 100%;
+          height: 42px;
+          background-color: var(--obsidian-black);
+          color: #FFFFFF;
+          border: none;
+          border-radius: 10px;
+          font-size: 0.875rem;
+          font-weight: 700;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background-color 0.15s ease;
+        }
+        .serp-drawer-apply-btn:hover {
+          background-color: #222222;
+        }
+
         @media (max-width: 768px) {
+          .serp-filter-desktop-only {
+            display: none !important;
+          }
+          .serp-mobile-filter-btn {
+            display: inline-flex !important;
+          }
           .serp-filter-bar {
             padding: 8px 12px !important;
           }
@@ -946,24 +1300,22 @@ export const SerpPage = () => {
           .serp-filters-left {
             display: flex !important;
             flex-wrap: nowrap !important;
-            overflow-x: auto !important;
-            padding-bottom: 2px !important;
+            align-items: center !important;
+            overflow-x: visible !important;
+            padding-bottom: 0 !important;
             gap: 8px !important;
             min-width: 0 !important;
             width: 100% !important;
-            scrollbar-width: none !important;
-            -webkit-overflow-scrolling: touch !important;
-          }
-          .serp-filters-left::-webkit-scrollbar {
-            display: none;
           }
           .serp-search-box {
-            min-width: 200px !important;
-            flex-shrink: 0 !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            flex: 1 1 auto !important;
           }
-          .serp-select {
+          .serp-mobile-filter-btn {
             flex-shrink: 0 !important;
-            height: 36px !important;
+            height: 40px !important;
+            padding: 0 12px !important;
             font-size: 0.78rem !important;
           }
           .serp-filters-right {
