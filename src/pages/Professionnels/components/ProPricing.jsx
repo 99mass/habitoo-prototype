@@ -112,7 +112,7 @@ export const ProPricing = () => {
               </li>
               <li className="habitoo-pro-card-feature-li">
                 <Check size={18} className="habitoo-pro-feature-check-icon" />
-                <span><strong>Badge PRO officiel validé</strong> & visible</span>
+                <span><strong>Badge PRO officiel validé</strong> et visible</span>
               </li>
               <li className="habitoo-pro-card-feature-li">
                 <Check size={18} className="habitoo-pro-feature-check-icon" />
@@ -153,7 +153,7 @@ export const ProPricing = () => {
               </div>
               <p className="habitoo-pro-card-period">
                 {billingCycle === 'monthly' 
-                  ? 'Par mois — Pour agences & promoteurs' 
+                  ? 'Par mois — Pour agences et promoteurs' 
                   : 'Par an (soit 29 160 FCFA/mois — Économisez 70 000 FCFA)'}
               </p>
             </div>
@@ -181,7 +181,7 @@ export const ProPricing = () => {
               </li>
               <li className="habitoo-pro-card-feature-li">
                 <Check size={18} className="habitoo-pro-feature-check-icon" />
-                <span>Support prioritaire 7j/7 & réseau inter-agences</span>
+                <span>Support prioritaire 7j/7 et réseau inter-agences</span>
               </li>
             </ul>
 

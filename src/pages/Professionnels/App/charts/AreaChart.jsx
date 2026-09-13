@@ -123,9 +123,9 @@ export const AreaChart = () => {
       {/* En-tête du graphique avec titre sobre & sélecteur temporel */}
       <div className="habitoo-dash-card__header">
         <div className="habitoo-dash-card__title-group">
-          <h3 className="habitoo-dash-card__title">Audience & Demandes de Visite</h3>
+          <h3 className="habitoo-dash-card__title">Audience et Demandes de Visite</h3>
           <p className="habitoo-dash-card__subtitle">
-            Flux de consultations d'annonces mis en corrélation avec les demandes de visites avec caution
+            Flux de consultations d'annonces mis en corrélation avec les demandes de visites vérifiées
           </p>
         </div>
 

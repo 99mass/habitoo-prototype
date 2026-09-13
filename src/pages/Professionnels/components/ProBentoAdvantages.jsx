@@ -5,7 +5,7 @@ const ADVANTAGES = [
   {
     id: 'badge',
     title: 'Le Badge PRO Certifié',
-    category: 'Autorité & Accréditation',
+    category: 'Autorité et Accréditation',
     icon: Award,
     image: '/assets/team/aminata-cisse.jpg',
     alt: 'Conseillère immobilière certifiée Habitoo',
@@ -15,17 +15,17 @@ const ADVANTAGES = [
   {
     id: 'dashboard',
     title: 'Dashboard Tout-en-un',
-    category: 'Analytique & Performance',
+    category: 'Analytique et Performance',
     icon: BarChart3,
     image: '/assets/pro-dashboard-analytics.jpg',
     alt: 'Tableau de bord professionnel avec graphiques et indicateurs clés',
     description: 'Suivi en temps réel des vues, prises de contact qualifiées et synchronisation simplifiée de votre calendrier de visites.',
-    highlight: 'Graphiques circulaires & métriques directes'
+    highlight: 'Graphiques circulaires et métriques directes'
   },
   {
     id: 'commissions',
     title: 'Commissions Automatiques',
-    category: 'Transactions & Règlements',
+    category: 'Transactions et Règlements',
     icon: CheckCircle2,
     image: '/assets/pro-commissions-money.jpg',
     alt: 'Encaissement des commissions et transactions sécurisées',
@@ -35,7 +35,7 @@ const ADVANTAGES = [
   {
     id: 'academie',
     title: 'Habitoo Académie',
-    category: 'Formation & Montée en Compétence',
+    category: 'Formation et Montée en Compétence',
     icon: GraduationCap,
     image: '/assets/pro-academy-learning.jpg',
     alt: 'Masterclass et formation d\'excellence en immobilier',
@@ -45,7 +45,7 @@ const ADVANTAGES = [
   {
     id: 'visibilite',
     title: 'Visibilité Maximale',
-    category: 'Boost & Algorithme',
+    category: 'Boost et Algorithme',
     icon: Sparkles,
     image: '/assets/pro-visibility-boost.jpg',
     alt: 'Visibilité prioritaire et mise en avant des biens',

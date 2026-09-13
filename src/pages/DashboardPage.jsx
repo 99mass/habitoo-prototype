@@ -342,7 +342,7 @@ export const DashboardPage = () => {
 
                   <div className="field-group">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                      <label className="field-label" style={{ margin: 0 }}>Téléphone & WhatsApp</label>
+                      <label className="field-label" style={{ margin: 0 }}>Téléphone et WhatsApp</label>
                     </div>
                     <div className="input-with-icon">
                       <Phone size={16} className="input-leading-icon" />
@@ -357,7 +357,7 @@ export const DashboardPage = () => {
                   </div>
 
                   <div className="field-group">
-                    <label className="field-label">Ville & Pays de résidence</label>
+                    <label className="field-label">Ville et Pays de résidence</label>
                     <div className="input-with-icon">
                       <Globe size={16} className="input-leading-icon" />
                       <input 
@@ -683,7 +683,7 @@ export const DashboardPage = () => {
         {activeTab === 'settings' && (
           <div className="userspace-panel animate-fadeIn">
             <div className="panel-card" style={{ marginBottom: '24px' }}>
-              <h2 className="panel-title">Marché & Devise par défaut</h2>
+              <h2 className="panel-title">Marché et Devise par défaut</h2>
               <p className="panel-subtitle" style={{ marginBottom: '20px' }}>
                 Sélectionnez votre marché régional actif pour adapter les annonces et la devise d'affichage sur l'ensemble de la plateforme.
               </p>

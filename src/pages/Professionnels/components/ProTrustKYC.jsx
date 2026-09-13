@@ -4,14 +4,14 @@ import { ShieldCheck, Clock, CheckCircle2, Lock, FileCheck } from 'lucide-react'
 const KYC_STEPS = [
   {
     step: "01",
-    title: "Inscription & Dépôt des pièces",
+    title: "Inscription et Dépôt des pièces",
     timeBadge: "2 minutes chrono",
     desc: "Renseignez vos coordonnées professionnelles et transmettez votre pièce d'identité officielle (CNI ou passeport) ou le registre de commerce (RCCM) de votre agence.",
     isGreenBadge: false
   },
   {
     step: "02",
-    title: "Audit & Validation sous 48h",
+    title: "Audit et Validation sous 48h",
     timeBadge: "Sous 48h ouvrées",
     desc: "Nos experts conformité contrôlent l'authenticité de vos pièces et l'historique de vos mandats afin de préserver l'intégrité et la réputation de notre communauté.",
     isGreenBadge: false
@@ -31,7 +31,7 @@ export const ProTrustKYC = () => {
       <div className="habitoo-pro-container">
         
         <div className="habitoo-pro-section-header">
-          <span className="habitoo-pro-tag">Confiance & Rigueur</span>
+          <span className="habitoo-pro-tag">Confiance et Rigueur</span>
           <h2 className="habitoo-pro-title">
             Un processus d'accréditation rigoureux et rapide
           </h2>

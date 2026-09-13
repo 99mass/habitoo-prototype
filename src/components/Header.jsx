@@ -122,21 +122,6 @@ export const Header = () => {
             Professionnels
           </a>
           <Link 
-            to="/pro/app/dashboard"
-            style={{ 
-              ...navLinkStyle(location.pathname.startsWith('/pro/app')), 
-              color: '#F70000', 
-              fontWeight: '700',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '5px'
-            }}
-            title="Accéder au Dashboard PRO (Démo)"
-          >
-            <LayoutDashboard size={14} />
-            <span>Dashboard PRO</span>
-          </Link>
-          <Link 
             to="/a-propos" 
             style={navLinkStyle(location.pathname === '/a-propos' || location.pathname === '/about')}
           >
@@ -165,7 +150,7 @@ export const Header = () => {
             {isCityDropdownOpen && (
               <div className="city-dropdown">
                 <div className="city-dropdown-title">
-                  Marchés & Devises
+                  Marchés et Devises
                 </div>
                 {CITIES.map((city) => (
                   <button

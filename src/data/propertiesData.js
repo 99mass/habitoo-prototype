@@ -18,16 +18,16 @@ export const PROPERTIES_DATA = [
       bedrooms: 5,
       bathrooms: 6,
       area: 650,
-      security: "Poste de garde H24 & clôture électrifiée"
+      security: "Poste de garde H24 et clôture électrifiée"
     },
     amenities: [
       "Groupe électrogène automatique (60 kVA)",
-      "Forage & Réserve d'eau 5 000L",
+      "Forage et Réserve d'eau 5 000L",
       "Gardiennage H24",
       "Piscine à débordement",
       "Entièrement meublé haut de gamme",
       "Climatisation intégrale inverter",
-      "Domotique & Caméras IA",
+      "Domotique et Caméras IA",
       "Garage fermé 4 véhicules"
     ],
     coordinates: [5.3484, -3.9780],
@@ -40,7 +40,7 @@ export const PROPERTIES_DATA = [
     ],
     floorPlan: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&w=1200&q=85",
     auditDate: "18 Février 2025",
-    auditStatus: "Audit physique certifié Habitoo — Titre foncier validé & conformité technique certifiée",
+    auditStatus: "Audit physique certifié Habitoo — Titre foncier validé et conformité technique certifiée",
     chargesBreakdown: {
       copropriete: "250 000 FCFA / mois",
       securite: "Inclus (Gardiennage armé H24)",
@@ -75,14 +75,14 @@ export const PROPERTIES_DATA = [
       bedrooms: 6,
       bathrooms: 7,
       area: 920,
-      security: "Sas blindé, bunker certifié & vidéosurveillance 360°"
+      security: "Sas blindé, bunker certifié et vidéosurveillance 360°"
     },
     amenities: [
       "Groupe électrogène automatique (100 kVA)",
-      "Forage & Réserve d'eau",
+      "Forage et Réserve d'eau",
       "Gardiennage H24",
       "Piscine olympique",
-      "Spa & Hammam privé",
+      "Spa et Hammam privé",
       "Logement de personnel séparé",
       "Jardin paysager 2 000 m²"
     ],
@@ -130,11 +130,11 @@ export const PROPERTIES_DATA = [
       bedrooms: 4,
       bathrooms: 4,
       area: 420,
-      security: "Gardiennage H24 & système d'alarme télésurveillé"
+      security: "Gardiennage H24 et système d'alarme télésurveillé"
     },
     amenities: [
       "Groupe électrogène automatique (45 kVA)",
-      "Forage & Réserve d'eau",
+      "Forage et Réserve d'eau",
       "Gardiennage H24",
       "Piscine avec vue fleuve",
       "Entièrement Meublé",
@@ -188,7 +188,7 @@ export const PROPERTIES_DATA = [
     },
     amenities: [
       "Groupe électrogène automatique (80 kVA)",
-      "Forage & Réserve d'eau 10 000L",
+      "Forage et Réserve d'eau 10 000L",
       "Gardiennage H24",
       "Piscine",
       "Court de tennis privé",
@@ -238,11 +238,11 @@ export const PROPERTIES_DATA = [
       bedrooms: 5,
       bathrooms: 5,
       area: 600,
-      security: "Poste de garde blindé & barrières infrarouges"
+      security: "Poste de garde blindé et barrières infrarouges"
     },
     amenities: [
       "Groupe électrogène automatique (50 kVA)",
-      "Forage & Réserve d'eau",
+      "Forage et Réserve d'eau",
       "Gardiennage H24",
       "Piscine miroir chauffée",
       "Jardin tropical paysager",
@@ -291,11 +291,11 @@ export const PROPERTIES_DATA = [
       bedrooms: 3,
       bathrooms: 3,
       area: 210,
-      security: "Gardiennage H24 & ascenseur codé"
+      security: "Gardiennage H24 et ascenseur codé"
     },
     amenities: [
       "Groupe électrogène automatique",
-      "Forage & Réserve d'eau",
+      "Forage et Réserve d'eau",
       "Gardiennage H24",
       "Entièrement Meublé",
       "Climatisation intégrale",
@@ -343,7 +343,7 @@ export const PROPERTIES_DATA = [
       bedrooms: 3,
       bathrooms: 4,
       area: 380,
-      security: "Contrôle d'accès biométrique & conciergerie"
+      security: "Contrôle d'accès biométrique et conciergerie"
     },
     amenities: [
       "Groupe électrogène automatique",
@@ -363,7 +363,7 @@ export const PROPERTIES_DATA = [
     ],
     floorPlan: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&w=1200&q=85",
     auditDate: "24 Janvier 2025",
-    auditStatus: "Audit physique certifié Habitoo — Contrôle sécuritaire & normes incendie conformes",
+    auditStatus: "Audit physique certifié Habitoo — Contrôle sécuritaire et normes incendie conformes",
     chargesBreakdown: {
       copropriete: "180 000 FCFA / mois",
       securite: "Inclus (Accès biométrique)",
@@ -398,11 +398,11 @@ export const PROPERTIES_DATA = [
       bedrooms: 5,
       bathrooms: 6,
       area: 720,
-      security: "Poste de garde renforcé H24 & protocole diplomatique"
+      security: "Poste de garde renforcé H24 et protocole diplomatique"
     },
     amenities: [
       "Groupe électrogène automatique (100 kVA redondant)",
-      "Forage & Réserve d'eau 15 000L",
+      "Forage et Réserve d'eau 15 000L",
       "Gardiennage H24",
       "Piscine",
       "Entièrement Meublé",
@@ -451,11 +451,11 @@ export const PROPERTIES_DATA = [
       bedrooms: 4,
       bathrooms: 5,
       area: 480,
-      security: "Société internationale de sécurité H24 & sas blindé"
+      security: "Société internationale de sécurité H24 et sas blindé"
     },
     amenities: [
       "Groupe électrogène automatique (Double secours)",
-      "Forage & Réserve d'eau (Station d'épuration UV)",
+      "Forage et Réserve d'eau (Station d'épuration UV)",
       "Gardiennage H24",
       "Piscine panoramique",
       "Entièrement Meublé",
@@ -505,11 +505,11 @@ export const PROPERTIES_DATA = [
       bedrooms: 2,
       bathrooms: 2,
       area: 165,
-      security: "Gardiennage H24 & barrière levante"
+      security: "Gardiennage H24 et barrière levante"
     },
     amenities: [
       "Groupe électrogène automatique",
-      "Forage & Réserve d'eau",
+      "Forage et Réserve d'eau",
       "Gardiennage H24",
       "Piscine en rooftop",
       "Entièrement Meublé",

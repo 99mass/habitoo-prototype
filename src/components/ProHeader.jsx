@@ -104,13 +104,13 @@ export const ProHeader = () => {
               Avantages stratégiques
             </a>
             <a href="#cibles" onClick={(e) => scrollToSection(e, 'cibles')} className="habitoo-pro-mobile-link">
-              Solutions Démarcheurs & Agences
+              Solutions Démarcheurs et Agences
             </a>
             <a href="#tarifs" onClick={(e) => scrollToSection(e, 'tarifs')} className="habitoo-pro-mobile-link">
               Grille tarifaire
             </a>
             <a href="#reassurance" onClick={(e) => scrollToSection(e, 'reassurance')} className="habitoo-pro-mobile-link">
-              Accréditation & KYC
+              Accréditation
             </a>
             <a href="#faq" onClick={(e) => scrollToSection(e, 'faq')} className="habitoo-pro-mobile-link">
               FAQ

@@ -127,7 +127,7 @@ export const ProRevenueView = () => {
           <thead>
             <tr>
               <th>Date</th>
-              <th>Description & Réf.</th>
+              <th>Description et Réf.</th>
               <th>Type</th>
               <th>Montant</th>
               <th style={{ textAlign: 'right' }}>Statut</th>

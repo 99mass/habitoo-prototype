@@ -614,7 +614,7 @@ export const PropertyDetailPage = () => {
                 <span style={{ fontSize: '0.75rem', color: 'var(--graphite-gray)', display: 'block' }}>Sécurité</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', fontWeight: 700, marginTop: '6px', color: 'var(--verified-green)' }}>
                   <ShieldCheck size={16} />
-                  <span>H24 & Blindé</span>
+                  <span>H24 et Blindé</span>
                 </div>
               </div>
             </div>
@@ -845,7 +845,7 @@ export const PropertyDetailPage = () => {
                     Frais de réservation
                   </span>
                   <span style={{ fontSize: '0.8125rem', color: 'var(--obsidian-black)', fontWeight: 600 }}>
-                    Dossier & visite dédiée
+                    Dossier et visite dédiée
                   </span>
                 </div>
                 <div style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', fontWeight: 700, color: 'var(--obsidian-black)' }}>
@@ -1043,7 +1043,7 @@ export const PropertyDetailPage = () => {
                   Frais de réservation
                 </span>
                 <span style={{ fontSize: '0.75rem', color: 'var(--obsidian-black)', fontWeight: 600 }}>
-                  Dossier & visite dédiée
+                  Dossier et visite dédiée
                 </span>
               </div>
               <div style={{ fontFamily: 'var(--font-serif)', fontSize: '1.15rem', fontWeight: 700, color: 'var(--obsidian-black)' }}>

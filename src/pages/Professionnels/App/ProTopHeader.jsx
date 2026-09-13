@@ -12,21 +12,25 @@ export const ProTopHeader = ({
   persona = 'demarcheur', 
   onPersonaChange, 
   credits = 45, 
-  onOpenCreditsModal 
+  onOpenCreditsModal,
+  userProfile
 }) => {
-  // Profil selon le persona
-  const profile = persona === 'agence' ? {
+  // Profil par défaut selon le persona, surchargeable par userProfile
+  const defaultProfile = persona === 'agence' ? {
     name: 'Ivoire Prestige Conseil',
-    role: 'Agence Agréée',
     badgeText: 'Agence Certifiée PRO',
     badgeClass: 'habitoo-dash-badge--agency',
     avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=120&q=80'
   } : {
     name: 'Jean-Marc Kouassi',
-    role: 'Négociateur Indépendant',
     badgeText: 'Démarcheur Agréé PRO',
     badgeClass: 'habitoo-dash-badge--broker',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80'
+  };
+
+  const profile = {
+    ...defaultProfile,
+    ...(userProfile || {})
   };
 
   return (
@@ -35,7 +39,7 @@ export const ProTopHeader = ({
         
         {/* Section Gauche : Logo Noir Habitoo + Badge PRO */}
         <div className="habitoo-dash-top-header__left">
-          <Link to="/" className="habitoo-dash-logo" title="Retour au portail Habitoo">
+          <Link to="/professionnels" className="habitoo-dash-logo" title="Retour au portail Habitoo">
             <img 
               src="/assets/Code_Generated_Image (3).png" 
               alt="Habitoo PRO" 
@@ -45,7 +49,7 @@ export const ProTopHeader = ({
           </Link>
         </div>
 
-        {/* Section Droite : Commutateur Persona démo, Crédits, Profil et Bouton Publier */}
+        {/* Section Droite : Commutateur Persona démo, Crédits et Profil */}
         <div className="habitoo-dash-top-header__right">
           
           {/* Commutateur Persona Démo (Démarcheur vs Agence) */}
@@ -92,7 +96,7 @@ export const ProTopHeader = ({
 
           <div className="habitoo-dash-divider-v" />
 
-          {/* Carte Profil Agent avec Badge PRO officiel */}
+          {/* Carte Profil Agent avec Badge PRO officiel (sans sous-titre de fonction) */}
           <div className="habitoo-dash-agent-card">
             <img
               src={profile.avatar}
@@ -106,15 +110,8 @@ export const ProTopHeader = ({
                   <ShieldCheck size={11} /> {profile.badgeText}
                 </span>
               </div>
-              <span className="habitoo-dash-agent-role">{profile.role}</span>
             </div>
           </div>
-
-          {/* Bouton Primaire Signature : + Publier une annonce */}
-          <Link to="/publier" className="habitoo-dash-btn-publish">
-            <Plus size={15} strokeWidth={2.4} />
-            <span>Publier une annonce</span>
-          </Link>
 
         </div>
 

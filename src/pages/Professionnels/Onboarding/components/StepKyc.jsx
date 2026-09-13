@@ -117,7 +117,7 @@ export const StepKyc = ({ formData, updateFormData, onNext, onPrev }) => {
       <div className="habitoo-step-header">
         <span className="habitoo-step-counter">Étape 02 sur 04</span>
         <h1 className="habitoo-step-title">
-          Identité & Justificatifs
+          Identité et Justificatifs
         </h1>
         <p className="habitoo-step-lead">
           Renseignez vos coordonnées et joignez vos documents pour l'audit de conformité.

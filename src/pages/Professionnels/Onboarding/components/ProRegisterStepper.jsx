@@ -3,7 +3,7 @@ import { Check } from 'lucide-react';
 
 const STEPS = [
   { id: 1, number: '01', label: 'Profil', sub: 'Activité' },
-  { id: 2, number: '02', label: 'Justificatifs', sub: 'Identité & Ville' },
+  { id: 2, number: '02', label: 'Justificatifs', sub: 'Identité et Ville' },
   { id: 3, number: '03', label: 'Forfait', sub: 'Formule' },
   { id: 4, number: '04', label: 'Règlement', sub: 'Validation' }
 ];

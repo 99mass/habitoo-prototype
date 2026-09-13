@@ -22,10 +22,10 @@ export const ProVirtualPass = ({ formData, currentStep }) => {
   const statusLabel = currentStep === 1 
     ? 'Étape 1 : Identification' 
     : currentStep === 2 
-      ? (formData.idCardUploaded ? 'KYC en cours de transmission' : 'Étape 2 : Dossier & KYC') 
+      ? (formData.idCardUploaded ? 'KYC en cours de transmission' : 'Étape 2 : Dossier et KYC') 
       : currentStep === 3 
         ? 'Étape 3 : Formule sélectionnée' 
-        : 'Étape 4 : Règlement & Immatriculation';
+        : 'Étape 4 : Règlement et Immatriculation';
 
   return (
     <aside className="habitoo-reg-showcase">

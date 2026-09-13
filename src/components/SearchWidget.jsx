@@ -28,6 +28,7 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
   const [isTypeDropdownOpen, setIsTypeDropdownOpen] = useState(false);
   const [maxBudget, setMaxBudget] = useState(transactionType === "VENTE" ? 150000000 : 2500000);
   const [selectedAmenities, setSelectedAmenities] = useState([]);
+  const [isAmenitiesOpen, setIsAmenitiesOpen] = useState(() => typeof window !== 'undefined' ? window.innerWidth > 960 : true);
 
   const typeDropdownRef = useRef(null);
 
@@ -436,10 +437,10 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
             </div>
 
             {/* 4. ACTION: BOUTON ROUGE "RECHERCHER" */}
-            <div>
+            <div className="search-submit-box">
               <button
                 type="submit"
-                className="btn-primary"
+                className="btn-primary search-submit-btn"
                 style={{
                   height: '46px',
                   padding: '0 26px',
@@ -461,90 +462,149 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
                 <span>Rechercher</span>
               </button>
             </div>
-          </div>
-        </form>
 
-        {/* Commodités indispensables en Afrique (Toujours ouvert, options sous le texte) */}
-        <div 
-          style={{ 
-            marginTop: '14px', 
-            paddingTop: '12px',
-            borderTop: '1px solid rgba(0, 0, 0, 0.06)'
-          }}
-        >
-          {/* Ligne 1: Titre au-dessus */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '6px' }}>
-            <span style={{ 
-              fontSize: '0.74rem', 
-              fontWeight: 800, 
-              color: 'var(--obsidian-black)', 
-              display: 'inline-flex', 
-              alignItems: 'center', 
-              gap: '6px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px'
-            }}>
-              <Layers size={14} color="var(--primary-red)" />
-              <span>Commodités indispensables :</span>
-            </span>
-
-            {selectedAmenities.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setSelectedAmenities([])}
-                style={{
-                  fontSize: '0.72rem',
-                  color: 'var(--primary-red)',
-                  fontWeight: 700,
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '3px'
+            {/* 5. COMMODITÉS INDISPENSABLES (Collapsible Accordion) */}
+            <div 
+              className="search-amenities-section"
+              style={{ 
+                marginTop: '14px', 
+                paddingTop: '12px',
+                borderTop: '1px solid rgba(0, 0, 0, 0.06)'
+              }}
+            >
+              {/* Ligne 1: Titre au-dessus & Déclencheur Accordéon */}
+              <div 
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'space-between', 
+                  marginBottom: isAmenitiesOpen ? '8px' : '0px', 
+                  flexWrap: 'wrap', 
+                  gap: '6px' 
                 }}
               >
-                <X size={12} />
-                <span>Réinitialiser ({selectedAmenities.length})</span>
-              </button>
-            )}
-          </div>
-
-          {/* Ligne 2: Options de commodités en-dessous du texte */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-            {LUXURY_AMENITIES_FILTERS.map((amenity) => {
-              const isActive = selectedAmenities.includes(amenity);
-              return (
                 <button
-                  key={amenity}
                   type="button"
-                  onClick={() => toggleAmenity(amenity)}
-                  className="amenity-chip-btn"
+                  onClick={() => setIsAmenitiesOpen(!isAmenitiesOpen)}
+                  className="amenities-toggle-btn"
+                  aria-expanded={isAmenitiesOpen}
                   style={{
-                    padding: '5px 14px',
-                    borderRadius: '9999px',
-                    fontSize: '0.76rem',
-                    fontWeight: 600,
-                    border: isActive ? '1px solid var(--primary-red)' : '1px solid var(--border-color)',
-                    backgroundColor: isActive ? 'var(--soft-tint)' : '#F9FAFB',
-                    color: isActive ? 'var(--primary-red)' : 'var(--obsidian-black)',
+                    background: 'none',
+                    border: 'none',
+                    padding: '2px 0',
+                    cursor: 'pointer',
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '5px',
-                    cursor: 'pointer',
-                    transition: 'all 0.15s ease'
+                    gap: '7px',
+                    color: 'inherit',
+                    textAlign: 'left'
                   }}
                 >
-                  {isActive && <Check size={12} color="var(--primary-red)" strokeWidth={2.5} />}
-                  <span>{amenity}</span>
+                  <Layers size={14} color="var(--primary-red)" />
+                  <span style={{ 
+                    fontSize: '0.74rem', 
+                    fontWeight: 800, 
+                    color: 'var(--obsidian-black)', 
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}>
+                    <span>Commodités indispensables :</span>
+                    {selectedAmenities.length > 0 && (
+                      <span style={{
+                        backgroundColor: 'var(--primary-red)',
+                        color: '#FFFFFF',
+                        fontSize: '0.68rem',
+                        fontWeight: 800,
+                        padding: '1px 6px',
+                        borderRadius: '9999px',
+                        lineHeight: '1.2'
+                      }}>
+                        {selectedAmenities.length}
+                      </span>
+                    )}
+                  </span>
+                  <ChevronDown 
+                    size={14} 
+                    color="#6B7280" 
+                    style={{ 
+                      transform: isAmenitiesOpen ? 'rotate(180deg)' : 'none', 
+                      transition: 'transform 0.15s ease',
+                      flexShrink: 0
+                    }} 
+                  />
                 </button>
-              );
-            })}
+
+                {selectedAmenities.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedAmenities([])}
+                    style={{
+                      fontSize: '0.72rem',
+                      color: 'var(--primary-red)',
+                      fontWeight: 700,
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '3px'
+                    }}
+                  >
+                    <X size={12} />
+                    <span>Réinitialiser ({selectedAmenities.length})</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Ligne 2: Options de commodités (Affichage/masquage instantané) */}
+              {isAmenitiesOpen && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {LUXURY_AMENITIES_FILTERS.map((amenity) => {
+                    const isActive = selectedAmenities.includes(amenity);
+                    return (
+                      <button
+                        key={amenity}
+                        type="button"
+                        onClick={() => toggleAmenity(amenity)}
+                        className="amenity-chip-btn"
+                        style={{
+                          padding: '5px 14px',
+                          borderRadius: '9999px',
+                          fontSize: '0.76rem',
+                          fontWeight: 600,
+                          border: isActive ? '1px solid var(--primary-red)' : '1px solid var(--border-color)',
+                          backgroundColor: isActive ? 'var(--soft-tint)' : '#F9FAFB',
+                          color: isActive ? 'var(--primary-red)' : 'var(--obsidian-black)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                          cursor: 'pointer',
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        {isActive && <Check size={12} color="var(--primary-red)" strokeWidth={2.5} />}
+                        <span>{amenity}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        </form>
       </div>
 
       <style>{`
+        .search-submit-box {
+          order: 4;
+        }
+        .search-amenities-section {
+          grid-column: 1 / -1;
+          order: 5;
+        }
         @media (max-width: 960px) {
           .search-main-grid {
             grid-template-columns: 1fr 1fr !important;
@@ -552,11 +612,20 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
           }
           .search-budget-box {
             grid-column: span 2 !important;
+            order: 3 !important;
           }
-          .search-main-grid > div:last-child {
+          .search-amenities-section {
             grid-column: span 2 !important;
+            order: 4 !important;
+            margin-top: 6px !important;
+            padding-top: 10px !important;
           }
-          .search-main-grid > div:last-child button {
+          .search-submit-box {
+            grid-column: span 2 !important;
+            order: 5 !important;
+            margin-top: 4px !important;
+          }
+          .search-submit-box button {
             width: 100% !important;
             justify-content: center;
           }
@@ -604,12 +673,20 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
           }
           .search-budget-box {
             grid-column: span 2 !important;
+            order: 3 !important;
           }
-          .search-main-grid > div:last-child {
+          .search-amenities-section {
             grid-column: span 2 !important;
-            margin-top: 4px;
+            order: 4 !important;
+            margin-top: 4px !important;
+            padding-top: 10px !important;
           }
-          .search-main-grid > div:last-child button {
+          .search-submit-box {
+            grid-column: span 2 !important;
+            order: 5 !important;
+            margin-top: 4px !important;
+          }
+          .search-submit-box button {
             width: 100% !important;
             height: 46px !important;
             font-size: 0.95rem !important;
@@ -628,9 +705,15 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
           }
           .search-budget-box {
             grid-column: span 1 !important;
+            order: 3 !important;
           }
-          .search-main-grid > div:last-child {
+          .search-amenities-section {
             grid-column: span 1 !important;
+            order: 4 !important;
+          }
+          .search-submit-box {
+            grid-column: span 1 !important;
+            order: 5 !important;
           }
         }
       `}</style>

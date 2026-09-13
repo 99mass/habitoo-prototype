@@ -43,7 +43,7 @@ const AUDIENCE_SLIDES = [
     id: 'agence',
     tabTitle: 'Agences Immobilières',
     tabIcon: Building2,
-    pill: 'Agence Immobilière & Promoteur',
+    pill: 'Agence Immobilière et Promoteur',
     title: 'Digitalisez votre catalogue et décuplez la portée de votre marque',
     lead: 'Centralisez vos mandats, analysez l\'intérêt des acquéreurs et renforcez votre présence régionale avec une vitrine de prestige.',
     image: '/assets/pro-agency-boss.jpg',

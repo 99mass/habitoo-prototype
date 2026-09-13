@@ -157,7 +157,7 @@ export const ProPendingPass = () => {
               </div>
               <div className="habitoo-tracker-text">
                 <span className="habitoo-tracker-label">Étape 1 • Validée</span>
-                <strong className="habitoo-tracker-heading">Dossier & Pièce d'identité réceptionnés</strong>
+                <strong className="habitoo-tracker-heading">Dossier et Pièce d'identité réceptionnés</strong>
                 <p className="habitoo-tracker-desc">
                   Les pièces KYC et vos données de contact ont été cryptées et stockées dans notre coffre-fort sécurisé.
                 </p>

@@ -317,7 +317,7 @@ export const DepositModal = () => {
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Équipements & Normes Africaines</label>
+                  <label className="form-label">Équipements et Normes Africaines</label>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                     {LUXURY_AMENITIES_FILTERS.map(a => {
                       const selected = formData.amenities.includes(a);

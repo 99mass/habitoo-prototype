@@ -45,13 +45,13 @@ export const TopPropertiesTable = ({ onOpenBoost }) => {
     <div className="habitoo-dash-card habitoo-dash-top-props-card">
       <div className="habitoo-dash-card__header">
         <div className="habitoo-dash-card__title-group">
-          <h3 className="habitoo-dash-card__title">Top Annonces & Popularité</h3>
+          <h3 className="habitoo-dash-card__title">Top Annonces et Popularité</h3>
           <p className="habitoo-dash-card__subtitle">
             Biens générant le plus fort taux d'engagement cette semaine
           </p>
         </div>
         <span className="habitoo-dash-top-props-badge">
-          3 mandats phares
+          3 annonces phares
         </span>
       </div>
 

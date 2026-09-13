@@ -47,9 +47,9 @@ export const ConciergeriePage = () => {
       description: "Notre équipe professionnelle intervient avec des équipements et produits éco-certifiés pour un entretien minutieux de vos villas, appartements ou bureaux. Remise en état complète, sols, vitres et dépoussiérage intégral.",
       inclusions: [
         "Produits éco-certifiés inclus",
-        "Personnel qualifié & assuré",
-        "Nettoyage en profondeur des sols & vitres",
-        "Désinfection des sanitaires & cuisine"
+        "Personnel qualifié et assuré",
+        "Nettoyage en profondeur des sols et vitres",
+        "Désinfection des sanitaires et cuisine"
       ]
     },
     {
@@ -68,9 +68,9 @@ export const ConciergeriePage = () => {
       description: "Contrôle préventif et systématique de vos équipements critiques : groupes électrogènes, climatiseurs, surpresseurs d'eau, tableaux électriques et plomberie pour éviter toute panne impromptue.",
       inclusions: [
         "Audit 40 points de contrôle",
-        "Entretien filtres & recharge gaz clim",
+        "Entretien filtres et recharge gaz clim",
         "Rapport technique numérique avec photos",
-        "Vérification groupe électrogène & réserves"
+        "Vérification groupe électrogène et réserves"
       ]
     },
     {
@@ -88,9 +88,9 @@ export const ConciergeriePage = () => {
       reviewCount: '410+ avis',
       description: "Plomberie, électricité, menuiserie, serrurerie ou maçonnerie : nos artisans certifiés interviennent en urgence ou sur rendez-vous avec des pièces de rechange d'origine et garantie de résultat.",
       inclusions: [
-        "Artisans agréés & réactivité garantie",
+        "Artisans agréés et réactivité garantie",
         "Diagnostic précis et devis transparent",
-        "Garantie 6 mois pièces & main d'œuvre",
+        "Garantie 6 mois pièces et main d'œuvre",
         "Facture détaillée certifiée Habitoo"
       ]
     },
@@ -111,7 +111,7 @@ export const ConciergeriePage = () => {
       inclusions: [
         "Rapport PDF exhaustif avec 80+ clichés",
         "Horodatage et géolocalisation infalsifiables",
-        "Relevé des index compteurs & équipements",
+        "Relevé des index compteurs et équipements",
         "Signature électronique contradictoire"
       ]
     },
@@ -155,7 +155,7 @@ export const ConciergeriePage = () => {
         "Photographe professionnel d'architecture",
         "Retouches chromatiques haute définition",
         "Livraison express des clichés sous 24h",
-        "Formats optimisés web & réseaux sociaux"
+        "Formats optimisés web et réseaux sociaux"
       ]
     }
   ];
@@ -233,7 +233,7 @@ export const ConciergeriePage = () => {
                 letterSpacing: '-0.5px'
               }}
             >
-              Conciergerie & Intendance Privée
+              Conciergerie et Intendance Privée
             </h1>
 
             <p 
@@ -355,7 +355,7 @@ export const ConciergeriePage = () => {
                     <div className="placeholder-perks">
                       <div className="perk-item">
                         <Check size={14} color="var(--verified-green)" />
-                        <span>Devis mono-service gratuit & sans engagement</span>
+                        <span>Devis mono-service gratuit et sans engagement</span>
                       </div>
                       <div className="perk-item">
                         <Check size={14} color="var(--verified-green)" />
@@ -363,7 +363,7 @@ export const ConciergeriePage = () => {
                       </div>
                       <div className="perk-item">
                         <Check size={14} color="var(--verified-green)" />
-                        <span>Interventions garanties & assurées</span>
+                        <span>Interventions garanties et assurées</span>
                       </div>
                     </div>
                   </div>
@@ -473,7 +473,7 @@ export const ConciergeriePage = () => {
 
                         {/* Localisation du bien */}
                         <div className="form-group" style={{ marginBottom: '12px' }}>
-                          <label className="form-label">Ville & quartier du bien *</label>
+                          <label className="form-label">Ville et quartier du bien *</label>
                           <input
                             type="text"
                             required
@@ -518,7 +518,7 @@ export const ConciergeriePage = () => {
 
                         <div style={{ textAlign: 'center', marginTop: '10px' }}>
                           <span style={{ fontSize: '0.6875rem', color: 'var(--graphite-light)' }}>
-                            Gratuit & sans engagement • Réponse sous 2h ouvrées
+                            Gratuit et sans engagement • Réponse sous 2h ouvrées
                           </span>
                         </div>
                       </form>

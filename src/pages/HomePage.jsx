@@ -425,7 +425,7 @@ export const HomePage = () => {
               <div className="service-text-col">
                 <div className="service-badge-chip">
                   <Home size={15} color="var(--primary-red)" />
-                  <span>Conciergerie & Intendance</span>
+                  <span>Conciergerie et Intendance</span>
                 </div>
                 <h3 className="font-serif service-row-title">
                   Confiez-nous la gestion complète de votre bien
@@ -436,11 +436,11 @@ export const HomePage = () => {
                 <ul className="service-features-list">
                   <li>
                     <CheckCircle2 size={18} className="service-check-icon" />
-                    <span>Accueil personnalisé & remise sécurisée des clés</span>
+                    <span>Accueil personnalisé et remise sécurisée des clés</span>
                   </li>
                   <li>
                     <CheckCircle2 size={18} className="service-check-icon" />
-                    <span>Ménage professionnel & blanchisserie de standing</span>
+                    <span>Ménage professionnel et blanchisserie de standing</span>
                   </li>
                   <li>
                     <CheckCircle2 size={18} className="service-check-icon" />
@@ -448,7 +448,7 @@ export const HomePage = () => {
                   </li>
                   <li>
                     <CheckCircle2 size={18} className="service-check-icon" />
-                    <span>Maintenance technique réactive & dépannage 7j/7</span>
+                    <span>Maintenance technique réactive et dépannage 7j/7</span>
                   </li>
                 </ul>
                 <div className="service-action-wrapper">
@@ -689,7 +689,7 @@ export const HomePage = () => {
       <section id="faq" className="section-faq">
         <div className="container">
           <div className="faq-header">
-            <span className="faq-tag">FAQ & AIDE</span>
+            <span className="faq-tag">FAQ et AIDE</span>
             <h2 className="font-serif faq-title">Questions fréquentes</h2>
             <p className="faq-subtitle">
               Tout ce que vous devez savoir pour vos projets d'acquisition, de location et d'intendance de standing.
@@ -726,15 +726,15 @@ export const HomePage = () => {
 
 
       {/* =========================================================================
-          9. CONTACT SECTION (Deux Colonnes Épurées & Réassurance Privée)
+          9. CONTACT SECTION (Deux Colonnes Épurées et Réassurance Privée)
           ========================================================================= */}
       <section id="contact" className="section-contact">
         <div className="container">
           <div className="contact-grid">
             
-            {/* Colonne Gauche : Coordonnées Directes & Représentations */}
+            {/* Colonne Gauche : Coordonnées Directes et Représentations */}
             <div className="contact-info-panel">
-              <span className="contact-tag">CONTACT & SERVICE PRIVÉ</span>
+              <span className="contact-tag">CONTACT et SERVICE PRIVÉ</span>
               <h2 className="font-serif contact-title">
                 Échangez avec nos conseillers privés
               </h2>
@@ -748,7 +748,7 @@ export const HomePage = () => {
                     <MapPin size={20} />
                   </div>
                   <div>
-                    <h4 className="contact-detail-title">Siège & Bureau Principal</h4>
+                    <h4 className="contact-detail-title">Siège et Bureau Principal</h4>
                     <p className="contact-detail-text">Cocody Ambassades, Boulevard de France</p>
                     <p className="contact-detail-sub">Abidjan, Côte d'Ivoire</p>
                   </div>
@@ -878,7 +878,7 @@ export const HomePage = () => {
                       <option value="Achat">Achat de bien d'exception</option>
                       <option value="Location">Location résidentielle de prestige</option>
                       <option value="Vente">Vente / Mandat d'un bien de standing</option>
-                      <option value="Conciergerie">Conciergerie & Intendance privée</option>
+                      <option value="Conciergerie">Conciergerie et Intendance privée</option>
                       <option value="Partenariat">Partenariat professionnel / Promoteur</option>
                     </select>
                   </div>

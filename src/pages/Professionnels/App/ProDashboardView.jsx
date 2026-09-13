@@ -91,10 +91,10 @@ export const ProDashboardView = ({ onSelectTab, onOpenCreditsModal }) => {
               </span>
             </div>
             <div className="habitoo-dash-metric-card__middle">
-              <strong className="habitoo-dash-metric-card__val">6 mandats</strong>
+              <strong className="habitoo-dash-metric-card__val">6</strong>
             </div>
             <div className="habitoo-dash-metric-card__bottom">
-              <span className="habitoo-dash-metric-card__sub">2 mandats boostés</span>
+              <span className="habitoo-dash-metric-card__sub">2 boostées</span>
               <button 
                 type="button" 
                 className="habitoo-dash-metric-card__action"
@@ -176,7 +176,7 @@ export const ProDashboardView = ({ onSelectTab, onOpenCreditsModal }) => {
           <div className="habitoo-dash-card">
             <div className="habitoo-dash-card__header">
               <div>
-                <h3 className="habitoo-dash-card__title">Optimisation des Mandats</h3>
+                <h3 className="habitoo-dash-card__title">Annonces à booster</h3>
                 <p className="habitoo-dash-card__subtitle">Annonces à fort potentiel nécessitant un boost</p>
               </div>
               <button

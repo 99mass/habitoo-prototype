@@ -14,8 +14,8 @@ const FUNNEL_STEPS = [
   },
   {
     id: 'details',
-    label: "Consultations fiches & photos HD",
-    sub: "Fiches détaillées ouvertes & galeries explorées",
+    label: "Consultations fiches et photos HD",
+    sub: "Fiches détaillées ouvertes et galeries explorées",
     count: 5631,
     percentage: 38.0,
     retentionFromPrev: '38.0%',
@@ -25,7 +25,7 @@ const FUNNEL_STEPS = [
   {
     id: 'requests',
     label: "Demandes de visite déposées",
-    sub: "Dossiers avec caution sous séquestre",
+    sub: "Dossiers vérifiés avec date sélectionnée",
     count: 918,
     percentage: 6.2,
     retentionFromPrev: '16.3%',

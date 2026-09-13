@@ -352,7 +352,7 @@ export const SerpPage = () => {
               title="Type de bien"
             >
               <option value="ALL">Type de Maison</option>
-              <option value="villa">Maison & Villa</option>
+              <option value="villa">Maison et Villa</option>
               <option value="appartement">Appartement</option>
               <option value="penthouse">Penthouse</option>
               <option value="residence">Résidence sécurisée</option>
@@ -436,7 +436,7 @@ export const SerpPage = () => {
               <span className="filter-chip">
                 <span>
                   Type : {
-                    propertyTypeParam === 'villa' ? 'Maison & Villa' :
+                    propertyTypeParam === 'villa' ? 'Maison et Villa' :
                     propertyTypeParam === 'appartement' ? 'Appartement' :
                     propertyTypeParam === 'penthouse' ? 'Penthouse' :
                     propertyTypeParam === 'residence' ? 'Résidence sécurisée' : propertyTypeParam

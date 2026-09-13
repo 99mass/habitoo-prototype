@@ -15,15 +15,27 @@ const TABS = [
   { id: 'visits', label: "Mes Visites", icon: CalendarCheck, badge: "2" },
   { id: 'revenue', label: "Revenus", icon: Wallet },
   { id: 'academy', label: "Habitoo Académie", icon: GraduationCap, personaOnly: "demarcheur" },
-  { id: 'reputation', label: "Profil & Réputation", icon: UserCheck },
+  { id: 'profile', label: "Profil", icon: UserCheck },
   { id: 'settings', label: "Paramètres", icon: Settings },
 ];
 
-export const ProTabView = ({ activeTab = 'overview', onSelectTab, persona = 'demarcheur' }) => {
+export const ProTabView = ({ 
+  activeTab = 'overview', 
+  onSelectTab, 
+  persona = 'demarcheur',
+  propertyCount
+}) => {
   const tabsContainerRef = useRef(null);
 
   // Filtrage conditionnel des onglets selon persona
-  const visibleTabs = TABS.filter(t => !t.personaOnly || t.personaOnly === persona);
+  const visibleTabs = TABS
+    .filter(t => !t.personaOnly || t.personaOnly === persona)
+    .map(t => {
+      if (t.id === 'properties' && propertyCount !== undefined) {
+        return { ...t, badge: String(propertyCount) };
+      }
+      return t;
+    });
 
   // Défilement automatique pour que l'onglet actif soit toujours visible sur mobile
   useEffect(() => {
@@ -40,7 +52,7 @@ export const ProTabView = ({ activeTab = 'overview', onSelectTab, persona = 'dem
       <div className="habitoo-dash-tabbar__inner" ref={tabsContainerRef}>
         {visibleTabs.map((tab) => {
           const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
+          const isActive = activeTab === tab.id || (tab.id === 'profile' && activeTab === 'reputation');
 
           return (
             <button

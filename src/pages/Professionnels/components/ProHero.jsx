@@ -46,7 +46,7 @@ export const ProHero = () => {
               onClick={scrollToPricing} 
               className="habitoo-pro-btn-secondary"
             >
-              Voir les offres & forfaits
+              Voir les offres et forfaits
             </a>
           </div>
 

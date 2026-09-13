@@ -1,29 +1,27 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { 
   Building2, 
   Search, 
   Plus, 
-  Eye, 
-  MessageSquare, 
   Flame, 
   CheckCircle, 
   Zap, 
   MapPin, 
-  ExternalLink, 
-  Edit3 
+  ExternalLink,
+  CheckCircle2
 } from 'lucide-react';
 import { PROPERTIES_DATA } from '../../../../data/propertiesData';
+import { ProNewPropertyForm } from './ProNewPropertyForm';
 
-// Extraction et normalisation des annonces du professionnel
-const USER_PROPERTIES = PROPERTIES_DATA
+// Extraction et normalisation des annonces initiales du professionnel
+const INITIAL_PROPERTIES = PROPERTIES_DATA
   .filter(p => p.isPro || p.advertiserType === 'PRO')
   .slice(0, 6)
   .map((p, idx) => {
     const isBoosted = idx === 0 || idx === 3;
     const views = [5420, 4110, 3890, 3120, 2480, 1950][idx] || 2000;
     const inquiries = [142, 98, 76, 64, 42, 31][idx] || 50;
-    const score = [94, 82, 78, 86, 72, 68][idx] || 75;
 
     return {
       id: p.id,
@@ -38,29 +36,92 @@ const USER_PROPERTIES = PROPERTIES_DATA
       status: isBoosted ? 'BOOSTED' : 'ACTIVE',
       statusLabel: isBoosted ? 'Boostée' : 'En ligne',
       views,
-      inquiries,
-      score
+      inquiries
     };
   });
 
-export const ProPropertiesView = ({ onOpenCreditsModal }) => {
-  const navigate = useNavigate();
+export const ProPropertiesView = ({ 
+  onOpenCreditsModal, 
+  credits = 45,
+  action,
+  onNavigateNew,
+  onCancelNew,
+  propertiesList,
+  onAddProperty,
+  userProfile
+}) => {
+  // Liste locale si non fournie depuis le layout
+  const [localProps, setLocalProps] = useState(INITIAL_PROPERTIES);
+  const [localIsCreating, setLocalIsCreating] = useState(false);
+  const [successToast, setSuccessToast] = useState('');
+
+  const propsData = propertiesList || localProps;
+  const isCreating = action === 'new' || localIsCreating;
+
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL'); // 'ALL' | 'ACTIVE' | 'BOOSTED'
 
-  const filteredProps = USER_PROPERTIES.filter(prop => {
+  const filteredProps = propsData.filter(prop => {
     const matchesSearch = prop.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           prop.neighborhood.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'ALL' || prop.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
-  const boostedCount = USER_PROPERTIES.filter(p => p.status === 'BOOSTED').length;
-  const activeCount = USER_PROPERTIES.filter(p => p.status === 'ACTIVE').length;
+  const boostedCount = propsData.filter(p => p.status === 'BOOSTED').length;
+  const activeCount = propsData.filter(p => p.status === 'ACTIVE').length;
+
+  const handleStartCreate = () => {
+    if (onNavigateNew) {
+      onNavigateNew();
+    } else {
+      setLocalIsCreating(true);
+    }
+  };
+
+  const handleCancelCreate = () => {
+    if (onCancelNew) {
+      onCancelNew();
+    } else {
+      setLocalIsCreating(false);
+    }
+  };
+
+  const handlePublishProperty = (newProp, creditsUsed) => {
+    if (onAddProperty) {
+      onAddProperty(newProp, creditsUsed);
+    } else {
+      setLocalProps(prev => [newProp, ...prev]);
+    }
+
+    handleCancelCreate();
+    setSuccessToast(`L'annonce « ${newProp.title} » a été publiée avec succès sur Habitoo PRO.`);
+    setTimeout(() => setSuccessToast(''), 5000);
+  };
+
+  // Si on est en mode création in-space
+  if (isCreating) {
+    return (
+      <ProNewPropertyForm
+        onCancel={handleCancelCreate}
+        onPublish={handlePublishProperty}
+        currentCredits={credits}
+        userProfile={userProfile}
+      />
+    );
+  }
 
   return (
     <div className="habitoo-dash-section">
       
+      {/* Toast de confirmation de publication */}
+      {successToast && (
+        <div className="habitoo-dash-toast-success">
+          <CheckCircle2 size={16} />
+          <span>{successToast}</span>
+        </div>
+      )}
+
       {/* Barre d'outils et actions */}
       <div className="habitoo-dash-toolbar">
         <div className="habitoo-dash-toolbar__left">
@@ -81,7 +142,7 @@ export const ProPropertiesView = ({ onOpenCreditsModal }) => {
               className={`habitoo-dash-filter-pill ${statusFilter === 'ALL' ? 'habitoo-dash-filter-pill--active' : ''}`}
               onClick={() => setStatusFilter('ALL')}
             >
-              Toutes ({USER_PROPERTIES.length})
+              Toutes ({propsData.length})
             </button>
             <button
               type="button"
@@ -101,14 +162,18 @@ export const ProPropertiesView = ({ onOpenCreditsModal }) => {
         </div>
 
         <div className="habitoo-dash-toolbar__right">
-          <Link to="/publier" className="habitoo-dash-btn-primary">
+          <button
+            type="button"
+            className="habitoo-dash-btn-primary"
+            onClick={handleStartCreate}
+          >
             <Plus size={14} />
-            <span>Publier un nouveau mandat</span>
-          </Link>
+            <span>Publier une annonce</span>
+          </button>
         </div>
       </div>
 
-      {/* Liste complète des annonces */}
+      {/* Liste complète des annonces sans colonne Performances */}
       <div className="habitoo-dash-card" style={{ padding: '0', overflow: 'hidden' }}>
         <table className="habitoo-dash-table">
           <thead>
@@ -116,7 +181,6 @@ export const ProPropertiesView = ({ onOpenCreditsModal }) => {
               <th>Bien</th>
               <th>Catégorie</th>
               <th>Prix</th>
-              <th>Performances</th>
               <th>Statut</th>
               <th style={{ textAlign: 'right' }}>Actions</th>
             </tr>
@@ -145,22 +209,6 @@ export const ProPropertiesView = ({ onOpenCreditsModal }) => {
                 {/* Prix */}
                 <td>
                   <strong className="habitoo-dash-table-price">{prop.price}</strong>
-                </td>
-
-                {/* Performances */}
-                <td>
-                  <div className="habitoo-dash-table-metrics">
-                    <div className="habitoo-dash-table-metrics__row">
-                      <span><Eye size={12} /> {prop.views.toLocaleString('fr-FR')} vues</span>
-                      <span><MessageSquare size={12} /> {prop.inquiries} contacts</span>
-                    </div>
-                    <div className="habitoo-dash-table-score-bar">
-                      <div
-                        className="habitoo-dash-table-score-fill"
-                        style={{ width: `${prop.score}%` }}
-                      />
-                    </div>
-                  </div>
                 </td>
 
                 {/* Statut */}

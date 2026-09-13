@@ -406,7 +406,7 @@ export const PublishPropertyPage = () => {
           onClick={() => setStep(1)}
         >
           <div className="step-circle">{step > 1 ? <Check size={11} /> : '1'}</div>
-          <span className="step-name">Lieu & Titre</span>
+          <span className="step-name">Lieu et Titre</span>
         </button>
 
         <div className="publish-stepper-line" />
@@ -428,7 +428,7 @@ export const PublishPropertyPage = () => {
           onClick={() => setStep(3)}
         >
           <div className="step-circle">3</div>
-          <span className="step-name">Photos & Contact</span>
+          <span className="step-name">Photos et Contact</span>
         </button>
       </div>
 
@@ -705,7 +705,7 @@ export const PublishPropertyPage = () => {
               onClick={() => setStep(3)}
               className="btn-primary compact-action-btn"
             >
-              <span>Photos & Contact</span>
+              <span>Photos et Contact</span>
               <ArrowRight size={13} />
             </button>
           </div>
@@ -1040,7 +1040,7 @@ export const PublishPropertyPage = () => {
                     </div>
                   </div>
                   <div className="preview-charges-box">
-                    <span className="charges-caption">Charges & entretien</span>
+                    <span className="charges-caption">Charges et entretien</span>
                     <span className="charges-value">Inclus</span>
                   </div>
                 </div>
@@ -1095,7 +1095,7 @@ export const PublishPropertyPage = () => {
               <div className="preview-section-card">
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
                   <h3 className="preview-section-title" style={{ margin: 0 }}>
-                    Commodités & Équipements
+                    Commodités et Équipements
                   </h3>
                   <span style={{ fontSize: '0.72rem', color: 'var(--graphite-gray)', fontWeight: 600 }}>
                     {formData.amenities.length} prestation(s)

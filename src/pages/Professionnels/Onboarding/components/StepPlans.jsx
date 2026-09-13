@@ -167,7 +167,7 @@ export const StepPlans = ({
               <span className="habitoo-plan-currency">FCFA</span>
             </div>
             <p className="habitoo-plan-period">
-              {isAnnual ? 'Par an (29 160 / mois)' : 'Par mois • Agences & Flottes'}
+              {isAnnual ? 'Par an (29 160 / mois)' : 'Par mois • Agences et Flottes'}
             </p>
           </div>
 
