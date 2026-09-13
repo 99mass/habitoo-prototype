@@ -7,7 +7,10 @@ import {
   MapPin, 
   CheckCircle2, 
   Sparkles,
-  CalendarDays
+  CalendarDays,
+  Plus,
+  Trash2,
+  X
 } from 'lucide-react';
 
 const UPCOMING_VISITS = [
@@ -100,6 +103,47 @@ export const ProVisitsView = () => {
   const [days, setDays] = useState(DAYS);
   const [visitDuration, setVisitDuration] = useState('45');
   const [savedFeedback, setSavedFeedback] = useState(false);
+
+  // État d'ajout de créneau personnalisé
+  const [isAddingSlot, setIsAddingSlot] = useState(false);
+  const [newSlotLabel, setNewSlotLabel] = useState('');
+  const [newSlotStart, setNewSlotStart] = useState('08:30');
+  const [newSlotEnd, setNewSlotEnd] = useState('10:30');
+  const [slotError, setSlotError] = useState('');
+
+  const handleAddSlot = (e) => {
+    e.preventDefault();
+    if (!newSlotStart || !newSlotEnd) {
+      setSlotError('Veuillez renseigner les heures de début et fin.');
+      return;
+    }
+    if (newSlotStart >= newSlotEnd) {
+      setSlotError("L'heure de fin doit être postérieure à l'heure de début.");
+      return;
+    }
+    setSlotError('');
+    const newId = `slot-custom-${Date.now()}`;
+    const label = newSlotLabel.trim() || `Créneau ${newSlotStart}`;
+    const newSlot = {
+      id: newId,
+      label,
+      time: `${newSlotStart} - ${newSlotEnd}`,
+      active: true,
+      custom: true
+    };
+    setSlots(prev => [...prev, newSlot]);
+    setIsAddingSlot(false);
+    setNewSlotLabel('');
+    setNewSlotStart('08:30');
+    setNewSlotEnd('10:30');
+    triggerFeedback();
+  };
+
+  const handleDeleteSlot = (e, slotId) => {
+    e.stopPropagation();
+    setSlots(prev => prev.filter(s => s.id !== slotId));
+    triggerFeedback();
+  };
 
   const toggleSlot = (id) => {
     setSlots(prev => prev.map(s => s.id === id ? { ...s, active: !s.active } : s));
@@ -251,7 +295,92 @@ export const ProVisitsView = () => {
 
             {/* Créneaux */}
             <div className="habitoo-dash-avail-section">
-              <label className="habitoo-dash-avail-label">Créneaux horaires proposés :</label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <label className="habitoo-dash-avail-label" style={{ margin: 0 }}>Créneaux horaires proposés :</label>
+                {!isAddingSlot && (
+                  <button
+                    type="button"
+                    onClick={() => setIsAddingSlot(true)}
+                    className="habitoo-dash-btn-add-slot-trigger"
+                    title="Définir un nouveau créneau de visite"
+                  >
+                    <Plus size={13} />
+                    <span>Nouveau créneau</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Formulaire d'ajout en ligne */}
+              {isAddingSlot && (
+                <form onSubmit={handleAddSlot} className="habitoo-dash-add-slot-card">
+                  <div className="habitoo-dash-add-slot-header">
+                    <span className="habitoo-dash-add-slot-title">Ajouter un créneau de visite</span>
+                    <button
+                      type="button"
+                      onClick={() => { setIsAddingSlot(false); setSlotError(''); }}
+                      className="habitoo-dash-add-slot-close"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+
+                  <div className="habitoo-dash-add-slot-field">
+                    <label className="habitoo-dash-add-slot-label">Libellé du créneau</label>
+                    <input
+                      type="text"
+                      className="habitoo-dash-add-slot-input"
+                      placeholder="Ex: Matinée VIP, Début d'après-midi, Fin de journée..."
+                      value={newSlotLabel}
+                      onChange={(e) => setNewSlotLabel(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="habitoo-dash-add-slot-times-row">
+                    <div className="habitoo-dash-add-slot-time-col">
+                      <label className="habitoo-dash-add-slot-label">Heure de début *</label>
+                      <input
+                        type="time"
+                        className="habitoo-dash-add-slot-input"
+                        value={newSlotStart}
+                        onChange={(e) => setNewSlotStart(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="habitoo-dash-add-slot-time-col">
+                      <label className="habitoo-dash-add-slot-label">Heure de fin *</label>
+                      <input
+                        type="time"
+                        className="habitoo-dash-add-slot-input"
+                        value={newSlotEnd}
+                        onChange={(e) => setNewSlotEnd(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  {slotError && (
+                    <span className="habitoo-dash-add-slot-error">{slotError}</span>
+                  )}
+
+                  <div className="habitoo-dash-add-slot-actions">
+                    <button
+                      type="button"
+                      onClick={() => { setIsAddingSlot(false); setSlotError(''); }}
+                      className="habitoo-dash-btn-ghost habitoo-dash-btn-add-slot-cancel"
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      type="submit"
+                      className="habitoo-dash-btn-primary habitoo-dash-btn-add-slot-submit"
+                    >
+                      Enregistrer ce créneau
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {/* Grille des créneaux actifs / inactifs */}
               <div className="habitoo-dash-slots-grid" style={{ marginTop: '8px' }}>
                 {slots.map((slot) => (
                   <div
@@ -268,6 +397,14 @@ export const ProVisitsView = () => {
                       <span className="habitoo-dash-slot-card__name">{slot.label}</span>
                       <strong className="habitoo-dash-slot-card__time">{slot.time}</strong>
                     </div>
+                    <button
+                      type="button"
+                      className="habitoo-dash-slot-delete-btn"
+                      onClick={(e) => handleDeleteSlot(e, slot.id)}
+                      title="Supprimer ce créneau"
+                    >
+                      <Trash2 size={13} />
+                    </button>
                   </div>
                 ))}
               </div>

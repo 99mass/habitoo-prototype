@@ -1397,6 +1397,164 @@
   border-color: #1A1A1A;
 }
 
+.habitoo-dash-btn-add-slot-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #1A1A1A;
+  background: #F3F4F6;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 4px 9px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.habitoo-dash-btn-add-slot-trigger:hover {
+  background: #E5E7EB;
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.habitoo-dash-add-slot-card {
+  background: #FFFFFF;
+  border: 1px solid #1A1A1A;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: proFadeIn 0.15s ease-out;
+}
+
+.habitoo-dash-add-slot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #F0F2F5;
+  padding-bottom: 6px;
+}
+
+.habitoo-dash-add-slot-title {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #1A1A1A;
+}
+
+.habitoo-dash-add-slot-close {
+  background: transparent;
+  border: none;
+  color: #6B7280;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.habitoo-dash-add-slot-close:hover {
+  color: #1A1A1A;
+  background: #F3F4F6;
+}
+
+.habitoo-dash-add-slot-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.habitoo-dash-add-slot-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #4B5563;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.habitoo-dash-add-slot-input {
+  border: 1px solid #D1D5DB;
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-size: 0.76rem;
+  color: #1A1A1A;
+  background: #FFFFFF;
+  outline: none;
+  font-family: inherit;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
+}
+
+.habitoo-dash-add-slot-input:focus {
+  border-color: #1A1A1A;
+  box-shadow: 0 0 0 1px #1A1A1A;
+}
+
+.habitoo-dash-add-slot-times-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.habitoo-dash-add-slot-time-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.habitoo-dash-add-slot-error {
+  font-size: 0.68rem;
+  color: #DC2626;
+  font-weight: 500;
+}
+
+.habitoo-dash-add-slot-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.habitoo-dash-btn-add-slot-cancel {
+  padding: 5px 10px;
+  font-size: 0.72rem;
+  border-radius: 4px;
+  border: 1px solid #E5E7EB;
+  background: transparent;
+  color: #4B5563;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.habitoo-dash-btn-add-slot-cancel:hover {
+  background: #F3F4F6;
+  color: #1A1A1A;
+}
+
+.habitoo-dash-btn-add-slot-submit {
+  padding: 5px 12px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 4px;
+  background: #1A1A1A;
+  color: #FFFFFF;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease;
+}
+
+.habitoo-dash-btn-add-slot-submit:hover {
+  background: #2D3748;
+}
+
 .habitoo-dash-slots-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1413,6 +1571,7 @@
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.12s ease;
+  position: relative;
 }
 
 .habitoo-dash-slot-card:hover {
@@ -1433,6 +1592,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .habitoo-dash-slot-card--active .habitoo-dash-slot-checkbox {
@@ -1449,6 +1609,8 @@
 .habitoo-dash-slot-card__content {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-width: 0;
 }
 
 .habitoo-dash-slot-card__name {
@@ -1461,6 +1623,27 @@
   font-size: 0.78rem;
   font-weight: 700;
   color: #1A1A1A;
+}
+
+.habitoo-dash-slot-delete-btn {
+  background: transparent;
+  border: none;
+  color: #9CA3AF;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.habitoo-dash-slot-delete-btn:hover {
+  opacity: 1;
+  color: #DC2626;
+  background: rgba(220, 38, 38, 0.08);
 }
 
 .habitoo-dash-avail-footer {
@@ -7315,4 +7498,367 @@
   .pro-mobile-only {
     display: block !important;
   }
+}
+
+/* ==========================================================================
+   AGENCE SIDEBAR VIEW (Desktop prestige layout)
+   ========================================================================== */
+
+/* Agence Desktop Layout */
+@media (min-width: 1025px) {
+  .habitoo-dash-shell--agence {
+    display: flex;
+    flex-direction: row;
+    min-height: 100vh;
+    background-color: #F8F9FA;
+    align-items: stretch;
+  }
+
+  .habitoo-dash-content-wrapper--with-sidebar {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .habitoo-dash-content-wrapper--with-sidebar .habitoo-dash-top-header__container {
+    max-width: 100%;
+    padding: 0 32px;
+  }
+
+  .habitoo-dash-content-wrapper--with-sidebar .habitoo-dash-top-header__left {
+    display: none;
+  }
+
+  .habitoo-dash-content-wrapper--with-sidebar .habitoo-dash-container {
+    max-width: 100%;
+    padding: 24px 32px;
+  }
+
+  .habitoo-agency-sidebar {
+    width: 260px;
+    min-width: 260px;
+    max-width: 260px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    background: #FFFFFF;
+    border-right: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 16px;
+    box-sizing: border-box;
+    z-index: 90;
+    overflow-y: auto;
+  }
+}
+
+/* Agence Mobile & Tablet (< 1025px) : Masquage strict de la sidebar */
+@media (max-width: 1024px) {
+  .habitoo-agency-sidebar {
+    display: none !important;
+  }
+
+  .habitoo-dash-shell--agence {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .habitoo-dash-content-wrapper--with-sidebar {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+/* Composants internes de la sidebar */
+.habitoo-agency-sidebar__header {
+  display: flex;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  margin-bottom: 14px;
+}
+
+.habitoo-agency-sidebar__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.habitoo-agency-sidebar__logo-img {
+  height: 28px;
+  width: auto;
+  object-fit: contain;
+}
+
+.habitoo-agency-sidebar__pro-tag {
+  background: #1A1A1A;
+  color: #FFFFFF;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.habitoo-agency-sidebar__agency-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #F9FAFB;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+
+.habitoo-agency-sidebar__agency-avatar-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.habitoo-agency-sidebar__agency-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.habitoo-agency-sidebar__agency-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.habitoo-agency-sidebar__agency-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.habitoo-agency-sidebar__agency-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.65rem;
+  color: #047857;
+  font-weight: 600;
+}
+
+.habitoo-agency-sidebar__cta-wrap {
+  margin-bottom: 16px;
+}
+
+.habitoo-agency-sidebar__btn-new-property {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #1A1A1A;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  padding: 9px 14px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.habitoo-agency-sidebar__btn-new-property:hover {
+  background: #2D3748;
+}
+
+.habitoo-agency-sidebar__btn-new-property:active {
+  transform: translateY(1px);
+}
+
+.habitoo-agency-sidebar__nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.habitoo-agency-sidebar__nav-section-title {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9CA3AF;
+  font-weight: 700;
+  margin-bottom: 8px;
+  padding-left: 6px;
+}
+
+.habitoo-agency-sidebar__nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.habitoo-agency-sidebar__nav-li {
+  margin: 0;
+  padding: 0;
+}
+
+.habitoo-agency-sidebar__nav-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: #4B5563;
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.habitoo-agency-sidebar__nav-btn:hover {
+  background: #F3F4F6;
+  color: #1A1A1A;
+}
+
+.habitoo-agency-sidebar__nav-btn--active {
+  background: #1A1A1A;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.habitoo-agency-sidebar__nav-btn--active:hover {
+  background: #1A1A1A;
+  color: #FFFFFF;
+}
+
+.habitoo-agency-sidebar__nav-icon {
+  flex-shrink: 0;
+}
+
+.habitoo-agency-sidebar__nav-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.habitoo-agency-sidebar__nav-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: #E5E7EB;
+  color: #374151;
+}
+
+.habitoo-agency-sidebar__nav-badge--active {
+  background: rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+}
+
+.habitoo-agency-sidebar__credits-card {
+  background: #F9FAFB;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.habitoo-agency-sidebar__credits-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.habitoo-agency-sidebar__credits-icon-wrap {
+  width: 26px;
+  height: 26px;
+  border-radius: 5px;
+  background: #FEF3C7;
+  color: #D97706;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.habitoo-agency-sidebar__credits-title {
+  display: block;
+  font-size: 0.68rem;
+  color: #6B7280;
+  font-weight: 600;
+}
+
+.habitoo-agency-sidebar__credits-amount {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1A1A1A;
+}
+
+.habitoo-agency-sidebar__credits-hint {
+  font-size: 0.68rem;
+  color: #6B7280;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+
+.habitoo-agency-sidebar__credits-btn {
+  width: 100%;
+  padding: 6px 10px;
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 5px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #1A1A1A;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.habitoo-agency-sidebar__credits-btn:hover {
+  background: #1A1A1A;
+  color: #FFFFFF;
+  border-color: #1A1A1A;
+}
+
+.habitoo-agency-sidebar__footer {
+  padding-top: 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.habitoo-agency-sidebar__footer-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6B7280;
+  font-size: 0.7rem;
+}
+
+.habitoo-agency-sidebar__footer-icon {
+  flex-shrink: 0;
+}
+
+.habitoo-agency-sidebar__footer-role {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

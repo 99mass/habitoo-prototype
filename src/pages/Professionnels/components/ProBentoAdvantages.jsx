@@ -7,7 +7,7 @@ const ADVANTAGES = [
     title: 'Le Badge PRO Certifié',
     category: 'Autorité et Accréditation',
     icon: Award,
-    image: '/assets/pro-badge-certified.jpg',
+    image: '/assets/pro-badge-certified.png',
     alt: 'Insigne officiel Habitoo PRO Certifié et accréditation professionnelle',
     description: 'Un gage immédiat de crédibilité auprès des acquéreurs et locataires. Vos annonces inspirent une confiance absolue dès le premier regard.',
   },

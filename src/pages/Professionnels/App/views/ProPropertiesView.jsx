@@ -87,10 +87,9 @@ export const ProPropertiesView = ({
   };
 
   const handleCancelCreate = () => {
+    setLocalIsCreating(false);
     if (onCancelNew) {
       onCancelNew();
-    } else {
-      setLocalIsCreating(false);
     }
   };
 

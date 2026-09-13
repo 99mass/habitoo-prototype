@@ -4,6 +4,7 @@ import { ProTopHeader } from './ProTopHeader';
 import { ProTabView } from './ProTabView';
 import { ProBottomNav } from './ProBottomNav';
 import { ProMoreDrawer } from './ProMoreDrawer';
+import { ProAgencySidebar } from './components/ProAgencySidebar';
 import { ProDashboardView } from './ProDashboardView';
 import { ProPropertiesView } from './views/ProPropertiesView';
 import { ProVisitsView } from './views/ProVisitsView';
@@ -50,13 +51,22 @@ export const ProDashboardLayout = () => {
   const activeTab = searchParams.get('tab') || 'overview';
   const actionParam = searchParams.get('action') || '';
 
-  const [persona, setPersona] = useState('demarcheur'); // 'demarcheur' | 'agence'
+  const personaParam = searchParams.get('persona');
+  const [persona, setPersona] = useState(personaParam === 'agence' ? 'agence' : 'demarcheur');
   const [credits, setCredits] = useState(45);
   const [propertiesList, setPropertiesList] = useState(INITIAL_PROPERTIES);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
 
   // État dynamique du profil synchronisé avec la navbar
-  const [userProfile, setUserProfile] = useState({
+  const [userProfile, setUserProfile] = useState(personaParam === 'agence' ? {
+    name: 'Ivoire Prestige Conseil',
+    avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80',
+    phone: '+225 27 22 44 55 66',
+    email: 'contact@ivoire-prestige.ci',
+    address: 'Immeuble Palm Club, 3ème étage, Boulevard Latrille',
+    city: 'Abidjan',
+    license: 'AGR-CI-2024-0892'
+  } : {
     name: 'Jean-Marc Kouassi',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
     phone: '+225 07 89 22 14 00',
@@ -72,11 +82,29 @@ export const ProDashboardLayout = () => {
   }, []);
 
   const handleSelectTab = (tabId, params = {}) => {
-    setSearchParams({ tab: tabId, ...params });
+    setSearchParams(prev => {
+      const next = new URLSearchParams();
+      const currentPersona = prev.get('persona') || persona;
+      if (currentPersona) {
+        next.set('persona', currentPersona);
+      }
+      next.set('tab', tabId);
+      Object.entries(params).forEach(([k, v]) => {
+        if (v !== null && v !== undefined && v !== '') {
+          next.set(k, v);
+        }
+      });
+      return next;
+    });
   };
 
   const handlePersonaChange = (newPersona) => {
     setPersona(newPersona);
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      next.set('persona', newPersona);
+      return next;
+    });
     if (newPersona === 'agence') {
       setUserProfile(prev => ({
         ...prev,
@@ -110,29 +138,47 @@ export const ProDashboardLayout = () => {
     }));
   };
 
+  const isAgency = persona === 'agence';
+
   return (
-    <div className="habitoo-dash-shell">
-      {/* 1. Bandeau supérieur institutionnel épuré (sans rôle sous le nom, sans bouton publier) */}
-      <ProTopHeader
-        persona={persona}
-        onPersonaChange={handlePersonaChange}
-        credits={credits}
-        onOpenCreditsModal={() => handleSelectTab('credits')}
-        userProfile={userProfile}
-        onOpenMenu={() => setIsMoreOpen(true)}
-      />
+    <div className={`habitoo-dash-shell ${isAgency ? 'habitoo-dash-shell--agence' : ''}`}>
+      {/* Sidebar latérale Agence en mode Desktop */}
+      {isAgency && (
+        <ProAgencySidebar
+          activeTab={activeTab}
+          onSelectTab={handleSelectTab}
+          propertyCount={propertiesList.length}
+          visitCount={2}
+          credits={credits}
+          onOpenCreditsModal={() => handleSelectTab('credits')}
+          userProfile={userProfile}
+        />
+      )}
 
-      {/* 2. Barre d'onglets de prestige sticky (7 onglets épurés avec 'Profil') */}
-      <ProTabView
-        activeTab={activeTab}
-        onSelectTab={handleSelectTab}
-        persona={persona}
-        propertyCount={propertiesList.length}
-      />
+      <div className={`habitoo-dash-content-wrapper ${isAgency ? 'habitoo-dash-content-wrapper--with-sidebar' : ''}`}>
+        {/* 1. Bandeau supérieur institutionnel épuré */}
+        <ProTopHeader
+          persona={persona}
+          onPersonaChange={handlePersonaChange}
+          credits={credits}
+          onOpenCreditsModal={() => handleSelectTab('credits')}
+          userProfile={userProfile}
+          onOpenMenu={() => setIsMoreOpen(true)}
+        />
 
-      {/* 3. Conteneur Full Canvas */}
-      <main className="habitoo-dash-main">
-        <div className="habitoo-dash-container">
+        {/* 2. Barre d'onglets uniquement pour Démarcheur (sur Agence, la sidebar remplace la tabview sur desktop) */}
+        {!isAgency && (
+          <ProTabView
+            activeTab={activeTab}
+            onSelectTab={handleSelectTab}
+            persona={persona}
+            propertyCount={propertiesList.length}
+          />
+        )}
+
+        {/* 3. Conteneur Full Canvas */}
+        <main className="habitoo-dash-main">
+          <div className="habitoo-dash-container">
 
           {/* Onglet 1 : Vue d'ensemble (Cockpit de décision sans mandats) */}
           {activeTab === 'overview' && (
@@ -212,6 +258,7 @@ export const ProDashboardLayout = () => {
 
         </div>
       </main>
+      </div>
 
       {/* 4. Bottom Navigation Mobile PRO (visible uniquement sous 768px) */}
       <ProBottomNav
