@@ -55,10 +55,10 @@ export const MetricSparkCard = ({
         {sparkPoints.length > 1 && (
           <div className="habitoo-dash-metric-card__spark-wrap">
             <svg
-              width={sparkWidth}
-              height={sparkHeight}
               viewBox={`0 0 ${sparkWidth} ${sparkHeight}`}
               className="habitoo-dash-metric-card__spark-svg"
+              style={{ width: '100%', height: 'auto', maxWidth: `${sparkWidth}px` }}
+              preserveAspectRatio="xMidYMid meet"
             >
               <defs>
                 <linearGradient id={fillGradientId} x1="0" y1="0" x2="0" y2="1">

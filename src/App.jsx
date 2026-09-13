@@ -85,10 +85,17 @@ const AppContent = () => {
                 ? 'calc(74px + env(safe-area-inset-bottom, 0px))' 
                 : isPublishPage
                   ? 'calc(80px + env(safe-area-inset-bottom, 0px))'
-                  : (isCheckoutPage || isProPage || isProTunnel || isProApp)
+                  : (isCheckoutPage || isProPage || isProTunnel)
                     ? '0px' 
-                    : 'calc(62px + env(safe-area-inset-bottom, 0px))'
+                    : isProApp
+                      ? '0px'
+                      : 'calc(62px + env(safe-area-inset-bottom, 0px))'
             };
+          }
+        }
+        @media (max-width: 768px) {
+          .app-main-content {
+            ${isProApp ? 'padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important;' : ''}
           }
         }
       `}</style>

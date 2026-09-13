@@ -391,15 +391,6 @@ export const Header = () => {
             Professionnels
           </a>
           <Link 
-            to="/pro/app/dashboard"
-            className="mobile-drawer-link"
-            style={{ color: '#F70000', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px' }}
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            <LayoutDashboard size={16} />
-            <span>Dashboard PRO (Démo)</span>
-          </Link>
-          <Link 
             to="/a-propos" 
             className={`mobile-drawer-link ${(location.pathname === '/a-propos' || location.pathname === '/about') ? 'active' : ''}`}
             onClick={() => setMobileMenuOpen(false)}

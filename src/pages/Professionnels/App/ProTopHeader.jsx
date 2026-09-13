@@ -1,19 +1,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  Zap, 
-  Plus, 
-  ShieldCheck, 
-  Building2, 
-  User 
+import {
+  Zap,
+  Plus,
+  ShieldCheck,
+  Building2,
+  User,
+  Menu
 } from 'lucide-react';
 
-export const ProTopHeader = ({ 
-  persona = 'demarcheur', 
-  onPersonaChange, 
-  credits = 45, 
+export const ProTopHeader = ({
+  persona = 'demarcheur',
+  onPersonaChange,
+  credits = 45,
   onOpenCreditsModal,
-  userProfile
+  userProfile,
+  onOpenMenu
 }) => {
   // Profil par défaut selon le persona, surchargeable par userProfile
   const defaultProfile = persona === 'agence' ? {
@@ -36,22 +38,22 @@ export const ProTopHeader = ({
   return (
     <header className="habitoo-dash-top-header">
       <div className="habitoo-dash-top-header__container">
-        
+
         {/* Section Gauche : Logo Noir Habitoo + Badge PRO */}
         <div className="habitoo-dash-top-header__left">
           <Link to="/professionnels" className="habitoo-dash-logo" title="Retour au portail Habitoo">
-            <img 
-              src="/assets/Code_Generated_Image (3).png" 
-              alt="Habitoo PRO" 
+            <img
+              src="/assets/Code_Generated_Image (3).png"
+              alt="Habitoo PRO"
               className="habitoo-dash-logo-img"
             />
             <span className="habitoo-dash-logo__tag">PRO</span>
           </Link>
         </div>
 
-        {/* Section Droite : Commutateur Persona démo, Crédits et Profil */}
+        {/* Section Droite : Commutateur Persona démo, Crédits, Profil et Hamburger Mobile */}
         <div className="habitoo-dash-top-header__right">
-          
+
           {/* Commutateur Persona Démo (Démarcheur vs Agence) */}
           <div className="habitoo-dash-persona-switcher" title="Basculez entre les vues pour tester l'interface">
             <button
@@ -75,7 +77,13 @@ export const ProTopHeader = ({
           <div className="habitoo-dash-divider-v" />
 
           {/* Widget Solde Crédits Boost */}
-          <div className="habitoo-dash-credits-widget">
+          <div
+            className="habitoo-dash-credits-widget"
+            onClick={onOpenCreditsModal}
+            role="button"
+            tabIndex={0}
+            title="Acheter des crédits de visibilité"
+          >
             <div className="habitoo-dash-credits-info">
               <span className="habitoo-dash-credits-label">Crédits Boost</span>
               <div className="habitoo-dash-credits-amount">
@@ -86,7 +94,10 @@ export const ProTopHeader = ({
             <button
               type="button"
               className="habitoo-dash-btn-add-credits"
-              onClick={onOpenCreditsModal}
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenCreditsModal && onOpenCreditsModal();
+              }}
               title="Acheter des crédits de visibilité"
             >
               <Plus size={12} />
@@ -96,8 +107,14 @@ export const ProTopHeader = ({
 
           <div className="habitoo-dash-divider-v" />
 
-          {/* Carte Profil Agent avec Badge PRO officiel (sans sous-titre de fonction) */}
-          <div className="habitoo-dash-agent-card">
+          {/* Carte Profil Agent avec Badge PRO officiel */}
+          <div
+            className="habitoo-dash-agent-card"
+            onClick={onOpenMenu}
+            role="button"
+            tabIndex={0}
+            title="Mon profil PRO"
+          >
             <img
               src={profile.avatar}
               alt={profile.name}
@@ -113,9 +130,21 @@ export const ProTopHeader = ({
             </div>
           </div>
 
+          {/* Bouton Hamburger Mobile (affiché en responsive) */}
+          <button
+            type="button"
+            className="habitoo-dash-mobile-hamburger"
+            onClick={onOpenMenu}
+            aria-label="Ouvrir le menu de navigation"
+            title="Menu principal"
+          >
+            <Menu size={22} />
+          </button>
+
         </div>
 
       </div>
     </header>
   );
 };
+

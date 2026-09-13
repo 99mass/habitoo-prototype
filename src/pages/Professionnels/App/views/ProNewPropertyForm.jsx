@@ -1,22 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
 import L from 'leaflet';
-import { 
-  MapPin, 
-  ArrowLeft, 
-  ArrowRight, 
-  CheckCircle2, 
-  Check, 
-  Plus, 
-  Minus, 
-  X, 
-  ChevronDown, 
-  ChevronLeft, 
-  ChevronRight, 
-  Bed, 
-  Bath, 
-  Maximize2, 
-  ShieldCheck, 
-  Zap, 
+import {
+  MapPin,
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  Check,
+  Plus,
+  Minus,
+  X,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Bed,
+  Bath,
+  Maximize2,
+  ShieldCheck,
+  Zap,
   Upload,
   Image as ImageIcon,
   Sparkles,
@@ -136,9 +136,9 @@ const PropertyMiniMap = ({ coordinates, address, neighborhood, city }) => {
   );
 };
 
-export const ProNewPropertyForm = ({ 
-  onCancel, 
-  onPublish, 
+export const ProNewPropertyForm = ({
+  onCancel,
+  onPublish,
   currentCredits = 45,
   userProfile
 }) => {
@@ -366,11 +366,11 @@ export const ProNewPropertyForm = ({
   // Composant du formulaire de saisie (utilisé sur desktop sticky et dans le tiroir mobile)
   const renderFormProcess = () => (
     <div className="publish-process-card">
-      
+
       {/* Stepper Navigation Ultra-Fin (Exactement comme la capture) */}
       <div className="publish-stepper-bar">
-        <button 
-          type="button" 
+        <button
+          type="button"
           className={`publish-stepper-btn ${step === 1 ? 'active' : step > 1 ? 'done' : ''}`}
           onClick={() => setStep(1)}
         >
@@ -380,8 +380,8 @@ export const ProNewPropertyForm = ({
 
         <div className="publish-stepper-line" />
 
-        <button 
-          type="button" 
+        <button
+          type="button"
           className={`publish-stepper-btn ${step === 2 ? 'active' : step > 2 ? 'done' : ''}`}
           onClick={() => setStep(2)}
         >
@@ -391,8 +391,8 @@ export const ProNewPropertyForm = ({
 
         <div className="publish-stepper-line" />
 
-        <button 
-          type="button" 
+        <button
+          type="button"
           className={`publish-stepper-btn ${step === 3 ? 'active' : ''}`}
           onClick={() => setStep(3)}
         >
@@ -404,7 +404,7 @@ export const ProNewPropertyForm = ({
       {/* STEP 1: LIEU ET TITRE (CONFORME 1:1 À LA CAPTURE D'ÉCRAN) */}
       {step === 1 && (
         <div className="publish-step-body animate-fadeIn">
-          
+
           {/* Opération Toggle: À Louer / À Vendre */}
           <div className="compact-form-row">
             <label className="compact-label" style={{ margin: 0 }}>Opération :</label>
@@ -519,7 +519,7 @@ export const ProNewPropertyForm = ({
       {/* STEP 2: CARACTÉRISTIQUES ET COMMODITÉS */}
       {step === 2 && (
         <div className="publish-step-body animate-fadeIn">
-          
+
           {/* Prix et Superficie */}
           <div className="publish-grid-2">
             <div className="compact-field">
@@ -611,8 +611,8 @@ export const ProNewPropertyForm = ({
           {/* Commodités et Équipements Multi-Select */}
           <div className="compact-field" ref={amenitiesDropdownRef} style={{ position: 'relative' }}>
             <label className="compact-label">Commodités et Équipements</label>
-            
-            <div 
+
+            <div
               className="multi-select-trigger-box"
               onClick={() => setIsAmenitiesOpen(!isAmenitiesOpen)}
             >
@@ -689,7 +689,7 @@ export const ProNewPropertyForm = ({
       {/* STEP 3: TÉLÉVERSEMENT PHOTOS ET CONTACT PRO */}
       {step === 3 && (
         <form onSubmit={handleSubmit} className="publish-step-body animate-fadeIn">
-          
+
           {/* Galerie de photos */}
           <div className="compact-field">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
@@ -699,7 +699,7 @@ export const ProNewPropertyForm = ({
               </span>
             </div>
 
-            <div 
+            <div
               className={`compact-upload-dropzone ${isDraggingOver ? 'dragging' : ''}`}
               onClick={() => photoInputRef.current?.click()}
               onDragOver={handleDragOver}
@@ -711,11 +711,11 @@ export const ProNewPropertyForm = ({
               <span style={{ fontSize: '0.68rem', color: 'var(--graphite-gray)' }}>
                 Glissez-déposez ou cliquez pour ajouter des fichiers
               </span>
-              <input 
-                type="file" 
-                ref={photoInputRef} 
-                style={{ display: 'none' }} 
-                accept="image/*" 
+              <input
+                type="file"
+                ref={photoInputRef}
+                style={{ display: 'none' }}
+                accept="image/*"
                 multiple
                 onChange={handlePhotosUpload}
               />
@@ -723,8 +723,8 @@ export const ProNewPropertyForm = ({
 
             <div className="uploaded-thumbnails-bar">
               {formData.images.map((imgUrl, i) => (
-                <div 
-                  key={i} 
+                <div
+                  key={i}
                   className={`thumb-item ${activePhotoIndex === i ? 'is-active' : ''}`}
                   onClick={() => setActivePhotoIndex(i)}
                   title={i === 0 ? "Photo de couverture" : "Cliquer pour afficher dans la prévisualisation"}
@@ -758,7 +758,7 @@ export const ProNewPropertyForm = ({
           {/* Contact PRO : Informations du compte professionnel */}
           <div className="compact-field" style={{ marginTop: '12px' }}>
 
-            
+
             <div className="pro-contact-locked-card">
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <img src={agentAvatar} alt={agentName} className="pro-contact-avatar" />
@@ -779,7 +779,7 @@ export const ProNewPropertyForm = ({
           </div>
 
           {/* Option Boost instantané */}
-          <div 
+          <div
             style={{
               backgroundColor: formData.autoBoost ? '#FEF2F2' : '#F9FAFB',
               border: `1.5px solid ${formData.autoBoost ? 'var(--primary-red)' : 'var(--border-color)'}`,
@@ -857,7 +857,7 @@ export const ProNewPropertyForm = ({
 
   return (
     <div className="pro-publish-wrapper animate-fadeIn">
-      
+
       {/* Barre de retour */}
       <div className="pro-publish-topbar">
         <button
@@ -872,20 +872,20 @@ export const ProNewPropertyForm = ({
 
       {/* DISPOSITION EN 2 COLONNES EXACTE DE PUBLISHPROPERTYPAGE */}
       <div className="publish-layout-grid">
-        
+
         {/* ========================================================= */}
         {/* COLONNE GAUCHE : PRÉVISUALISATION EN DIRECT TYPE DETAIL   */}
         {/* ========================================================= */}
         <div className="publish-preview-col">
           <div className="preview-rich-container">
-            
+
             {/* 1. CAROUSEL PHOTO & BADGES */}
             <div className="preview-carousel-card">
               <div className="preview-carousel-main-wrap">
-                <img 
-                  src={currentPhotoUrl} 
-                  alt={formData.title} 
-                  className="preview-carousel-main-img" 
+                <img
+                  src={currentPhotoUrl}
+                  alt={formData.title}
+                  className="preview-carousel-main-img"
                 />
 
                 {/* Badges Transaction & Statut Professionnel */}
@@ -906,16 +906,16 @@ export const ProNewPropertyForm = ({
                 {/* Flèches de navigation photo */}
                 {formData.images.length > 1 && (
                   <>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="preview-carousel-arrow prev"
                       onClick={handlePrevPhoto}
                       title="Photo précédente"
                     >
                       <ChevronLeft size={18} />
                     </button>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       className="preview-carousel-arrow next"
                       onClick={handleNextPhoto}
                       title="Photo suivante"
@@ -1056,7 +1056,7 @@ export const ProNewPropertyForm = ({
               <h3 className="preview-section-title">
                 Localisation
               </h3>
-              <PropertyMiniMap 
+              <PropertyMiniMap
                 coordinates={currentCoordinates}
                 address={formData.neighborhood ? `${formData.neighborhood}, ${formData.city}` : formData.city}
                 neighborhood={formData.neighborhood}
@@ -1067,10 +1067,10 @@ export const ProNewPropertyForm = ({
             {/* 7. CONTACT & PROFIL DU PROFESSIONNEL */}
             <div className="preview-section-card preview-contact-card">
               <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                <img 
-                  src={agentAvatar} 
-                  alt={agentName} 
-                  className="preview-agent-avatar" 
+                <img
+                  src={agentAvatar}
+                  alt={agentName}
+                  className="preview-agent-avatar"
                 />
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
@@ -1100,8 +1100,8 @@ export const ProNewPropertyForm = ({
       {/* EXPÉRIENCE RESPONSIVE MOBILE (< 1024px) : DRAWER LATÉRAL  */}
       {/* ========================================================= */}
       {!isSubmitting && (
-        <button 
-          type="button" 
+        <button
+          type="button"
           className="mobile-drawer-trigger"
           onClick={() => setIsMobileDrawerOpen(true)}
           aria-label="Modifier l'annonce"
@@ -1122,8 +1122,8 @@ export const ProNewPropertyForm = ({
                   Paramètres de l'annonce
                 </span>
               </div>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="mobile-drawer-close-btn"
                 onClick={() => setIsMobileDrawerOpen(false)}
                 title="Fermer le volet"
@@ -1131,7 +1131,7 @@ export const ProNewPropertyForm = ({
                 <X size={18} />
               </button>
             </div>
-            
+
             <div className="mobile-drawer-body">
               {renderFormProcess()}
             </div>

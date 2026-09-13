@@ -6,7 +6,10 @@ import {
   CheckCircle2, 
   Download, 
   CreditCard,
-  Building 
+  Building,
+  Eye,
+  X,
+  ShieldCheck
 } from 'lucide-react';
 
 const REVENUE_STATS = {
@@ -55,6 +58,7 @@ const TRANSACTIONS = [
 ];
 
 export const ProRevenueView = () => {
+  const [selectedTx, setSelectedTx] = useState(null);
   const [isTransferring, setIsTransferring] = useState(false);
   const [transferDone, setTransferDone] = useState(false);
 
@@ -112,8 +116,8 @@ export const ProRevenueView = () => {
 
       </div>
 
-      {/* Historique des Règlements */}
-      <div className="habitoo-dash-card" style={{ marginTop: '20px', padding: '0', overflow: 'hidden' }}>
+      {/* Desktop : Historique des Règlements en tableau (masqué sur mobile) */}
+      <div className="habitoo-dash-card pro-desktop-only" style={{ marginTop: '20px', padding: '0', overflow: 'hidden' }}>
         <div className="habitoo-dash-card__header" style={{ padding: '18px 22px 14px 22px', borderBottom: '1px solid #F0F2F5', marginBottom: '0' }}>
           <div>
             <h3 className="habitoo-dash-card__title">Historique des Règlements</h3>
@@ -168,6 +172,152 @@ export const ProRevenueView = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Mobile : Cartes des règlements (masquées sur desktop) */}
+      <div className="pro-mobile-only" style={{ marginTop: '16px' }}>
+        <div style={{ marginBottom: '12px' }}>
+          <h3 className="habitoo-dash-card__title" style={{ fontSize: '1rem', margin: '0 0 2px 0' }}>Historique des Règlements</h3>
+          <p className="habitoo-dash-card__subtitle" style={{ fontSize: '0.74rem', margin: 0 }}>
+            Encaissements d'honoraires et virements sortants
+          </p>
+        </div>
+
+        <div className="pro-tx-cards">
+          {TRANSACTIONS.map((tx) => (
+            <div
+              key={tx.id}
+              className="pro-tx-card"
+              onClick={() => setSelectedTx(tx)}
+              role="button"
+              tabIndex={0}
+              title="Appuyez pour voir le reçu de la transaction"
+            >
+              <div className="pro-tx-card__header">
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <h4 className="pro-tx-card__title">{tx.title}</h4>
+                  <span className="pro-tx-card__date">{tx.date} • Réf. {tx.ref}</span>
+                </div>
+                <span className={`habitoo-dash-tx-type ${tx.type === 'CREDIT' ? 'habitoo-dash-tx-type--in' : 'habitoo-dash-tx-type--out'}`}>
+                  {tx.type === 'CREDIT' ? <ArrowDownLeft size={12} /> : <ArrowUpRight size={12} />}
+                  {tx.type === 'CREDIT' ? 'Entrée' : 'Virement'}
+                </span>
+              </div>
+
+              <div className="pro-tx-card__bottom">
+                <div className="pro-tx-card__amount-wrap">
+                  <strong className={`pro-tx-card__amount ${tx.type === 'CREDIT' ? 'pro-tx-card__amount--in' : 'pro-tx-card__amount--out'}`}>
+                    {tx.amount > 0 ? `+${tx.amount.toLocaleString('fr-FR')}` : tx.amount.toLocaleString('fr-FR')} FCFA
+                  </strong>
+                  <span className={`habitoo-dash-table-badge ${tx.status === 'DISPONIBLE' ? 'habitoo-dash-table-badge--boosted' : 'habitoo-dash-table-badge--active'}`}>
+                    {tx.status === 'DISPONIBLE' ? 'Disponible' : 'Viré'}
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  className="pro-tx-card__btn-details"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedTx(tx);
+                  }}
+                  title="Voir les détails et le reçu"
+                >
+                  <Eye size={13} />
+                  <span>Voir détails</span>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Modale Reçu de Règlement PRO */}
+      {selectedTx && (
+        <div className="habitoo-dash-modal-overlay" onClick={() => setSelectedTx(null)}>
+          <div
+            className="habitoo-dash-modal pro-tx-modal"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="pro-tx-modal-title"
+          >
+            <button
+              type="button"
+              className="habitoo-dash-modal__close pro-tx-modal__close"
+              onClick={() => setSelectedTx(null)}
+              aria-label="Fermer la modale"
+            >
+              <X size={18} />
+            </button>
+
+            {/* En-tête du Reçu */}
+            <div className="pro-tx-modal__header">
+              <div className="pro-tx-modal__badge-row">
+                <span className={`habitoo-dash-tx-type ${selectedTx.type === 'CREDIT' ? 'habitoo-dash-tx-type--in' : 'habitoo-dash-tx-type--out'}`}>
+                  {selectedTx.type === 'CREDIT' ? <ArrowDownLeft size={12} /> : <ArrowUpRight size={12} />}
+                  {selectedTx.type === 'CREDIT' ? 'Encaissement Entrant' : 'Virement Sortant'}
+                </span>
+                <span className={`habitoo-dash-table-badge ${selectedTx.status === 'DISPONIBLE' ? 'habitoo-dash-table-badge--boosted' : 'habitoo-dash-table-badge--active'}`}>
+                  {selectedTx.status === 'DISPONIBLE' ? 'Fonds Disponibles' : 'Virement Exécuté'}
+                </span>
+              </div>
+
+              <strong className={`pro-tx-modal__amount ${selectedTx.type === 'CREDIT' ? 'pro-tx-modal__amount--in' : 'pro-tx-modal__amount--out'}`}>
+                {selectedTx.amount > 0 ? `+${selectedTx.amount.toLocaleString('fr-FR')}` : selectedTx.amount.toLocaleString('fr-FR')} FCFA
+              </strong>
+              <p id="pro-tx-modal-title" className="pro-tx-modal__title">{selectedTx.title}</p>
+            </div>
+
+            {/* Corps du Reçu */}
+            <div className="pro-tx-modal__body">
+              <div className="pro-tx-modal__section">
+                <span className="pro-tx-modal__section-title">Informations de la transaction</span>
+                <div className="pro-tx-modal__info-grid">
+                  <div className="pro-tx-modal__info-item">
+                    <span className="pro-tx-modal__info-label">Référence</span>
+                    <strong className="pro-tx-modal__info-value font-mono">{selectedTx.ref}</strong>
+                  </div>
+                  <div className="pro-tx-modal__info-item">
+                    <span className="pro-tx-modal__info-label">Date d'opération</span>
+                    <span className="pro-tx-modal__info-value">{selectedTx.date}</span>
+                  </div>
+                  <div className="pro-tx-modal__info-item">
+                    <span className="pro-tx-modal__info-label">Garantie & Séquestre</span>
+                    <span className="pro-tx-modal__info-value" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: '#059669' }}>
+                      <ShieldCheck size={13} /> Sécurisé Habitoo PRO
+                    </span>
+                  </div>
+                  <div className="pro-tx-modal__info-item">
+                    <span className="pro-tx-modal__info-label">Mode d'exécution</span>
+                    <span className="pro-tx-modal__info-value">
+                      {selectedTx.type === 'CREDIT' ? 'Compte séquestre notarié' : 'Virement instantané BOA CI'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Pied d'action */}
+            <div className="pro-tx-modal__footer">
+              <button
+                type="button"
+                className="habitoo-dash-btn-primary pro-tx-modal__download-btn"
+                onClick={() => alert('Téléchargement du reçu officiel Habitoo PRO (PDF)...')}
+              >
+                <Download size={14} />
+                <span>Télécharger le reçu</span>
+              </button>
+              <button
+                type="button"
+                className="pro-tx-modal__close-btn"
+                onClick={() => setSelectedTx(null)}
+              >
+                Fermer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

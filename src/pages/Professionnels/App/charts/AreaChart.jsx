@@ -114,6 +114,28 @@ export const AreaChart = () => {
     setHoveredIdx(null);
   };
 
+  // Touch handler pour mobile (même logique que mouse)
+  const handleTouch = (e) => {
+    if (!containerRef.current) return;
+    const touch = e.touches[0];
+    if (!touch) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const touchX = touch.clientX - rect.left;
+    const ratio = touchX / rect.width;
+    const svgX = ratio * width;
+
+    let closest = 0;
+    let minDist = Infinity;
+    viewsPoints.forEach((pt, i) => {
+      const dist = Math.abs(pt.x - svgX);
+      if (dist < minDist) {
+        minDist = dist;
+        closest = i;
+      }
+    });
+    setHoveredIdx(closest);
+  };
+
   const activeItem = hoveredIdx !== null ? data[hoveredIdx] : null;
   const activeViewsPt = hoveredIdx !== null ? viewsPoints[hoveredIdx] : null;
   const activeVisitsPt = hoveredIdx !== null ? visitsPoints[hoveredIdx] : null;
@@ -170,6 +192,9 @@ export const AreaChart = () => {
         ref={containerRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
+        onTouchStart={handleTouch}
+        onTouchMove={handleTouch}
+        onTouchEnd={handleMouseLeave}
       >
         <svg
           viewBox={`0 0 ${width} ${height}`}
@@ -279,8 +304,8 @@ export const AreaChart = () => {
             className="habitoo-dash-chart-tooltip"
             style={{
               left: `${(activeViewsPt.x / width) * 100}%`,
-              transform: activeViewsPt.x > width * 0.75 
-                ? 'translateX(-100%) translateY(-100%)' 
+              transform: activeViewsPt.x > width * 0.75
+                ? 'translateX(-100%) translateY(-100%)'
                 : 'translateX(0) translateY(-100%)'
             }}
           >

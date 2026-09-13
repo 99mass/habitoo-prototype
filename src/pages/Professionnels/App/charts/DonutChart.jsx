@@ -27,8 +27,8 @@ export const DonutChart = () => {
     return { ...sec, strokeDasharray, strokeDashoffset };
   });
 
-  const activeSector = hoveredSector 
-    ? SECTORS_DATA.find(s => s.id === hoveredSector) 
+  const activeSector = hoveredSector
+    ? SECTORS_DATA.find(s => s.id === hoveredSector)
     : SECTORS_DATA[0]; // Leader par défaut (Riviera Golf 42%)
 
   return (
@@ -46,10 +46,9 @@ export const DonutChart = () => {
         {/* Visualisation Donut SVG pure */}
         <div className="habitoo-dash-donut-canvas-wrap">
           <svg
-            width={size}
-            height={size}
             viewBox={`0 0 ${size} ${size}`}
             className="habitoo-dash-donut-svg"
+            style={{ width: '100%', maxWidth: `${size}px`, height: 'auto' }}
           >
             {/* Cercle de fond discret */}
             <circle
@@ -80,6 +79,7 @@ export const DonutChart = () => {
                   className="habitoo-dash-donut-segment"
                   onMouseEnter={() => setHoveredSector(sec.id)}
                   onMouseLeave={() => setHoveredSector(null)}
+                  onTouchStart={() => setHoveredSector(sec.id)}
                 />
               );
             })}

@@ -98,7 +98,7 @@ export const ProHeader = () => {
         <div className="habitoo-pro-mobile-drawer">
           <nav className="habitoo-pro-mobile-nav">
             <a href="#hero" onClick={(e) => scrollToSection(e, 'hero')} className="habitoo-pro-mobile-link">
-              Accueil PRO
+              Accueil
             </a>
             <a href="#avantages" onClick={(e) => scrollToSection(e, 'avantages')} className="habitoo-pro-mobile-link">
               Avantages stratégiques
@@ -116,10 +116,6 @@ export const ProHeader = () => {
               FAQ
             </a>
             <div className="habitoo-pro-mobile-footer-actions">
-              <Link to="/pro/app/dashboard" className="habitoo-pro-btn-secondary" style={{ width: '100%', marginBottom: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                <LayoutDashboard size={16} />
-                <span>Dashboard PRO (Démo)</span>
-              </Link>
               <Link to="/pro/inscription" className="habitoo-pro-btn-primary" style={{ width: '100%' }}>
                 <span>Rejoindre Habitoo PRO</span>
                 <ArrowRight size={16} />

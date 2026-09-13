@@ -95,6 +95,7 @@ const DAYS = [
 
 export const ProVisitsView = () => {
   const [subTab, setSubTab] = useState('UPCOMING'); // 'UPCOMING' | 'PAST'
+  const [mobileSection, setMobileSection] = useState('PLANNING'); // 'PLANNING' | 'AVAILABILITY'
   const [slots, setSlots] = useState(DEFAULT_SLOTS);
   const [days, setDays] = useState(DAYS);
   const [visitDuration, setVisitDuration] = useState('45');
@@ -120,11 +121,31 @@ export const ProVisitsView = () => {
   return (
     <div className="habitoo-dash-section">
       
+      {/* Sélecteur d'onglets mobile (< 768px) pour basculer Planning vs Disponibilités */}
+      <div className="pro-visits-mobile-tabs">
+        <button
+          type="button"
+          className={`pro-visits-mobile-tab-btn ${mobileSection === 'PLANNING' ? 'pro-visits-mobile-tab-btn--active' : ''}`}
+          onClick={() => setMobileSection('PLANNING')}
+        >
+          <Calendar size={14} />
+          <span>Planning ({UPCOMING_VISITS.length})</span>
+        </button>
+        <button
+          type="button"
+          className={`pro-visits-mobile-tab-btn ${mobileSection === 'AVAILABILITY' ? 'pro-visits-mobile-tab-btn--active' : ''}`}
+          onClick={() => setMobileSection('AVAILABILITY')}
+        >
+          <Clock size={14} />
+          <span>Disponibilités</span>
+        </button>
+      </div>
+
       {/* 2 Colonnes : Planning des Visites vs Gestionnaire de Disponibilité */}
       <div className="habitoo-dash-visits-page-grid">
         
         {/* Colonne Gauche : Liste des visites avec sous-onglets */}
-        <div className="habitoo-dash-card">
+        <div className={`habitoo-dash-card ${mobileSection !== 'PLANNING' ? 'pro-visits-col--hidden-mobile' : ''}`}>
           <div className="habitoo-dash-card__header">
             <div>
               <h3 className="habitoo-dash-card__title">Planning des Visites</h3>
@@ -193,7 +214,7 @@ export const ProVisitsView = () => {
         </div>
 
         {/* Colonne Droite : Plages de disponibilité de l'agent */}
-        <div className="habitoo-dash-card">
+        <div className={`habitoo-dash-card ${mobileSection !== 'AVAILABILITY' ? 'pro-visits-col--hidden-mobile' : ''}`}>
           <div className="habitoo-dash-card__header">
             <div>
               <div className="habitoo-dash-title-with-sync">

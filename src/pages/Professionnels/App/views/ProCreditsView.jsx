@@ -438,7 +438,7 @@ export const ProCreditsView = ({
                 ) : (
                   <>
                     <ShieldCheck size={16} />
-                    <span>Payer {selectedPack.priceFormatted} et Créditer</span>
+                    <span>Payer {selectedPack.priceFormatted}</span>
                   </>
                 )}
               </button>

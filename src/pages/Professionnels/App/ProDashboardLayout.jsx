@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ProTopHeader } from './ProTopHeader';
 import { ProTabView } from './ProTabView';
+import { ProBottomNav } from './ProBottomNav';
+import { ProMoreDrawer } from './ProMoreDrawer';
 import { ProDashboardView } from './ProDashboardView';
 import { ProPropertiesView } from './views/ProPropertiesView';
 import { ProVisitsView } from './views/ProVisitsView';
@@ -10,8 +12,8 @@ import { ProCreditsView } from './views/ProCreditsView';
 import { ProProfileView } from './views/ProProfileView';
 import { ProSettingsView } from './views/ProSettingsView';
 import { PROPERTIES_DATA } from '../../../data/propertiesData';
-import { 
-  GraduationCap, 
+import {
+  GraduationCap,
   ArrowRight
 } from 'lucide-react';
 import './ProDashboard.css';
@@ -51,6 +53,7 @@ export const ProDashboardLayout = () => {
   const [persona, setPersona] = useState('demarcheur'); // 'demarcheur' | 'agence'
   const [credits, setCredits] = useState(45);
   const [propertiesList, setPropertiesList] = useState(INITIAL_PROPERTIES);
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
 
   // État dynamique du profil synchronisé avec la navbar
   const [userProfile, setUserProfile] = useState({
@@ -65,7 +68,7 @@ export const ProDashboardLayout = () => {
 
   useEffect(() => {
     document.title = "Habitoo PRO | dashboard"
-  
+
   }, []);
 
   const handleSelectTab = (tabId, params = {}) => {
@@ -116,6 +119,7 @@ export const ProDashboardLayout = () => {
         credits={credits}
         onOpenCreditsModal={() => handleSelectTab('credits')}
         userProfile={userProfile}
+        onOpenMenu={() => setIsMoreOpen(true)}
       />
 
       {/* 2. Barre d'onglets de prestige sticky (7 onglets épurés avec 'Profil') */}
@@ -129,7 +133,7 @@ export const ProDashboardLayout = () => {
       {/* 3. Conteneur Full Canvas */}
       <main className="habitoo-dash-main">
         <div className="habitoo-dash-container">
-          
+
           {/* Onglet 1 : Vue d'ensemble (Cockpit de décision sans mandats) */}
           {activeTab === 'overview' && (
             <ProDashboardView
@@ -208,6 +212,25 @@ export const ProDashboardLayout = () => {
 
         </div>
       </main>
+
+      {/* 4. Bottom Navigation Mobile PRO (visible uniquement sous 768px) */}
+      <ProBottomNav
+        activeTab={activeTab}
+        onSelectTab={handleSelectTab}
+        onOpenMore={() => setIsMoreOpen(true)}
+        visitCount={2}
+      />
+
+      {/* 5. Tiroir "Plus" Mobile PRO (drawer latéral droit) */}
+      <ProMoreDrawer
+        isOpen={isMoreOpen}
+        onClose={() => setIsMoreOpen(false)}
+        onSelectTab={handleSelectTab}
+        persona={persona}
+        onPersonaChange={handlePersonaChange}
+        userProfile={userProfile}
+        credits={credits}
+      />
     </div>
   );
 };
