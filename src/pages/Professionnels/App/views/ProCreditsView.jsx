@@ -14,6 +14,7 @@ import {
   Download,
   AlertCircle
 } from 'lucide-react';
+import { OperatorSelectorGrid, CardBrandLogos } from '../../../../components/PaymentOperatorLogos';
 
 const CREDIT_PACKS = [
   {
@@ -48,13 +49,6 @@ const CREDIT_PACKS = [
     popular: false,
     savingBadge: 'Économisez 35%'
   }
-];
-
-const OPERATORS = [
-  { id: 'Wave', label: 'Wave', color: '#1dc4e9' },
-  { id: 'Orange Money', label: 'Orange Money', color: '#ff6600' },
-  { id: 'MTN MoMo', label: 'MTN MoMo', color: '#ffcc00' },
-  { id: 'Moov Money', label: 'Moov Money', color: '#0055a5' }
 ];
 
 export const ProCreditsView = ({ 
@@ -327,20 +321,12 @@ export const ProCreditsView = ({
               {/* Option Mobile Money */}
               {paymentMethod === 'mobile_money' && (
                 <div className="habitoo-dash-mobile-money-fields">
-                  <label className="habitoo-dash-label">Sélectionnez votre opérateur</label>
-                  <div className="habitoo-dash-operator-grid">
-                    {OPERATORS.map(op => (
-                      <button
-                        key={op.id}
-                        type="button"
-                        className={`habitoo-dash-operator-btn ${mobileOperator === op.id ? 'habitoo-dash-operator-btn--active' : ''}`}
-                        onClick={() => setMobileOperator(op.id)}
-                      >
-                        <span className="habitoo-dash-operator-dot" style={{ backgroundColor: op.color }} />
-                        <span>{op.label}</span>
-                      </button>
-                    ))}
-                  </div>
+                  <label className="habitoo-dash-label">Sélectionnez votre opérateur Mobile Money</label>
+                  <OperatorSelectorGrid
+                    selectedOperator={mobileOperator}
+                    onSelectOperator={setMobileOperator}
+                    compact={true}
+                  />
 
                   <div className="habitoo-dash-form-group" style={{ marginTop: '16px' }}>
                     <label className="habitoo-dash-label" htmlFor="recharge-phone">
@@ -381,7 +367,12 @@ export const ProCreditsView = ({
                   </div>
 
                   <div className="habitoo-dash-form-group">
-                    <label className="habitoo-dash-label" htmlFor="card-number">Numéro de carte</label>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                      <label className="habitoo-dash-label" htmlFor="card-number" style={{ margin: 0 }}>
+                        Numéro de carte
+                      </label>
+                      <CardBrandLogos />
+                    </div>
                     <input
                       id="card-number"
                       type="text"

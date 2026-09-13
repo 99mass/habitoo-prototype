@@ -1,0 +1,139 @@
+/* ==========================================================================
+   PaymentOperatorLogos.css
+   Style officiel et épuré pour les logos d'opérateurs de paiement
+   Strictement conforme aux directives .antigravity/rules.md
+   ========================================================================== */
+
+.habitoo-operators-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+  width: 100%;
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+
+.habitoo-operators-grid--compact {
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 8px;
+}
+
+.habitoo-op-card-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 8px 8px 8px;
+  background-color: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  outline: none;
+  min-height: 70px;
+  position: relative;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.habitoo-operators-grid--compact .habitoo-op-card-btn {
+  min-height: 58px;
+  padding: 8px 6px 6px 6px;
+}
+
+.habitoo-op-card-btn:hover {
+  border-color: rgba(0, 0, 0, 0.25);
+  background-color: #FAFAFA;
+}
+
+.habitoo-op-card-btn:focus-visible {
+  border-color: #111111;
+  box-shadow: 0 0 0 2px rgba(17, 17, 17, 0.1);
+}
+
+/* État Actif / Sélectionné : Élégant et Sober */
+.habitoo-op-card-btn--active {
+  background-color: #F8F9FA;
+  border: 1.5px solid #111111 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Conteneur de logo */
+.habitoo-op-logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  width: 100%;
+  margin-bottom: 6px;
+}
+
+.habitoo-operators-grid--compact .habitoo-op-logo-wrap {
+  height: 22px;
+  margin-bottom: 4px;
+}
+
+.habitoo-op-logo-img {
+  max-height: 100%;
+  max-width: 90%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+}
+
+/* Typographie sobre du libellé */
+.habitoo-op-card-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #1A1A1A;
+  letter-spacing: 0.01em;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.habitoo-operators-grid--compact .habitoo-op-card-label {
+  font-size: 0.6875rem;
+}
+
+/* Logos des cartes bancaires */
+.habitoo-card-brand-logos {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.habitoo-card-brand-img {
+  height: 18px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.habitoo-card-brand-img--visa {
+  height: 16px;
+}
+
+.habitoo-card-brand-img--mastercard {
+  height: 20px;
+}
+
+/* Responsive Mobile (375px et moins) */
+@media (max-width: 480px) {
+  .habitoo-operators-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .habitoo-op-card-btn {
+    padding: 8px 4px;
+    min-height: 60px;
+  }
+
+  .habitoo-op-logo-wrap {
+    height: 24px;
+  }
+
+  .habitoo-op-card-label {
+    font-size: 0.6875rem;
+  }
+}

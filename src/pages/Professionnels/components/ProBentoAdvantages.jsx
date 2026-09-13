@@ -7,50 +7,45 @@ const ADVANTAGES = [
     title: 'Le Badge PRO Certifié',
     category: 'Autorité et Accréditation',
     icon: Award,
-    image: '/assets/team/aminata-cisse.jpg',
-    alt: 'Conseillère immobilière certifiée Habitoo',
+    image: '/assets/pro-badge-certified.jpg',
+    alt: 'Insigne officiel Habitoo PRO Certifié et accréditation professionnelle',
     description: 'Un gage immédiat de crédibilité auprès des acquéreurs et locataires. Vos annonces inspirent une confiance absolue dès le premier regard.',
-    highlight: 'Badge vérifié sur toutes vos annonces'
   },
   {
     id: 'dashboard',
     title: 'Dashboard Tout-en-un',
     category: 'Analytique et Performance',
     icon: BarChart3,
-    image: '/assets/pro-dashboard-analytics.jpg',
-    alt: 'Tableau de bord professionnel avec graphiques et indicateurs clés',
+    image: '/assets/pro-dashboard-screen.jpg',
+    alt: 'Tableau de bord professionnel Habitoo avec indicateurs clés et gestion des mandats',
     description: 'Suivi en temps réel des vues, prises de contact qualifiées et synchronisation simplifiée de votre calendrier de visites.',
-    highlight: 'Graphiques circulaires et métriques directes'
   },
   {
     id: 'commissions',
     title: 'Commissions Automatiques',
     category: 'Transactions et Règlements',
     icon: CheckCircle2,
-    image: '/assets/pro-commissions-money.jpg',
-    alt: 'Encaissement des commissions et transactions sécurisées',
+    image: '/assets/pro-commissions-transaction.jpg',
+    alt: 'Notification de virement et règlement sécurisé des commissions',
     description: 'Encaissement garanti, transparent et rapide de vos honoraires directement via Mobile Money avec reçus officiels horodatés.',
-    highlight: 'Paiements directs et traçabilité totale'
   },
   {
     id: 'academie',
     title: 'Habitoo Académie',
     category: 'Formation et Montée en Compétence',
     icon: GraduationCap,
-    image: '/assets/pro-academy-learning.jpg',
-    alt: 'Masterclass et formation d\'excellence en immobilier',
+    image: '/assets/pro-academy-simple.jpg',
+    alt: 'Interface épurée de masterclass immobilière Habitoo Académie',
     description: 'Formations professionnelles continues : réglementation foncière, valorisation photographique de mandats et négociation terrain.',
-    highlight: 'Accès illimité aux masterclasses'
   },
   {
     id: 'visibilite',
     title: 'Visibilité Maximale',
     category: 'Boost et Algorithme',
     icon: Sparkles,
-    image: '/assets/pro-visibility-boost.jpg',
-    alt: 'Visibilité prioritaire et mise en avant des biens',
+    image: '/assets/pro-boost-algorithm.jpg',
+    alt: 'Algorithme de boost et propulsion d\'annonce en tête de recherche',
     description: 'Options de boost pour propulser vos biens prioritaires en tête des résultats de recherche, en vitrine d\'accueil et en alertes acquéreurs.',
-    highlight: 'Positionnement prioritaire garanti'
   }
 ];
 
@@ -90,11 +85,6 @@ export const ProBentoAdvantages = () => {
                   </div>
                   <h3 className="habitoo-pro-card-title">{adv.title}</h3>
                   <p className="habitoo-pro-card-desc">{adv.description}</p>
-                  
-                  <div className="habitoo-pro-card-footer">
-                    <span>{adv.highlight}</span>
-                    <ArrowRight size={15} />
-                  </div>
                 </div>
               </div>
             );

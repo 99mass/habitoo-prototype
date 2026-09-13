@@ -64,11 +64,6 @@ export const ProHeader = () => {
 
         {/* Right Actions */}
         <div className="habitoo-pro-header-actions">
-          {/* Bouton Prototypage direct vers Dashboard PRO */}
-          <Link to="/pro/app/dashboard" className="habitoo-pro-dashboard-quicklink" title="Accès direct Dashboard PRO (Démo)">
-            <LayoutDashboard size={14} />
-            <span>Dashboard PRO</span>
-          </Link>
 
           <Link to="/" className="habitoo-pro-back-link" title="Accéder au portail grand public">
             <span>Espace Particuliers</span>

@@ -15,6 +15,7 @@ import {
   Info,
   ExternalLink
 } from 'lucide-react';
+import { OperatorSelectorGrid, CardBrandLogos } from '../../components/PaymentOperatorLogos';
 import './Checkout.css';
 
 export const CheckoutPage = () => {
@@ -239,19 +240,11 @@ export const CheckoutPage = () => {
                     {paymentMethod === 'mobile_money' && (
                       <form onSubmit={handleConfirmPayment}>
                         <div className="checkout-field-group">
-                          <label className="checkout-label">Sélectionner votre opérateur</label>
-                          <div className="checkout-operator-pills">
-                            {['Wave', 'Orange Money', 'MTN MoMo', 'Moov Money'].map(op => (
-                              <button
-                                key={op}
-                                type="button"
-                                onClick={() => setMobileOperator(op)}
-                                className={`checkout-operator-btn ${mobileOperator === op ? 'checkout-operator-btn--active' : ''}`}
-                              >
-                                {op}
-                              </button>
-                            ))}
-                          </div>
+                          <label className="checkout-label">Sélectionner votre opérateur Mobile Money</label>
+                          <OperatorSelectorGrid
+                            selectedOperator={mobileOperator}
+                            onSelectOperator={setMobileOperator}
+                          />
                         </div>
 
                         <div className="checkout-field-group">
@@ -296,7 +289,10 @@ export const CheckoutPage = () => {
                         </div>
 
                         <div className="checkout-field-group">
-                          <label className="checkout-label">Numéro de carte</label>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                            <label className="checkout-label" style={{ margin: 0 }}>Numéro de carte</label>
+                            <CardBrandLogos />
+                          </div>
                           <div style={{ position: 'relative' }}>
                             <input
                               type="text"
@@ -306,10 +302,6 @@ export const CheckoutPage = () => {
                               placeholder="4532 •••• •••• ••••"
                               required
                             />
-                            <div style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', display: 'flex', gap: '6px' }}>
-                              <span style={{ fontSize: '0.6875rem', fontWeight: 800, color: 'var(--graphite-gray)', letterSpacing: '0.5px' }}>VISA</span>
-                              <span style={{ fontSize: '0.6875rem', fontWeight: 800, color: 'var(--graphite-gray)', letterSpacing: '0.5px' }}>MC</span>
-                            </div>
                           </div>
                         </div>
 

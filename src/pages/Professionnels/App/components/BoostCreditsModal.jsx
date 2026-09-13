@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Zap, Check, ShieldCheck, CreditCard, Smartphone } from 'lucide-react';
+import { OperatorSelectorGrid } from '../../../../components/PaymentOperatorLogos';
 
 const PACKS = [
   { id: 'pack-5', credits: 5, price: '15 000 FCFA', perUnit: '3 000 F / crédit', popular: false },
@@ -83,19 +84,12 @@ export const BoostCreditsModal = ({ isOpen, onClose, currentCredits = 45, onRech
 
             {/* Méthode de paiement */}
             <div className="habitoo-dash-pay-section">
-              <label className="habitoo-dash-pay-label">Opérateur Mobile Money :</label>
-              <div className="habitoo-dash-ops-row">
-                {['WAVE', 'ORANGE', 'MTN', 'MOOV'].map(op => (
-                  <button
-                    key={op}
-                    type="button"
-                    onClick={() => setOperator(op)}
-                    className={`habitoo-dash-op-btn ${operator === op ? 'habitoo-dash-op-btn--active' : ''}`}
-                  >
-                    {op}
-                  </button>
-                ))}
-              </div>
+              <label className="habitoo-dash-pay-label">Sélectionnez votre opérateur Mobile Money :</label>
+              <OperatorSelectorGrid
+                selectedOperator={operator}
+                onSelectOperator={setOperator}
+                compact={true}
+              />
 
               <div className="habitoo-dash-phone-wrap">
                 <Smartphone size={15} />

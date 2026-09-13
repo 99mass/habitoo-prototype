@@ -8,8 +8,7 @@ import {
   Info,
   AlertCircle
 } from 'lucide-react';
-
-const OPERATORS = ['Wave', 'Orange Money', 'MTN MoMo', 'Moov Money'];
+import { OperatorSelectorGrid, CardBrandLogos } from '../../../../components/PaymentOperatorLogos';
 
 export const StepCheckout = ({ formData, updateFormData, onPrev, onCompletePayment }) => {
   const [paymentMethod, setPaymentMethod] = useState(formData.paymentMethod || 'mobile_money');
@@ -132,20 +131,12 @@ export const StepCheckout = ({ formData, updateFormData, onPrev, onCompletePayme
           <>
             <div className="habitoo-field-group">
               <label className="habitoo-field-label">
-                Opérateur
+                Sélectionnez votre opérateur Mobile Money
               </label>
-              <div className="habitoo-momo-pills-row">
-                {OPERATORS.map((op) => (
-                  <button
-                    key={op}
-                    type="button"
-                    className={`habitoo-momo-pill ${mobileOperator === op ? 'habitoo-momo-pill--active' : ''}`}
-                    onClick={() => setMobileOperator(op)}
-                  >
-                    {op}
-                  </button>
-                ))}
-              </div>
+              <OperatorSelectorGrid
+                selectedOperator={mobileOperator}
+                onSelectOperator={setMobileOperator}
+              />
             </div>
 
             <div className="habitoo-field-group">
@@ -180,9 +171,12 @@ export const StepCheckout = ({ formData, updateFormData, onPrev, onCompletePayme
               </div>
 
               <div className="habitoo-field-group">
-                <label className="habitoo-field-label">
-                  Numéro de carte *
-                </label>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                  <label className="habitoo-field-label" style={{ margin: 0 }}>
+                    Numéro de carte *
+                  </label>
+                  <CardBrandLogos />
+                </div>
                 <input
                   type="text"
                   className="habitoo-field-input"

@@ -49,28 +49,6 @@ export const ProHero = () => {
               Voir les offres et forfaits
             </a>
           </div>
-
-          {/* Trust Metrics in Dark Glassmorphism */}
-          <div className="habitoo-pro-trust-row">
-            <div className="habitoo-pro-metric-pill">
-              <span className="habitoo-pro-metric-icon">
-                <ShieldCheck size={16} />
-              </span>
-              <span>Vérification officielle sous 48h</span>
-            </div>
-            <div className="habitoo-pro-metric-pill">
-              <span className="habitoo-pro-metric-icon">
-                <CreditCard size={16} />
-              </span>
-              <span>Commissions Mobile Money</span>
-            </div>
-            <div className="habitoo-pro-metric-pill">
-              <span className="habitoo-pro-metric-icon">
-                <Globe size={16} />
-              </span>
-              <span>Réseau actif : Côte d'Ivoire, RDC, Congo</span>
-            </div>
-          </div>
         </div>
       </div>
     </header>
