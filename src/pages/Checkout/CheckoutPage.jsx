@@ -180,10 +180,6 @@ export const CheckoutPage = () => {
           /* PASSERELLE DE PAIEMENT : 2 COLONNES                      */
           /* ========================================================= */
           <>
-            <div className="checkout-header">
-              <span className="checkout-pre-title">Transaction Sécurisée</span>
-              <h1 className="checkout-title">Finalisation de la réservation</h1>
-            </div>
 
             <div className="checkout-grid">
               
