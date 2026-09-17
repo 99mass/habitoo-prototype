@@ -862,6 +862,26 @@ export const PublishPropertyPage = () => {
                 onChange={(e) => setFormData({ ...formData, ownerEmail: e.target.value })}
               />
             </div>
+
+            {/* Avantages Particulier & Frais de Visite */}
+            <div style={{
+              padding: '12px 14px',
+              backgroundColor: 'rgba(22, 163, 74, 0.08)',
+              border: '1px solid rgba(22, 163, 74, 0.25)',
+              borderRadius: 'var(--radius-input, 10px)',
+              marginTop: '14px',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '10px'
+            }}>
+              <ShieldCheck size={18} color="#16a34a" style={{ flexShrink: 0, marginTop: '2px' }} />
+              <div style={{ fontSize: '0.78rem', color: '#166534', lineHeight: 1.4 }}>
+                <strong>Publication Particulier : 0 FCFA de frais de visite</strong>
+                <p style={{ margin: '2px 0 0 0', opacity: 0.9 }}>
+                  Vos acquéreurs et locataires vous contacteront directement. Aucun frais de visite ni séquestre bancaire n'est prélevé.
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Step 3 Footer */}
@@ -922,9 +942,12 @@ export const PublishPropertyPage = () => {
             </p>
 
             <div className="publish-success-actions">
-              <Link to="/recherche" className="btn-primary" style={{ padding: '10px 20px', justifyContent: 'center' }}>
-                <span>Voir les annonces en ligne</span>
+              <Link to="/mon-compte?tab=properties" className="btn-primary" style={{ padding: '10px 20px', justifyContent: 'center' }}>
+                <span>Gérer mes annonces & Booster</span>
                 <ArrowRight size={15} />
+              </Link>
+              <Link to="/recherche" className="btn-ghost-dark" style={{ padding: '8px 18px', fontSize: '0.8125rem', justifyContent: 'center' }}>
+                <span>Voir le catalogue</span>
               </Link>
               <button 
                 onClick={() => {

@@ -11,12 +11,14 @@ export const StepPersona = ({ formData, updateFormData, onNext }) => {
       
       {/* Header of Step */}
       <div className="habitoo-step-header">
-        <span className="habitoo-step-counter">Étape 01 sur 04</span>
+        <span className="habitoo-step-counter">
+          {formData.persona === 'demarcheur' ? 'Étape 01 sur 02' : 'Étape 01 sur 04'}
+        </span>
         <h1 className="habitoo-step-title">
           Votre profil professionnel
         </h1>
         <p className="habitoo-step-lead">
-          Sélectionnez votre modalité d'exercice pour adapter votre tableau de bord et vos pièces justificatives.
+          Sélectionnez votre modalité d'exercice.
         </p>
       </div>
 
@@ -45,10 +47,6 @@ export const StepPersona = ({ formData, updateFormData, onNext }) => {
             Négociateur autonome, mandataire individuel ou apporteur d'affaires de terrain.
           </p>
 
-          <div className="habitoo-role-tags">
-            <span className="habitoo-role-mini-tag">Commissions directes</span>
-            <span className="habitoo-role-mini-tag">Diffusion mobile</span>
-          </div>
         </div>
 
         {/* Role 2: Agence Immobilière */}
@@ -72,11 +70,6 @@ export const StepPersona = ({ formData, updateFormData, onNext }) => {
           <p className="habitoo-role-desc">
             Structure commerciale, cabinet de gestion ou promoteur gérant un portefeuille d'actifs.
           </p>
-
-          <div className="habitoo-role-tags">
-            <span className="habitoo-role-mini-tag">Multi-collaborateurs</span>
-            <span className="habitoo-role-mini-tag">Vitrine dédiée</span>
-          </div>
         </div>
 
       </div>

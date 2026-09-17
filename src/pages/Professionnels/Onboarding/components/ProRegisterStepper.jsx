@@ -1,18 +1,24 @@
 import React from 'react';
 import { Check } from 'lucide-react';
 
-const STEPS = [
+const AGENCY_STEPS = [
   { id: 1, number: '01', label: 'Profil', sub: 'Activité' },
   { id: 2, number: '02', label: 'Justificatifs', sub: 'Identité et Ville' },
   { id: 3, number: '03', label: 'Forfait', sub: 'Formule' },
   { id: 4, number: '04', label: 'Règlement', sub: 'Validation' }
 ];
 
-export const ProRegisterStepper = ({ currentStep, onStepClick }) => {
+const DEMARCHEUR_STEPS = [
+  { id: 1, number: '01', label: 'Profil', sub: 'Activité' },
+  { id: 2, number: '02', label: 'Justificatifs', sub: 'Identité & Ville' }
+];
+
+export const ProRegisterStepper = ({ currentStep, onStepClick, persona = 'demarcheur' }) => {
+  const steps = persona === 'agence' ? AGENCY_STEPS : DEMARCHEUR_STEPS;
   return (
     <div className="habitoo-reg-stepper" aria-label="Progression de l'inscription">
       <div className="habitoo-reg-stepper-inner">
-        {STEPS.map((step, idx) => {
+        {steps.map((step, idx) => {
           const isCompleted = currentStep > step.id;
           const isActive = currentStep === step.id;
           const isPending = currentStep < step.id;
@@ -45,7 +51,7 @@ export const ProRegisterStepper = ({ currentStep, onStepClick }) => {
                 </div>
               </div>
 
-              {idx < STEPS.length - 1 && (
+              {idx < steps.length - 1 && (
                 <div 
                   className={`habitoo-reg-step-line ${currentStep > step.id ? 'habitoo-reg-step-line--completed' : ''}`}
                   aria-hidden="true"

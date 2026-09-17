@@ -17,12 +17,14 @@ import {
   CreditCard, 
   Lock, 
   Phone, 
+  MessageCircle,
   X, 
   ChevronLeft,
   ChevronRight,
   Maximize,
   Building,
-  Navigation
+  Navigation,
+  Star
 } from 'lucide-react';
 
 // Leaflet Mini Map Component
@@ -144,7 +146,8 @@ export const PropertyDetailPage = () => {
     formatPrice, 
     isFavorite, 
     toggleFavorite, 
-    bookVisit
+    bookVisit,
+    userProperties
   } = useHabitoo();
 
   // Check if viewing preview from publish page
@@ -163,7 +166,7 @@ export const PropertyDetailPage = () => {
     }
   }
 
-  // Find property
+  // Find property in userProperties or PROPERTIES_DATA
   const property = isPreview && previewData
     ? {
         id: 'preview-card',
@@ -204,11 +207,15 @@ export const PropertyDetailPage = () => {
         isPro: previewData.userRole === 'AGENCE' || previewData.userRole === 'MANDATAIRE' || previewData.isPro === true,
         advertiserType: (previewData.userRole === 'AGENCE' || previewData.userRole === 'MANDATAIRE' || previewData.advertiserType === 'PRO') ? 'PRO' : 'PARTICULIER'
       }
-    : (PROPERTIES_DATA.find(p => p.id === id) || PROPERTIES_DATA[0]);
+    : ((userProperties && userProperties.find(p => p.id === id)) || PROPERTIES_DATA.find(p => p.id === id) || PROPERTIES_DATA[0]);
 
   const favorite = isFavorite(property.id);
   const isVente = property.category === 'VENTE';
   const isProListing = property.isPro ?? (property.advertiserType === 'PRO' || (property.agent?.agency && property.agent.agency !== 'Particulier' && !property.agent.agency.includes('Direct Propriétaire') && !property.agent.agency.includes('Propriétaire Direct')));
+  const isParticulierListing = !isProListing || property.advertiserType === 'PARTICULIER';
+  const ownerPhone = property.agent?.phone || property.ownerPhone || "+225 07 08 09 10 11";
+  const cleanPhoneForWa = ownerPhone.replace(/[^0-9]/g, '');
+  const ownerName = property.agent?.name || property.ownerName || "Propriétaire Déclarant";
 
 
   // Carousel & Lightbox States
@@ -227,6 +234,34 @@ export const PropertyDetailPage = () => {
     "14:30 - 15:30",
     "16:30 - 17:30"
   ];
+
+  // Créneaux personnalisés configurés par le propriétaire particulier
+  const customOwnerSlots = React.useMemo(() => {
+    try {
+      const savedSlots = localStorage.getItem('habitoo_user_avail_slots');
+      if (savedSlots) {
+        const parsed = JSON.parse(savedSlots);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map(s => s.start && s.end ? `${s.start} - ${s.end}` : s.time || '').filter(Boolean);
+        }
+      }
+    } catch (e) {}
+    return ['09:00 - 12:00', '14:00 - 17:00'];
+  }, []);
+
+  const customOwnerDays = React.useMemo(() => {
+    try {
+      const savedDays = localStorage.getItem('habitoo_user_avail_days');
+      if (savedDays) {
+        const parsed = JSON.parse(savedDays);
+        if (Array.isArray(parsed)) {
+          const activeDays = parsed.filter(d => d.active).map(d => d.label);
+          if (activeDays.length > 0) return activeDays.join(' · ');
+        }
+      }
+    } catch (e) {}
+    return 'Lun - Sam';
+  }, []);
 
   const handleBookingSubmit = (e) => {
     e.preventDefault();
@@ -658,82 +693,49 @@ export const PropertyDetailPage = () => {
             </div>
 
             {/* 6. AGENT & AGENCY CONTACT CARD */}
-            <div 
-              className="agency-contact-card"
-              style={{
-                backgroundColor: 'var(--surface-white)',
-                borderRadius: 'var(--radius-card)',
-                border: '1px solid var(--border-color)',
-                padding: '24px',
-                marginBottom: '36px',
-                boxShadow: 'var(--shadow-sm)'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                  <img 
-                    src={property.agent.avatar} 
-                    alt={property.agent.name} 
-                    style={{ width: '64px', height: '64px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--border-color)' }}
-                  />
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                      {isProListing ? (
-                        <span style={{ 
-                          display: 'inline-flex', 
-                          alignItems: 'center', 
-                          gap: '4px',
-                          padding: '3px 8px',
-                          borderRadius: '9999px',
-                          backgroundColor: '#2563EB',
-                          color: '#FFFFFF',
-                          fontSize: '0.7rem', 
-                          textTransform: 'uppercase', 
-                          letterSpacing: '0.5px', 
-                          fontWeight: 800 
-                        }}>
-                          <ShieldCheck size={12} strokeWidth={2.5} />
-                          Agence Professionnelle Partenaire
-                        </span>
-                      ) : (
-                        <span style={{ 
-                          display: 'inline-flex', 
-                          alignItems: 'center', 
-                          gap: '4px',
-                          padding: '3px 8px',
-                          borderRadius: '9999px',
-                          backgroundColor: 'rgba(0, 0, 0, 0.06)',
-                          color: 'var(--graphite-gray)',
-                          fontSize: '0.7rem', 
-                          textTransform: 'uppercase', 
-                          letterSpacing: '0.5px', 
-                          fontWeight: 700 
-                        }}>
-                          Annonce Particulier (Direct Propriétaire)
-                        </span>
-                      )}
-                    </div>
-                    <h4 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--obsidian-black)', margin: 0 }}>
-                      {property.agent.agency}
-                    </h4>
-                    <div style={{ fontSize: '0.875rem', color: 'var(--graphite-gray)', marginTop: '2px' }}>
-                      {isProListing ? (
-                        <>Conseiller dédié : <strong>{property.agent.name}</strong></>
-                      ) : (
-                        <>Contact direct : <strong>{property.agent.name}</strong></>
-                      )}
-                    </div>
+            <div className="agency-contact-card">
+              <div className="agency-card-layout">
+                <img 
+                  src={property.agent.avatar} 
+                  alt={property.agent.name} 
+                  className="agency-card-avatar"
+                />
+                <div className="agency-card-info">
+                  <div className="agency-card-badge-row">
+                    {isProListing ? (
+                      <span className="agency-partner-badge">
+                        <ShieldCheck size={12} strokeWidth={2.5} />
+                        <span>Agence Professionnelle Partenaire</span>
+                      </span>
+                    ) : (
+                      <span className="agency-direct-badge">
+                        <span>Annonce Directe</span>
+                      </span>
+                    )}
                   </div>
-                </div>
+                  <h4 className="agency-name-title">
+                    {property.agent.agency}
+                  </h4>
+                  <div className="agency-advisor-text">
+                    {isProListing ? (
+                      <>Conseiller dédié : <strong>{property.agent.name}</strong></>
+                    ) : (
+                      <>Contact direct : <strong>{property.agent.name}</strong></>
+                    )}
+                  </div>
 
-                <a 
-                  href={`tel:${property.agent.phone}`} 
-                  className="btn-dark"
-                  style={{ padding: '12px 20px', fontSize: '0.875rem', display: 'inline-flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}
-                >
-                  <Phone size={15} />
-                  <span>{isProListing ? `Contacter l'agence (${property.agent.phone})` : `Contacter le propriétaire (${property.agent.phone})`}</span>
-                </a>
+                  {isProListing && (
+                    <div className="agency-rating-row">
+                      <div className="agency-rating-pill">
+                        <Star size={11} fill="#D97706" color="#D97706" />
+                        <span>4.9 / 5</span>
+                      </div>
+                      <span className="agency-rating-count">
+                        (18 avis certifiés)
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -771,105 +773,196 @@ export const PropertyDetailPage = () => {
               zIndex: 50
             }}
           >
-            <form onSubmit={handleBookingSubmit}>
+            {isParticulierListing ? (
+              /* ========================================================= */
+              /* BLOC PARTICULIER : CONTACT DIRECT SANS FRAIS DE VISITE   */
+              /* ========================================================= */
+              <div className="pdp-particulier-booking-box">
+                {/* Header Particulier */}
+                <div style={{ marginBottom: '16px', paddingBottom: '14px', borderBottom: '2px solid var(--border-light)' }}>
               
-              {/* Header */}
-              <div style={{ marginBottom: '20px', paddingBottom: '16px', borderBottom: '2px solid var(--border-light)' }}>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary-red)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  {isVente ? "Acquisition" : "Réservation Directe"}
-                </span>
-                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.35rem', fontWeight: 700, marginTop: '2px' }}>
-                  Planifier une Visite
-                </h3>
-              </div>
+                  <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.3rem', fontWeight: 700, marginTop: '8px' }}>
+                    Contacter pour une visite
+                  </h3>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--graphite-gray)', marginTop: '4px', lineHeight: 1.4 }}>
+                    Échangez directement avec le propriétaire pour convenir d'une visite.
+                  </p>
+                </div>
 
-              {/* Calendar */}
-              <div className="form-group">
-                <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Calendar size={14} color="var(--primary-red)" />
-                  <span>Choisir la date</span>
-                </label>
-                <input
-                  type="date"
-                  className="form-input"
-                  value={visitDate}
-                  min="2025-02-28"
-                  onChange={(e) => setVisitDate(e.target.value)}
-                  required
-                />
-              </div>
+                {/* Coordonnées & Badge Propriétaire */}
+                <div style={{ 
+                  padding: '14px', 
+                  backgroundColor: 'var(--bg-main)', 
+                  borderRadius: 'var(--radius-input)', 
+                  border: '1px solid var(--border-color)',
+                  marginBottom: '16px'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                    <div style={{ 
+                      width: '40px', 
+                      height: '40px', 
+                      borderRadius: '50%', 
+                      backgroundColor: 'rgba(247,0,0,0.1)', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                      color: 'var(--primary-red)',
+                      fontWeight: 700,
+                      fontSize: '1rem'
+                    }}>
+                      {ownerName.charAt(0)}
+                    </div>
+                    <div>
+                      <strong style={{ display: 'block', fontSize: '0.875rem', color: 'var(--obsidian-black)' }}>{ownerName}</strong>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--graphite-gray)' }}>Propriétaire Déclarant</span>
+                    </div>
+                  </div>
 
-              {/* Time Slots */}
-              <div className="form-group">
-                <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Clock size={14} color="var(--primary-red)" />
-                  <span>Créneau horaire</span>
-                </label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                  {timeSlots.map(slot => (
-                    <button
-                      key={slot}
-                      type="button"
-                      onClick={() => setVisitTime(slot)}
-                      style={{
-                        padding: '8px 4px',
-                        borderRadius: 'var(--radius-input)',
-                        fontSize: '0.75rem',
-                        fontWeight: 600,
-                        border: visitTime === slot ? '2px solid var(--primary-red)' : '1px solid var(--border-color)',
-                        backgroundColor: visitTime === slot ? 'var(--soft-tint)' : 'var(--bg-main)',
-                        color: visitTime === slot ? 'var(--primary-red)' : 'var(--obsidian-black)',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      {slot}
-                    </button>
-                  ))}
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'space-between',
+                    padding: '8px 12px', 
+                    background: '#FFFFFF', 
+                    borderRadius: '6px', 
+                    border: '1px dashed var(--border-color)' 
+                  }}>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--graphite-gray)', fontWeight: 600 }}>Téléphone direct :</span>
+                    <strong style={{ fontSize: '0.875rem', color: 'var(--obsidian-black)' }}>{ownerPhone}</strong>
+                  </div>
+                </div>
+
+                {/* Créneaux suggérés */}
+                <div style={{ marginBottom: '18px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', fontSize: '0.75rem', fontWeight: 700, color: 'var(--obsidian-black)' }}>
+                    <Clock size={13} color="var(--primary-red)" />
+                    <span>Créneaux de visite ({customOwnerDays}) :</span>
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                    {customOwnerSlots.map((slotTime, idx) => (
+                      <span key={idx} style={{ fontSize: '0.72rem', padding: '4px 8px', background: 'var(--bg-main)', borderRadius: '4px', border: '1px solid var(--border-color)', color: 'var(--obsidian-black)', fontWeight: 600 }}>
+                        {slotTime}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* CTAs : Appel & WhatsApp */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <a 
+                    href="#"
+                    className="btn-primary"
+                    style={{ width: '100%', height: '46px', fontSize: '0.875rem', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                  >
+                    <Phone size={15} />
+                    <span>Contacter le propriétaire</span>
+                  </a>
                 </div>
               </div>
-
-              {/* Transaction Fee Row */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '14px 16px',
-                backgroundColor: 'var(--bg-main)',
-                borderRadius: 'var(--radius-input)',
-                border: '1px solid var(--border-color)',
-                marginTop: '16px',
-                marginBottom: '20px'
-              }}>
-                <div>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--graphite-gray)', display: 'block', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700 }}>
-                    Frais de réservation
+            ) : (
+              /* ========================================================= */
+              /* BLOC PRO (AGENCE / DÉMARCHEUR) : RÉSERVATION AVEC SÉQUESTRE */
+              /* ========================================================= */
+              <form onSubmit={handleBookingSubmit}>
+                
+                {/* Header */}
+                <div style={{ marginBottom: '20px', paddingBottom: '16px', borderBottom: '2px solid var(--border-light)' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary-red)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    {isVente ? "Acquisition" : "Réservation Directe"}
                   </span>
-                  <span style={{ fontSize: '0.8125rem', color: 'var(--obsidian-black)', fontWeight: 600 }}>
-                    Dossier et visite dédiée
+                  <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.35rem', fontWeight: 700, marginTop: '2px' }}>
+                    Planifier une Visite
+                  </h3>
+                </div>
+
+                {/* Calendar */}
+                <div className="form-group">
+                  <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Calendar size={14} color="var(--primary-red)" />
+                    <span>Choisir la date</span>
+                  </label>
+                  <input
+                    type="date"
+                    className="form-input"
+                    value={visitDate}
+                    min="2025-02-28"
+                    onChange={(e) => setVisitDate(e.target.value)}
+                    required
+                  />
+                </div>
+
+                {/* Time Slots */}
+                <div className="form-group">
+                  <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Clock size={14} color="var(--primary-red)" />
+                    <span>Créneau horaire</span>
+                  </label>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                    {timeSlots.map(slot => (
+                      <button
+                        key={slot}
+                        type="button"
+                        onClick={() => setVisitTime(slot)}
+                        style={{
+                          padding: '8px 4px',
+                          borderRadius: 'var(--radius-input)',
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          border: visitTime === slot ? '2px solid var(--primary-red)' : '1px solid var(--border-color)',
+                          backgroundColor: visitTime === slot ? 'var(--soft-tint)' : 'var(--bg-main)',
+                          color: visitTime === slot ? 'var(--primary-red)' : 'var(--obsidian-black)',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {slot}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Transaction Fee Row */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '14px 16px',
+                  backgroundColor: 'var(--bg-main)',
+                  borderRadius: 'var(--radius-input)',
+                  border: '1px solid var(--border-color)',
+                  marginTop: '16px',
+                  marginBottom: '20px'
+                }}>
+                  <div>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--graphite-gray)', display: 'block', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700 }}>
+                      Frais de réservation
+                    </span>
+                    <span style={{ fontSize: '0.8125rem', color: 'var(--obsidian-black)', fontWeight: 600 }}>
+                      Dossier et visite dédiée
+                    </span>
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', fontWeight: 700, color: 'var(--obsidian-black)' }}>
+                    10 000 FCFA
+                  </div>
+                </div>
+
+                {/* Submit CTA */}
+                <button
+                  type="submit"
+                  className="btn-primary"
+                  style={{ width: '100%', height: '48px', fontSize: '0.9375rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                >
+                  <Lock size={15} />
+                  <span>Poursuivre la transaction</span>
+                </button>
+
+                <div style={{ textAlign: 'center', marginTop: '12px' }}>
+                  <span style={{ fontSize: '0.6875rem', color: 'var(--graphite-gray)' }}>
+                    Paiement sécurisé multi-moyens (Mobile Money, Carte, PayPal)
                   </span>
                 </div>
-                <div style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', fontWeight: 700, color: 'var(--obsidian-black)' }}>
-                  10 000 FCFA
-                </div>
-              </div>
 
-              {/* Submit CTA */}
-              <button
-                type="submit"
-                className="btn-primary"
-                style={{ width: '100%', height: '48px', fontSize: '0.9375rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-              >
-                <Lock size={15} />
-                <span>Poursuivre la transaction</span>
-              </button>
-
-              <div style={{ textAlign: 'center', marginTop: '12px' }}>
-                <span style={{ fontSize: '0.6875rem', color: 'var(--graphite-gray)' }}>
-                  Paiement sécurisé multi-moyens (Mobile Money, Carte, PayPal)
-                </span>
-              </div>
-
-            </form>
+              </form>
+            )}
           </div>
 
         </div>
@@ -965,11 +1058,17 @@ export const PropertyDetailPage = () => {
           {/* Header du volet */}
           <div className="mobile-drawer-header">
             <div>
-              <span style={{ fontSize: '0.6875rem', fontWeight: 700, color: 'var(--primary-red)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                {isVente ? "Acquisition" : "Réservation Directe"}
+              <span style={{ 
+                fontSize: '0.6875rem', 
+                fontWeight: 700, 
+                color: isParticulierListing ? '#16a34a' : 'var(--primary-red)', 
+                textTransform: 'uppercase', 
+                letterSpacing: '0.5px' 
+              }}>
+                {isParticulierListing ? "Direct Particulier • Sans Frais" : isVente ? "Acquisition" : "Réservation Directe"}
               </span>
               <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>
-                Planifier une Visite
+                {isParticulierListing ? "Contacter pour visiter" : "Planifier une Visite"}
               </h3>
             </div>
             <button
@@ -982,90 +1081,193 @@ export const PropertyDetailPage = () => {
             </button>
           </div>
 
-          {/* Formulaire dans le tiroir */}
-          <form onSubmit={handleBookingSubmit} style={{ padding: '20px' }}>
-            <div className="form-group">
-              <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Calendar size={14} color="var(--primary-red)" />
-                <span>Choisir la date</span>
-              </label>
-              <input
-                type="date"
-                className="form-input"
-                value={visitDate}
-                min="2025-02-28"
-                onChange={(e) => setVisitDate(e.target.value)}
-                required
-              />
-            </div>
+          {isParticulierListing ? (
+            /* Contenu Mobile Particulier */
+            <div style={{ padding: '20px' }}>
+              <div style={{ 
+                padding: '14px', 
+                backgroundColor: 'var(--bg-main)', 
+                borderRadius: 'var(--radius-input)', 
+                border: '1px solid var(--border-color)',
+                marginBottom: '16px'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                  <div style={{ 
+                    width: '38px', 
+                    height: '38px', 
+                    borderRadius: '50%', 
+                    backgroundColor: 'rgba(247,0,0,0.1)', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    color: 'var(--primary-red)',
+                    fontWeight: 700
+                  }}>
+                    {ownerName.charAt(0)}
+                  </div>
+                  <div>
+                    <strong style={{ display: 'block', fontSize: '0.875rem', color: 'var(--obsidian-black)' }}>{ownerName}</strong>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--graphite-gray)' }}>Propriétaire Déclarant</span>
+                  </div>
+                </div>
 
-            <div className="form-group">
-              <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Clock size={14} color="var(--primary-red)" />
-                <span>Créneau horaire</span>
-              </label>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                {timeSlots.map(slot => (
-                  <button
-                    key={slot}
-                    type="button"
-                    onClick={() => setVisitTime(slot)}
-                    style={{
-                      padding: '8px 4px',
-                      borderRadius: 'var(--radius-input)',
-                      fontSize: '0.75rem',
-                      fontWeight: 600,
-                      border: visitTime === slot ? '2px solid var(--primary-red)' : '1px solid var(--border-color)',
-                      backgroundColor: visitTime === slot ? 'var(--soft-tint)' : 'var(--bg-main)',
-                      color: visitTime === slot ? 'var(--primary-red)' : 'var(--obsidian-black)',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    {slot}
-                  </button>
-                ))}
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'space-between',
+                  padding: '8px 10px', 
+                  background: '#FFFFFF', 
+                  borderRadius: '6px', 
+                  border: '1px dashed var(--border-color)' 
+                }}>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--graphite-gray)', fontWeight: 600 }}>Numéro :</span>
+                  <strong style={{ fontSize: '0.875rem', color: 'var(--obsidian-black)' }}>{ownerPhone}</strong>
+                </div>
               </div>
-            </div>
 
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '12px 14px',
-              backgroundColor: 'var(--bg-main)',
-              borderRadius: 'var(--radius-input)',
-              border: '1px solid var(--border-color)',
-              marginTop: '16px',
-              marginBottom: '18px'
-            }}>
-              <div>
-                <span style={{ fontSize: '0.6875rem', color: 'var(--graphite-gray)', display: 'block', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700 }}>
-                  Frais de réservation
+              {/* Plages suggérées */}
+              <div style={{ marginBottom: '18px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px', fontSize: '0.75rem', fontWeight: 700 }}>
+                  <Clock size={13} color="var(--primary-red)" />
+                  <span>Disponibilités ({customOwnerDays}) :</span>
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                  {customOwnerSlots.map((slotTime, idx) => (
+                    <span key={idx} style={{ fontSize: '0.72rem', padding: '3px 8px', background: 'var(--bg-main)', borderRadius: '4px', border: '1px solid var(--border-color)', fontWeight: 600 }}>
+                      {slotTime}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Actions Mobile */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <a 
+                  href={`tel:${ownerPhone.replace(/\s+/g, '')}`}
+                  className="btn-primary"
+                  style={{ width: '100%', height: '46px', fontSize: '0.875rem', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                >
+                  <Phone size={15} />
+                  <span>Appeler ({ownerPhone})</span>
+                </a>
+
+                <a 
+                  href={`https://wa.me/${cleanPhoneForWa}?text=${encodeURIComponent(`Bonjour, je vous contacte au sujet de votre annonce Habitoo : "${property.title}". Est-il possible d'organiser une visite ?`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ 
+                    width: '100%', 
+                    height: '44px', 
+                    borderRadius: 'var(--radius-input)', 
+                    backgroundColor: '#25D366', 
+                    color: '#FFFFFF', 
+                    fontWeight: 700, 
+                    fontSize: '0.84rem', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    gap: '8px',
+                    textDecoration: 'none'
+                  }}
+                >
+                  <MessageCircle size={16} />
+                  <span>Discuter sur WhatsApp</span>
+                </a>
+              </div>
+
+              <div style={{ textAlign: 'center', marginTop: '14px' }}>
+                <span style={{ fontSize: '0.7rem', color: 'var(--graphite-gray)' }}>
+                  <ShieldCheck size={12} style={{ display: 'inline', verticalAlign: '-1px', marginRight: '4px', color: '#16a34a' }} />
+                  Visite directe sans frais de réservation ni intermédiaire
                 </span>
-                <span style={{ fontSize: '0.75rem', color: 'var(--obsidian-black)', fontWeight: 600 }}>
-                  Dossier et visite dédiée
+              </div>
+            </div>
+          ) : (
+            /* Formulaire Pro dans le tiroir */
+            <form onSubmit={handleBookingSubmit} style={{ padding: '20px' }}>
+              <div className="form-group">
+                <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Calendar size={14} color="var(--primary-red)" />
+                  <span>Choisir la date</span>
+                </label>
+                <input
+                  type="date"
+                  className="form-input"
+                  value={visitDate}
+                  min="2025-02-28"
+                  onChange={(e) => setVisitDate(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Clock size={14} color="var(--primary-red)" />
+                  <span>Créneau horaire</span>
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                  {timeSlots.map(slot => (
+                    <button
+                      key={slot}
+                      type="button"
+                      onClick={() => setVisitTime(slot)}
+                      style={{
+                        padding: '8px 4px',
+                        borderRadius: 'var(--radius-input)',
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        border: visitTime === slot ? '2px solid var(--primary-red)' : '1px solid var(--border-color)',
+                        backgroundColor: visitTime === slot ? 'var(--soft-tint)' : 'var(--bg-main)',
+                        color: visitTime === slot ? 'var(--primary-red)' : 'var(--obsidian-black)',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {slot}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '12px 14px',
+                backgroundColor: 'var(--bg-main)',
+                borderRadius: 'var(--radius-input)',
+                border: '1px solid var(--border-color)',
+                marginTop: '16px',
+                marginBottom: '18px'
+              }}>
+                <div>
+                  <span style={{ fontSize: '0.6875rem', color: 'var(--graphite-gray)', display: 'block', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700 }}>
+                    Frais de réservation
+                  </span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--obsidian-black)', fontWeight: 600 }}>
+                    Dossier et visite dédiée
+                  </span>
+                </div>
+                <div style={{ fontFamily: 'var(--font-serif)', fontSize: '1.15rem', fontWeight: 700, color: 'var(--obsidian-black)' }}>
+                  10 000 FCFA
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="btn-primary"
+                style={{ width: '100%', height: '46px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+              >
+                <Lock size={15} />
+                <span>Poursuivre la transaction</span>
+              </button>
+
+              <div style={{ textAlign: 'center', marginTop: '12px' }}>
+                <span style={{ fontSize: '0.6875rem', color: 'var(--graphite-gray)' }}>
+                  Paiement sécurisé multi-moyens (Mobile Money, Carte, PayPal)
                 </span>
               </div>
-              <div style={{ fontFamily: 'var(--font-serif)', fontSize: '1.15rem', fontWeight: 700, color: 'var(--obsidian-black)' }}>
-                10 000 FCFA
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="btn-primary"
-              style={{ width: '100%', height: '46px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-            >
-              <Lock size={15} />
-              <span>Poursuivre la transaction</span>
-            </button>
-
-            <div style={{ textAlign: 'center', marginTop: '12px' }}>
-              <span style={{ fontSize: '0.6875rem', color: 'var(--graphite-gray)' }}>
-                Paiement sécurisé multi-moyens (Mobile Money, Carte, PayPal)
-              </span>
-            </div>
-          </form>
+            </form>
+          )}
 
         </div>
       </div>
@@ -1083,10 +1285,14 @@ export const PropertyDetailPage = () => {
         <button
           onClick={() => setIsMobileDrawerOpen(true)}
           className="btn-primary"
-          style={{ padding: '10px 18px', fontSize: '0.875rem', gap: '6px' }}
+          style={{ 
+            padding: '10px 18px', 
+            fontSize: '0.875rem', 
+            gap: '6px',
+          }}
         >
-          <Calendar size={15} />
-          <span>Réserver visite</span>
+          {isParticulierListing ? <Phone size={15} /> : <Calendar size={15} />}
+          <span>{isParticulierListing ? "Contacter" : "Réserver visite"}</span>
         </button>
       </div>
 
@@ -1337,6 +1543,108 @@ export const PropertyDetailPage = () => {
           transform: scale(1.08);
         }
 
+        /* AGENT & AGENCY CONTACT CARD BASE STYLES */
+        .agency-contact-card {
+          background-color: var(--surface-white, #FFFFFF);
+          border-radius: var(--radius-card, 12px);
+          border: 1px solid var(--border-color, #E5E7EB);
+          padding: 22px 24px;
+          margin-bottom: 36px;
+          box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.05));
+        }
+        .agency-card-layout {
+          display: flex;
+          align-items: flex-start;
+          gap: 16px;
+        }
+        .agency-card-avatar {
+          width: 60px;
+          height: 60px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2px solid var(--border-color, #E5E7EB);
+          flex-shrink: 0;
+        }
+        .agency-card-info {
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+          flex: 1;
+        }
+        .agency-card-badge-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 5px;
+        }
+        .agency-partner-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          padding: 3px 8px;
+          border-radius: 9999px;
+          background-color: #2563EB;
+          color: #FFFFFF;
+          font-size: 0.68rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          font-weight: 800;
+          line-height: 1.25;
+        }
+        .agency-direct-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          padding: 3px 8px;
+          border-radius: 9999px;
+          background-color: rgba(0, 0, 0, 0.06);
+          color: var(--graphite-gray, #6B7280);
+          font-size: 0.68rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          font-weight: 700;
+        }
+        .agency-name-title {
+          font-size: 1.18rem;
+          font-weight: 800;
+          color: var(--obsidian-black, #111827);
+          margin: 0;
+          line-height: 1.25;
+          word-break: break-word;
+        }
+        .agency-advisor-text {
+          font-size: 0.85rem;
+          color: var(--graphite-gray, #6B7280);
+          margin-top: 3px;
+          line-height: 1.35;
+        }
+        .agency-rating-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-top: 7px;
+          flex-wrap: wrap;
+        }
+        .agency-rating-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          background: #FEF3C7;
+          border: 1px solid #FDE68A;
+          border-radius: 4px;
+          padding: 2px 7px;
+          font-size: 0.74rem;
+          font-weight: 700;
+          color: #92400E;
+          white-space: nowrap !important;
+          flex-shrink: 0;
+        }
+        .agency-rating-count {
+          font-size: 0.74rem;
+          color: var(--graphite-gray, #6B7280);
+          white-space: nowrap;
+        }
+
         /* ===== RESPONSIVE & MOBILE FLOATING DRAWER ===== */
         .mobile-floating-trigger-tab {
           display: none;
@@ -1472,6 +1780,40 @@ export const PropertyDetailPage = () => {
             font-weight: 800;
             color: var(--obsidian-black);
             line-height: 1.2;
+          }
+
+          /* AGENT & AGENCY CONTACT CARD (RESPONSIVE) */
+          .agency-contact-card {
+            padding: 14px 16px;
+            margin-bottom: 24px;
+          }
+          .agency-card-layout {
+            gap: 12px;
+          }
+          .agency-card-avatar {
+            width: 48px;
+            height: 48px;
+          }
+          .agency-partner-badge {
+            font-size: 0.62rem;
+            padding: 2px 7px;
+          }
+          .agency-name-title {
+            font-size: 1.02rem;
+          }
+          .agency-advisor-text {
+            font-size: 0.78rem;
+          }
+          .agency-rating-row {
+            gap: 6px;
+            margin-top: 6px;
+          }
+          .agency-rating-pill {
+            font-size: 0.72rem;
+            padding: 2px 6px;
+          }
+          .agency-rating-count {
+            font-size: 0.72rem;
           }
         }
       `}</style>

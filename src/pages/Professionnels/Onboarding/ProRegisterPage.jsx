@@ -83,6 +83,24 @@ export const ProRegisterPage = () => {
     navigate('/pro/en-attente', { state: { applicationData: finalData } });
   };
 
+  // Handler for Démarcheur (Free direct accreditation without subscription)
+  const handleCompleteDemarcheur = () => {
+    const finalData = {
+      ...formData,
+      isStarter: true,
+      isDemarcheur: true,
+      selectedPlan: 'demarcheur_free',
+      submittedAt: new Date().toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    };
+    navigate('/pro/en-attente', { state: { applicationData: finalData } });
+  };
+
   // Handler for Paid Plans after successful payment
   const handleCompletePayment = (receipt) => {
     const finalData = {
@@ -142,6 +160,7 @@ export const ProRegisterPage = () => {
         <ProRegisterStepper 
           currentStep={currentStep} 
           onStepClick={(stepId) => setCurrentStep(stepId)} 
+          persona={formData.persona}
         />
 
         {/* Dynamic Active Step */}
@@ -158,7 +177,13 @@ export const ProRegisterPage = () => {
             <StepKyc 
               formData={formData} 
               updateFormData={updateFormData} 
-              onNext={() => setCurrentStep(3)} 
+              onNext={() => {
+                if (formData.persona === 'demarcheur') {
+                  handleCompleteDemarcheur();
+                } else {
+                  setCurrentStep(3);
+                }
+              }} 
               onPrev={() => setCurrentStep(1)} 
             />
           )}

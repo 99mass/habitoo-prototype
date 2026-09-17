@@ -26,8 +26,14 @@ import {
   Phone, 
   Globe, 
   ChevronRight, 
-  X
+  X,
+  Flame,
+  Zap,
+  Star
 } from 'lucide-react';
+import { ParticulierAvailabilityCard } from '../components/ParticulierAvailabilityCard';
+import { ParticulierBoostModal } from '../components/ParticulierBoostModal';
+import { RateProModal } from '../components/RateProModal';
 
 const DEFAULT_AVATAR = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80";
 
@@ -44,6 +50,7 @@ export const DashboardPage = () => {
 
   const { 
     scheduledVisits, 
+    rateVisit,
     favorites, 
     currentUser, 
     logout,
@@ -51,12 +58,20 @@ export const DashboardPage = () => {
     setActiveCity,
     userProperties,
     deleteUserProperty,
+    boostUserProperty,
     notifications,
     markAllNotificationsRead,
     deleteNotification,
     updateUserProfile,
     deleteAccount
   } = useHabitoo();
+
+  // Particulier Boost Modal State
+  const [boostModalProperty, setBoostModalProperty] = useState(null);
+  const [isBoostModalOpen, setIsBoostModalOpen] = useState(false);
+
+  // Rate Pro Modal State
+  const [ratingVisit, setRatingVisit] = useState(null);
 
   // Redirect to home if disconnected
   useEffect(() => {
@@ -405,13 +420,16 @@ export const DashboardPage = () => {
               <div>
                 <h2 className="panel-title">Mes Annonces Publiées</h2>
                 <p className="panel-subtitle">
-                  Gérez vos biens en ligne, suivez la visibilité et modifiez vos annonces certifiées.
+                  Gérez vos biens en ligne, configurez vos créneaux de visite et boostez votre visibilité.
                 </p>
               </div>
               <Link to="/publier" className="btn-primary" style={{ padding: '9px 18px', textDecoration: 'none' }}>
                 <span>Publier une annonce</span>
               </Link>
             </div>
+
+            {/* GESTIONNAIRE DES DISPONIBILITÉS DE VISITE PARTICULIER */}
+            <ParticulierAvailabilityCard />
 
             {userProperties.length === 0 ? (
               <div className="empty-state-card">
@@ -438,6 +456,11 @@ export const DashboardPage = () => {
                         className="user-prop-img"
                       />
                       <span className="prop-status-tag">{property.status || 'En ligne'}</span>
+                      {property.isBoosted && (
+                        <span className="prop-boost-pill">
+                          <Flame size={11} /> Boost Actif
+                        </span>
+                      )}
                       <span className="prop-category-tag">{property.category === 'VENTE' ? 'Vente' : 'Location'}</span>
                     </div>
 
@@ -466,8 +489,22 @@ export const DashboardPage = () => {
                           style={{ flex: 1, textDecoration: 'none', justifyContent: 'center' }}
                         >
                           <Eye size={13} />
-                          <span>Voir la fiche</span>
+                          <span>Voir</span>
                         </Link>
+                        
+                        <button
+                          type="button"
+                          className={`btn-boost-prop ${property.isBoosted ? 'is-active' : ''}`}
+                          onClick={() => {
+                            setBoostModalProperty(property);
+                            setIsBoostModalOpen(true);
+                          }}
+                          title="Booster cette annonce"
+                        >
+                          <Flame size={13} />
+                          <span>{property.isBoosted ? 'Boosté' : 'Booster'}</span>
+                        </button>
+
                         <button
                           type="button"
                           className="btn-del-prop"
@@ -529,7 +566,7 @@ export const DashboardPage = () => {
 
                     <div className="visit-card-content">
                       <div className="visit-card-badges">
-                        <span className={`visit-status-tag ${visit.status === 'Confirmé' ? 'confirmed' : 'pending'}`}>
+                        <span className={`visit-status-tag ${visit.status === 'Confirmé' ? 'confirmed' : visit.status === 'Effectuée' ? 'completed' : 'pending'}`}>
                           {visit.status.toUpperCase()}
                         </span>
                         <span className="visit-escrow-badge">
@@ -542,20 +579,47 @@ export const DashboardPage = () => {
                       <div className="visit-address">{visit.propertyAddress}</div>
                       
                       <div className="visit-meta-row">
-                        <span>📅 {visit.date} ({visit.time})</span>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <Calendar size={12} /> {visit.date} ({visit.time})
+                        </span>
                         <span>•</span>
-                        <span>Agent : <strong>{visit.agentName}</strong></span>
+                        <span>Agent : <strong>{visit.agentName}</strong> {visit.agentAgency && <span style={{ color: 'var(--graphite-gray)', fontWeight: 400 }}>({visit.agentAgency})</span>}</span>
                       </div>
                     </div>
 
-                    <Link 
-                      to={`/bien/${visit.propertyId}`}
-                      className="btn-ghost-dark btn-small"
-                      style={{ padding: '8px 16px', textDecoration: 'none', alignSelf: 'center' }}
-                    >
-                      <span>Voir la fiche</span>
-                      <ChevronRight size={14} />
-                    </Link>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', alignSelf: 'center', flexWrap: 'wrap' }}>
+                      {visit.status === 'Effectuée' && (
+                        visit.rating ? (
+                          <button
+                            type="button"
+                            onClick={() => setRatingVisit(visit)}
+                            className="btn-rated-pill"
+                            title="Modifier votre évaluation"
+                          >
+                            <Star size={13} fill="#D97706" color="#D97706" />
+                            <span>Avis : {visit.rating.score}/5</span>
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => setRatingVisit(visit)}
+                            className="btn-rate-pro"
+                          >
+                            <Star size={13} />
+                            <span>Évaluer le pro</span>
+                          </button>
+                        )
+                      )}
+
+                      <Link 
+                        to={`/bien/${visit.propertyId}`}
+                        className="btn-ghost-dark btn-small"
+                        style={{ padding: '8px 14px', textDecoration: 'none' }}
+                      >
+                        <span>Voir la fiche</span>
+                        <ChevronRight size={14} />
+                      </Link>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -801,6 +865,22 @@ export const DashboardPage = () => {
           </div>
         </div>
       )}
+
+      {/* MODALE DE BOOST PARTICULIER */}
+      <ParticulierBoostModal
+        isOpen={isBoostModalOpen}
+        onClose={() => setIsBoostModalOpen(false)}
+        property={boostModalProperty}
+        onBoostSuccess={(propId, days) => boostUserProperty(propId, days)}
+      />
+
+      {/* MODALE DE NOTATION DU PROFESSIONNEL */}
+      <RateProModal
+        isOpen={Boolean(ratingVisit)}
+        onClose={() => setRatingVisit(null)}
+        visit={ratingVisit}
+        onSaveRating={rateVisit}
+      />
 
       {/* SCOPED COMPONENT STYLES */}
       <style>{`
@@ -1229,6 +1309,47 @@ export const DashboardPage = () => {
           background-color: #FEE2E2;
         }
 
+        .prop-boost-pill {
+          position: absolute;
+          bottom: 10px;
+          left: 10px;
+          font-size: 0.68rem;
+          font-weight: 700;
+          color: #FFF;
+          background: linear-gradient(135deg, #FF6B00 0%, #F70000 100%);
+          box-shadow: 0 2px 8px rgba(247, 0, 0, 0.35);
+          padding: 2px 8px;
+          border-radius: var(--radius-pill);
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+
+        .btn-boost-prop {
+          padding: 6px 12px;
+          border-radius: 6px;
+          border: 1px solid rgba(255, 107, 0, 0.35);
+          background: rgba(255, 107, 0, 0.08);
+          color: #EA580C;
+          font-size: 0.78rem;
+          font-weight: 700;
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        .btn-boost-prop:hover {
+          background: rgba(255, 107, 0, 0.16);
+          border-color: #EA580C;
+        }
+        .btn-boost-prop.is-active {
+          background: linear-gradient(135deg, #FF6B00 0%, #F70000 100%);
+          border-color: transparent;
+          color: #FFF;
+          box-shadow: 0 2px 8px rgba(247, 0, 0, 0.25);
+        }
+
         /* VISITS CARD ITEM */
         .visit-card-item {
           background-color: var(--surface-white);
@@ -1273,6 +1394,44 @@ export const DashboardPage = () => {
         .visit-status-tag.pending {
           background-color: #FEF3C7;
           color: #B45309;
+        }
+        .visit-status-tag.completed {
+          background-color: #E0E7FF;
+          color: #3730A3;
+        }
+        .btn-rate-pro {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          padding: 6px 12px;
+          border-radius: 6px;
+          background: #111827;
+          color: #FFFFFF;
+          border: none;
+          font-size: 0.76rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: background 0.15s ease;
+        }
+        .btn-rate-pro:hover {
+          background: var(--primary-red);
+        }
+        .btn-rated-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          padding: 5px 10px;
+          border-radius: 6px;
+          background: #FEF3C7;
+          border: 1px solid #FDE68A;
+          color: #92400E;
+          font-size: 0.74rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: border-color 0.15s ease;
+        }
+        .btn-rated-pill:hover {
+          border-color: #D97706;
         }
         .visit-escrow-badge {
           display: inline-flex;

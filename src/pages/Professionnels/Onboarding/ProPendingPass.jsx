@@ -35,13 +35,15 @@ export const ProPendingPass = () => {
     submittedAt: 'Aujourd\'hui à 11:42'
   };
 
-  const planLabel = data.selectedPlan === 'premium'
-    ? 'Formule Premium'
-    : data.selectedPlan === 'pro'
-      ? 'Formule PRO'
-      : 'Formule Starter';
-
   const isAgence = data.persona === 'agence';
+
+  const planLabel = !isAgence
+    ? 'Accès Démarcheur PRO'
+    : data.selectedPlan === 'premium'
+      ? 'Formule Premium'
+      : data.selectedPlan === 'pro'
+        ? 'Formule PRO'
+        : 'Formule Starter';
 
   return (
     <div className="habitoo-pending-page">
@@ -105,7 +107,7 @@ export const ProPendingPass = () => {
                 {planLabel}
               </strong>
               <span className="habitoo-pass-field-sub">
-                {data.billingCycle === 'annual' ? 'Cycle annuel' : 'Cycle mensuel'}
+                {!isAgence ? "Exempté d'abonnement • Droits PRO actifs" : data.billingCycle === 'annual' ? 'Cycle annuel' : 'Cycle mensuel'}
               </span>
             </div>
 

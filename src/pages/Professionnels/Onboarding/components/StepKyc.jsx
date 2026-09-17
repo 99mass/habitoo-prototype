@@ -6,7 +6,8 @@ import {
   Trash2, 
   ArrowRight, 
   ArrowLeft,
-  AlertCircle
+  AlertCircle,
+  CheckCircle2
 } from 'lucide-react';
 
 export const StepKyc = ({ formData, updateFormData, onNext, onPrev }) => {
@@ -115,7 +116,9 @@ export const StepKyc = ({ formData, updateFormData, onNext, onPrev }) => {
       
       {/* Header */}
       <div className="habitoo-step-header">
-        <span className="habitoo-step-counter">Étape 02 sur 04</span>
+        <span className="habitoo-step-counter">
+          {isAgence ? 'Étape 02 sur 04' : 'Étape 02 sur 02'}
+        </span>
         <h1 className="habitoo-step-title">
           Identité et Justificatifs
         </h1>
@@ -352,9 +355,19 @@ export const StepKyc = ({ formData, updateFormData, onNext, onPrev }) => {
           <button 
             type="submit" 
             className="habitoo-reg-btn-primary"
+            style={!isAgence ? { backgroundColor: '#16a34a', borderColor: '#16a34a' } : undefined}
           >
-            <span>Choisir mon forfait</span>
-            <ArrowRight size={16} />
+            {isAgence ? (
+              <>
+                <span>Choisir mon forfait</span>
+                <ArrowRight size={16} />
+              </>
+            ) : (
+              <>
+                <CheckCircle2 size={16} />
+                <span>Valider mon dossier</span>
+              </>
+            )}
           </button>
         </div>
 

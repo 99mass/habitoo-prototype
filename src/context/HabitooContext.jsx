@@ -38,6 +38,21 @@ const INITIAL_TRANSACTIONS = [
 
 const INITIAL_VISITS = [
   {
+    id: "vis-03",
+    propertyId: "hab-ci-01",
+    propertyTitle: "Villa Signature 'Le Belvédère' — Riviera Golf",
+    propertyAddress: "Boulevard de France prolongé, Cocody, Abidjan",
+    date: "Hier à 15:00",
+    time: "15:00 - 15:45",
+    status: "Effectuée",
+    fee: 10000,
+    escrowStatus: "Visite honorée",
+    agentName: "Jean-Marc Kouassi",
+    agentAgency: "Ivoire Prestige Properties",
+    paymentMethod: "Portefeuille Habitoo",
+    rating: null
+  },
+  {
     id: "vis-01",
     propertyId: "hab-ci-01",
     propertyTitle: "Villa Signature 'Le Belvédère' — Riviera Golf",
@@ -47,22 +62,10 @@ const INITIAL_VISITS = [
     status: "Confirmé",
     fee: 10000,
     escrowStatus: "Séquestre actif",
-    agentName: "Jean-Marc Kouassi (Ivoire Prestige)",
+    agentName: "Jean-Marc Kouassi",
+    agentAgency: "Ivoire Prestige Properties",
     paymentMethod: "Portefeuille Habitoo"
   },
-  {
-    id: "vis-02",
-    propertyId: "hab-ci-02",
-    propertyTitle: "Penthouse Panoramique 'Laguna Sky' — Plateau",
-    propertyAddress: "Avenue Chardy, Le Plateau, Abidjan",
-    date: "01 Mars 2025",
-    time: "10:30 - 11:30",
-    status: "En attente",
-    fee: 10000,
-    escrowStatus: "Validation créneau agent",
-    agentName: "Fatoumata Bamba (Abidjan Prime)",
-    paymentMethod: "Orange Money"
-  }
 ];
 
 const INITIAL_NOTIFICATIONS = [
@@ -126,7 +129,21 @@ export const HabitooProvider = ({ children }) => {
   // Scheduled Visits
   const [scheduledVisits, setScheduledVisits] = useState(() => {
     const saved = localStorage.getItem('habitoo_visits');
-    return saved ? JSON.parse(saved) : INITIAL_VISITS;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const hasCompleted = parsed.some(v => v.status === 'Effectuée');
+          if (!hasCompleted) {
+            return [INITIAL_VISITS[0], ...parsed];
+          }
+          return parsed;
+        }
+      } catch (e) {
+        console.error("Error reading habitoo_visits:", e);
+      }
+    }
+    return INITIAL_VISITS;
   });
 
   // Search Filters
@@ -216,6 +233,22 @@ const DEFAULT_USER = {
 
   const deleteUserProperty = (propertyId) => {
     setUserProperties(prev => prev.filter(p => p.id !== propertyId));
+  };
+
+  const boostUserProperty = (propertyId, days = 7) => {
+    const until = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+    setUserProperties(prev => prev.map(p => {
+      if (p.id === propertyId) {
+        return {
+          ...p,
+          isBoosted: true,
+          boostDays: days,
+          boostedUntil: until,
+          status: 'Boostée'
+        };
+      }
+      return p;
+    }));
   };
 
   // Notifications State
@@ -325,6 +358,30 @@ const DEFAULT_USER = {
     return newVisit;
   };
 
+  // Notation d'une visite effectuée
+  const rateVisit = (visitId, ratingData) => {
+    setScheduledVisits(prev => {
+      const updated = prev.map(v => {
+        if (v.id === visitId) {
+          return {
+            ...v,
+            rating: {
+              ...ratingData,
+              ratedAt: new Date().toLocaleDateString('fr-FR', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+              })
+            }
+          };
+        }
+        return v;
+      });
+      localStorage.setItem('habitoo_visits', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
   // Authentication: Google Login (direct pass, simulation)
   const loginWithGoogle = () => {
     const googleUser = {
@@ -431,6 +488,7 @@ const DEFAULT_USER = {
         transactions,
         scheduledVisits,
         bookVisit,
+        rateVisit,
         formatPrice,
         formatCurrencyAmount,
         searchFilters,
@@ -456,6 +514,7 @@ const DEFAULT_USER = {
         userProperties,
         addUserProperty,
         deleteUserProperty,
+        boostUserProperty,
         notifications,
         markAllNotificationsRead,
         deleteNotification,
