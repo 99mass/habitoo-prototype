@@ -79,15 +79,6 @@ const INITIAL_NOTIFICATIONS = [
     link: "/mon-compte?tab=visits"
   },
   {
-    id: "notif-02",
-    type: "ESCROW",
-    title: "Séquestre activé avec succès",
-    message: "Les frais de visite (10 000 FCFA) sont conservés en compte tiers de confiance.",
-    date: "Hier à 16:20",
-    read: false,
-    link: "/mon-compte?tab=visits"
-  },
-  {
     id: "notif-03",
     type: "SECURITY",
     title: "Connexion sécurisée détectée",

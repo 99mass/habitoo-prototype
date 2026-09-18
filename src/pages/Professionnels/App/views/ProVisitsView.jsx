@@ -410,27 +410,7 @@ export const ProVisitsView = () => {
               </div>
             </div>
 
-            {/* Durée */}
-            <div className="habitoo-dash-avail-footer">
-              <div className="habitoo-dash-duration-picker">
-                <span className="habitoo-dash-duration-label">Durée par visite :</span>
-                <div className="habitoo-dash-duration-opts">
-                  {['30', '45', '60'].map((mins) => (
-                    <button
-                      key={mins}
-                      type="button"
-                      onClick={() => {
-                        setVisitDuration(mins);
-                        triggerFeedback();
-                      }}
-                      className={`habitoo-dash-duration-btn ${visitDuration === mins ? 'habitoo-dash-duration-btn--active' : ''}`}
-                    >
-                      {mins} min
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
+     
 
           </div>
         </div>

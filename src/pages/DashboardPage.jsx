@@ -423,9 +423,6 @@ export const DashboardPage = () => {
                   Gérez vos biens en ligne, configurez vos créneaux de visite et boostez votre visibilité.
                 </p>
               </div>
-              <Link to="/publier" className="btn-primary" style={{ padding: '9px 18px', textDecoration: 'none' }}>
-                <span>Publier une annonce</span>
-              </Link>
             </div>
 
             {/* GESTIONNAIRE DES DISPONIBILITÉS DE VISITE PARTICULIER */}
@@ -606,7 +603,7 @@ export const DashboardPage = () => {
                             className="btn-rate-pro"
                           >
                             <Star size={13} />
-                            <span>Évaluer le pro</span>
+                            <span>Évaluer</span>
                           </button>
                         )
                       )}

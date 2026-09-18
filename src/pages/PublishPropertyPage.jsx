@@ -406,7 +406,7 @@ export const PublishPropertyPage = () => {
           onClick={() => setStep(1)}
         >
           <div className="step-circle">{step > 1 ? <Check size={11} /> : '1'}</div>
-          <span className="step-name">Lieu et Titre</span>
+          <span className="step-name">Bien</span>
         </button>
 
         <div className="publish-stepper-line" />
@@ -417,7 +417,7 @@ export const PublishPropertyPage = () => {
           onClick={() => setStep(2)}
         >
           <div className="step-circle">{step > 2 ? <Check size={11} /> : '2'}</div>
-          <span className="step-name">Caractéristiques</span>
+          <span className="step-name">Critères</span>
         </button>
 
         <div className="publish-stepper-line" />
@@ -428,7 +428,7 @@ export const PublishPropertyPage = () => {
           onClick={() => setStep(3)}
         >
           <div className="step-circle">3</div>
-          <span className="step-name">Photos et Contact</span>
+          <span className="step-name">Contact</span>
         </button>
       </div>
 
@@ -784,12 +784,9 @@ export const PublishPropertyPage = () => {
               <label className="compact-label">Statut</label>
               <div className="status-locked-badge-card">
                 <div className="status-locked-header">
-                  <span className="status-locked-title">Propriétaire (particulier)</span>
+                  <span className="status-locked-title">Particulier</span>
                   <span className="status-locked-pill">Fixe</span>
                 </div>
-                <p className="status-locked-help">
-                  Les comptes agences font l'objet d'une certification préalable.
-                </p>
               </div>
             </div>
           </div>
@@ -862,26 +859,6 @@ export const PublishPropertyPage = () => {
                 onChange={(e) => setFormData({ ...formData, ownerEmail: e.target.value })}
               />
             </div>
-
-            {/* Avantages Particulier & Frais de Visite */}
-            <div style={{
-              padding: '12px 14px',
-              backgroundColor: 'rgba(22, 163, 74, 0.08)',
-              border: '1px solid rgba(22, 163, 74, 0.25)',
-              borderRadius: 'var(--radius-input, 10px)',
-              marginTop: '14px',
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: '10px'
-            }}>
-              <ShieldCheck size={18} color="#16a34a" style={{ flexShrink: 0, marginTop: '2px' }} />
-              <div style={{ fontSize: '0.78rem', color: '#166534', lineHeight: 1.4 }}>
-                <strong>Publication Particulier : 0 FCFA de frais de visite</strong>
-                <p style={{ margin: '2px 0 0 0', opacity: 0.9 }}>
-                  Vos acquéreurs et locataires vous contacteront directement. Aucun frais de visite ni séquestre bancaire n'est prélevé.
-                </p>
-              </div>
-            </div>
           </div>
 
           {/* Step 3 Footer */}
@@ -943,7 +920,7 @@ export const PublishPropertyPage = () => {
 
             <div className="publish-success-actions">
               <Link to="/mon-compte?tab=properties" className="btn-primary" style={{ padding: '10px 20px', justifyContent: 'center' }}>
-                <span>Gérer mes annonces & Booster</span>
+                <span>Gérer mes annonces</span>
                 <ArrowRight size={15} />
               </Link>
               <Link to="/recherche" className="btn-ghost-dark" style={{ padding: '8px 18px', fontSize: '0.8125rem', justifyContent: 'center' }}>
@@ -1281,12 +1258,14 @@ export const PublishPropertyPage = () => {
 
         .publish-layout-grid {
           display: grid;
-          grid-template-columns: minmax(0, 1.45fr) minmax(360px, 420px);
+          grid-template-columns: minmax(0, 1.4fr) minmax(360px, 420px);
           gap: 28px;
           max-width: 1280px;
           margin: 0 auto;
           align-items: flex-start;
           position: relative;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         /* COLONNE GAUCHE : PRÉVISUALISATION EN DIRECT */
@@ -1698,6 +1677,7 @@ export const PublishPropertyPage = () => {
           align-self: flex-start;
           max-height: calc(100vh - 100px);
           overflow-y: auto;
+          overflow-x: hidden;
           scrollbar-width: thin;
           padding-bottom: 20px;
         }
@@ -1723,22 +1703,28 @@ export const PublishPropertyPage = () => {
         .publish-stepper-bar {
           display: flex;
           align-items: center;
+          justify-content: space-between;
           background-color: var(--bg-main);
           border-radius: 8px;
-          padding: 5px 8px;
+          padding: 6px 8px;
           margin-bottom: 12px;
           border: 1px solid var(--border-color);
+          width: 100%;
+          box-sizing: border-box;
+          gap: 3px;
         }
         .publish-stepper-btn {
           display: flex;
           align-items: center;
-          gap: 6px;
+          gap: 5px;
           background: transparent;
           border: none;
           cursor: pointer;
           opacity: 0.55;
-          padding: 2px 5px;
+          padding: 2px 4px;
           transition: all 0.15s ease;
+          min-width: 0;
+          flex-shrink: 0;
         }
         .publish-stepper-btn.active { opacity: 1; }
         .publish-stepper-btn.done { opacity: 0.9; }
@@ -1755,6 +1741,7 @@ export const PublishPropertyPage = () => {
           font-size: 0.68rem;
           font-weight: 700;
           color: var(--graphite-gray);
+          flex-shrink: 0;
         }
         .publish-stepper-btn.active .step-circle {
           background-color: var(--primary-red);
@@ -1772,12 +1759,15 @@ export const PublishPropertyPage = () => {
           font-weight: 600;
           color: var(--obsidian-black);
           white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
         .publish-stepper-line {
           flex: 1;
           height: 1px;
           background-color: var(--border-color);
-          margin: 0 5px;
+          margin: 0 4px;
+          min-width: 6px;
         }
 
         /* Compact Form Controls */
@@ -2177,8 +2167,10 @@ export const PublishPropertyPage = () => {
           border-radius: 6px;
           height: 34px;
           box-sizing: border-box;
+          min-width: 0;
+          overflow: hidden;
         }
-        .phone-country-dropdown { position: relative; }
+        .phone-country-dropdown { position: relative; flex-shrink: 0; }
         .country-trigger-btn {
           display: flex;
           align-items: center;
@@ -2187,6 +2179,7 @@ export const PublishPropertyPage = () => {
           border: none;
           padding: 4px 6px;
           cursor: pointer;
+          flex-shrink: 0;
         }
         .flag { font-size: 0.95rem; }
         .code { font-size: 0.72rem; font-weight: 700; color: var(--obsidian-black); }
@@ -2223,9 +2216,10 @@ export const PublishPropertyPage = () => {
         .floating-item:hover { background-color: var(--bg-main); }
         .c-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .c-code { font-weight: 600; color: var(--graphite-gray); font-size: 0.7rem; }
-        .phone-sep { width: 1px; height: 16px; background-color: var(--border-color); }
+        .phone-sep { width: 1px; height: 16px; background-color: var(--border-color); flex-shrink: 0; }
         .compact-phone-input {
           flex: 1;
+          min-width: 0;
           width: 100%;
           border: none;
           outline: none;
