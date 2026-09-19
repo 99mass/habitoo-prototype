@@ -5,6 +5,7 @@ import './ProOnboarding.css';
 
 import { ProRegisterStepper } from './components/ProRegisterStepper';
 import { StepPersona } from './components/StepPersona';
+import { StepAccount } from './components/StepAccount';
 import { StepKyc } from './components/StepKyc';
 import { StepPlans } from './components/StepPlans';
 import { StepCheckout } from './components/StepCheckout';
@@ -30,6 +31,8 @@ export const ProRegisterPage = () => {
     entityName: currentUser?.name || '',
     managerName: '',
     email: currentUser?.email || '',
+    password: '',
+    confirmPassword: '',
     phone: currentUser?.phone || '',
     city: '',
     neighborhood: '',
@@ -50,7 +53,7 @@ export const ProRegisterPage = () => {
     dossierRef: `HAB-PRO-${Math.floor(1000 + Math.random() * 9000)}`
   });
 
-  const [currentStep, setCurrentStep] = useState(queryStep >= 1 && queryStep <= 4 ? queryStep : 1);
+  const [currentStep, setCurrentStep] = useState(queryStep >= 1 && queryStep <= 5 ? queryStep : 1);
 
   // Synchronize user credentials
   useEffect(() => {
@@ -71,22 +74,20 @@ export const ProRegisterPage = () => {
 
   // Helper to ensure authenticated session upon registration completion
   const ensureProUser = (finalData) => {
-    if (!currentUser) {
-      const newProUser = {
-        id: `usr-pro-${Date.now().toString().slice(-4)}`,
-        name: finalData.entityName || finalData.managerName || 'Professionnel Habitoo',
-        email: finalData.email || 'pro@habitoo.ci',
-        phone: finalData.phone || '+225 07 00 00 00 00',
-        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
-        authMethod: 'onboarding',
-        isVerified: true,
-        memberId: finalData.dossierRef || `PRO-${Math.floor(10000 + Math.random() * 90000)}`,
-        role: finalData.persona === 'agence' ? 'Agence Immobilière' : 'Démarcheur Indépendant',
-        joinedDate: "À l'instant"
-      };
-      localStorage.removeItem('habitoo_logged_out');
-      setCurrentUser(newProUser);
-    }
+    const newProUser = {
+      id: currentUser?.id || `usr-pro-${Date.now().toString().slice(-4)}`,
+      name: finalData.entityName || finalData.managerName || currentUser?.name || 'Professionnel Habitoo',
+      email: finalData.email || currentUser?.email || 'pro@habitoo.ci',
+      phone: finalData.phone || currentUser?.phone || '+225 07 00 00 00 00',
+      avatar: currentUser?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
+      authMethod: 'onboarding',
+      isVerified: true,
+      memberId: finalData.dossierRef || `PRO-${Math.floor(10000 + Math.random() * 90000)}`,
+      role: finalData.persona === 'agence' ? 'Agence Immobilière' : 'Démarcheur Indépendant',
+      joinedDate: "À l'instant"
+    };
+    localStorage.removeItem('habitoo_logged_out');
+    setCurrentUser(newProUser);
   };
 
   // Handler for direct pro login
@@ -204,6 +205,15 @@ export const ProRegisterPage = () => {
           )}
 
           {currentStep === 2 && (
+            <StepAccount 
+              formData={formData} 
+              updateFormData={updateFormData} 
+              onNext={() => setCurrentStep(3)} 
+              onPrev={() => setCurrentStep(1)} 
+            />
+          )}
+
+          {currentStep === 3 && (
             <StepKyc 
               formData={formData} 
               updateFormData={updateFormData} 
@@ -211,28 +221,28 @@ export const ProRegisterPage = () => {
                 if (formData.persona === 'demarcheur') {
                   handleCompleteDemarcheur();
                 } else {
-                  setCurrentStep(3);
+                  setCurrentStep(4);
                 }
               }} 
-              onPrev={() => setCurrentStep(1)} 
-            />
-          )}
-
-          {currentStep === 3 && (
-            <StepPlans 
-              formData={formData} 
-              updateFormData={updateFormData} 
-              onNext={() => setCurrentStep(4)} 
               onPrev={() => setCurrentStep(2)} 
-              onCompleteStarter={handleCompleteStarter} 
             />
           )}
 
           {currentStep === 4 && (
+            <StepPlans 
+              formData={formData} 
+              updateFormData={updateFormData} 
+              onNext={() => setCurrentStep(5)} 
+              onPrev={() => setCurrentStep(3)} 
+              onCompleteStarter={handleCompleteStarter} 
+            />
+          )}
+
+          {currentStep === 5 && (
             <StepCheckout 
               formData={formData} 
               updateFormData={updateFormData} 
-              onPrev={() => setCurrentStep(3)} 
+              onPrev={() => setCurrentStep(4)} 
               onCompletePayment={handleCompletePayment} 
             />
           )}

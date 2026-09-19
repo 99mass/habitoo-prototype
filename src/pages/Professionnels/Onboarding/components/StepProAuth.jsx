@@ -18,7 +18,18 @@ export const StepProAuth = ({ onLoginSuccess, onStartRegistration }) => {
   const [authSubView, setAuthSubView] = useState('login');
 
   // Login form state
-  const [loginEmail, setLoginEmail] = useState('');
+  const [loginEmail, setLoginEmail] = useState(() => {
+    try {
+      const saved = localStorage.getItem('habitoo_user');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.email && parsed.email !== 'pro@habitoo.ci') return parsed.email;
+      }
+    } catch {
+      // ignore
+    }
+    return '';
+  });
   const [loginPassword, setLoginPassword] = useState('');
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [loginError, setLoginError] = useState('');

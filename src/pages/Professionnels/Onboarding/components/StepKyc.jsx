@@ -117,7 +117,7 @@ export const StepKyc = ({ formData, updateFormData, onNext, onPrev }) => {
       {/* Header */}
       <div className="habitoo-step-header">
         <span className="habitoo-step-counter">
-          {isAgence ? 'Étape 02 sur 04' : 'Étape 02 sur 02'}
+          {isAgence ? 'Étape 03 sur 05' : 'Étape 03 sur 03'}
         </span>
         <h1 className="habitoo-step-title">
           Identité et Justificatifs
@@ -359,7 +359,7 @@ export const StepKyc = ({ formData, updateFormData, onNext, onPrev }) => {
           >
             {isAgence ? (
               <>
-                <span>Choisir mon forfait</span>
+                <span>Forfait</span>
                 <ArrowRight size={16} />
               </>
             ) : (

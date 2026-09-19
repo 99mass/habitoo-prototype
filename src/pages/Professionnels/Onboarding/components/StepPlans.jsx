@@ -34,7 +34,7 @@ export const StepPlans = ({
       
       {/* Header */}
       <div className="habitoo-step-header">
-        <span className="habitoo-step-counter">Étape 03 sur 04</span>
+        <span className="habitoo-step-counter">Étape 04 sur 05</span>
         <h1 className="habitoo-step-title">
           Formule d'adhésion
         </h1>
@@ -218,7 +218,7 @@ export const StepPlans = ({
             </>
           ) : (
             <>
-              <span>Continuer vers le règlement</span>
+              <span>Règlement</span>
               <ArrowRight size={16} />
             </>
           )}

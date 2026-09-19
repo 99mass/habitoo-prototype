@@ -12,7 +12,7 @@ export const StepPersona = ({ formData, updateFormData, onNext, onBackToLogin })
       {/* Header of Step */}
       <div className="habitoo-step-header">
         <span className="habitoo-step-counter">
-          {formData.persona === 'demarcheur' ? 'Étape 01 sur 02' : 'Étape 01 sur 04'}
+          {formData.persona === 'demarcheur' ? 'Étape 01 sur 03' : 'Étape 01 sur 05'}
         </span>
         <h1 className="habitoo-step-title">
           Votre profil professionnel
@@ -105,7 +105,7 @@ export const StepPersona = ({ formData, updateFormData, onNext, onBackToLogin })
           onClick={onNext}
           className="habitoo-reg-btn-primary"
         >
-          <span>Continuer vers les justificatifs</span>
+          <span>Compte</span>
           <ArrowRight size={16} />
         </button>
       </div>

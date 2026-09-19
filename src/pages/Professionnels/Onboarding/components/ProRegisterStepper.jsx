@@ -3,14 +3,16 @@ import { Check } from 'lucide-react';
 
 const AGENCY_STEPS = [
   { id: 1, number: '01', label: 'Profil', sub: 'Activité' },
-  { id: 2, number: '02', label: 'Justificatifs', sub: 'Identité et Ville' },
-  { id: 3, number: '03', label: 'Forfait', sub: 'Formule' },
-  { id: 4, number: '04', label: 'Règlement', sub: 'Validation' }
+  { id: 2, number: '02', label: 'Compte', sub: 'Identifiants' },
+  { id: 3, number: '03', label: 'Justificatifs', sub: 'Identité et Ville' },
+  { id: 4, number: '04', label: 'Forfait', sub: 'Formule' },
+  { id: 5, number: '05', label: 'Règlement', sub: 'Validation' }
 ];
 
 const DEMARCHEUR_STEPS = [
   { id: 1, number: '01', label: 'Profil', sub: 'Activité' },
-  { id: 2, number: '02', label: 'Justificatifs', sub: 'Identité & Ville' }
+  { id: 2, number: '02', label: 'Compte', sub: 'Identifiants' },
+  { id: 3, number: '03', label: 'Justificatifs', sub: 'Identité & Ville' }
 ];
 
 export const ProRegisterStepper = ({ currentStep, onStepClick, persona = 'demarcheur' }) => {

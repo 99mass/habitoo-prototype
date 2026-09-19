@@ -81,7 +81,7 @@ export const StepCheckout = ({ formData, updateFormData, onPrev, onCompletePayme
       
       {/* Header */}
       <div className="habitoo-step-header">
-        <span className="habitoo-step-counter">Étape 04 sur 04</span>
+        <span className="habitoo-step-counter">Étape 05 sur 05</span>
         <h1 className="habitoo-step-title">
           Règlement de votre formule
         </h1>
