@@ -8,19 +8,21 @@ import { StepPersona } from './components/StepPersona';
 import { StepKyc } from './components/StepKyc';
 import { StepPlans } from './components/StepPlans';
 import { StepCheckout } from './components/StepCheckout';
-
-import { Shield, Lock, UserCheck } from 'lucide-react';
+import { StepProAuth } from './components/StepProAuth';
 
 export const ProRegisterPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { currentUser, setIsAuthModalOpen } = useHabitoo();
+  const { currentUser, setCurrentUser } = useHabitoo();
 
   // Query params
   const queryPlan = searchParams.get('forfait');
   const queryCycle = searchParams.get('cycle');
   const queryStep = parseInt(searchParams.get('step') || '1', 10);
   const queryPersona = searchParams.get('persona');
+
+  // Registration gate: shows login by default unless pricing plan chosen or registration clicked
+  const [isRegistering, setIsRegistering] = useState(() => Boolean(queryPlan || queryPersona));
 
   // Central State for KYC & Registration
   const [formData, setFormData] = useState({
@@ -67,6 +69,53 @@ export const ProRegisterPage = () => {
     setFormData(prev => ({ ...prev, ...fields }));
   };
 
+  // Helper to ensure authenticated session upon registration completion
+  const ensureProUser = (finalData) => {
+    if (!currentUser) {
+      const newProUser = {
+        id: `usr-pro-${Date.now().toString().slice(-4)}`,
+        name: finalData.entityName || finalData.managerName || 'Professionnel Habitoo',
+        email: finalData.email || 'pro@habitoo.ci',
+        phone: finalData.phone || '+225 07 00 00 00 00',
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
+        authMethod: 'onboarding',
+        isVerified: true,
+        memberId: finalData.dossierRef || `PRO-${Math.floor(10000 + Math.random() * 90000)}`,
+        role: finalData.persona === 'agence' ? 'Agence Immobilière' : 'Démarcheur Indépendant',
+        joinedDate: "À l'instant"
+      };
+      localStorage.removeItem('habitoo_logged_out');
+      setCurrentUser(newProUser);
+    }
+  };
+
+  // Handler for direct pro login
+  const handleLoginSuccess = ({ email }) => {
+    const prefix = email.split('@')[0];
+    const formattedName = prefix
+      .replace(/[._-]/g, ' ')
+      .split(' ')
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
+
+    const proUser = {
+      id: `usr-pro-${Date.now().toString().slice(-4)}`,
+      name: formattedName || 'Professionnel Habitoo',
+      email: email,
+      phone: '+225 07 00 00 00 00',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
+      authMethod: 'password',
+      isVerified: true,
+      memberId: `PRO-${Math.floor(10000 + Math.random() * 90000)}`,
+      role: 'Professionnel Certifié',
+      joinedDate: 'Membre actif'
+    };
+
+    localStorage.removeItem('habitoo_logged_out');
+    setCurrentUser(proUser);
+    navigate('/pro/app/dashboard');
+  };
+
   // Handler for Starter 0 FCFA direct submission
   const handleCompleteStarter = () => {
     const finalData = {
@@ -80,6 +129,7 @@ export const ProRegisterPage = () => {
         minute: '2-digit'
       })
     };
+    ensureProUser(finalData);
     navigate('/pro/en-attente', { state: { applicationData: finalData } });
   };
 
@@ -98,6 +148,7 @@ export const ProRegisterPage = () => {
         minute: '2-digit'
       })
     };
+    ensureProUser(finalData);
     navigate('/pro/en-attente', { state: { applicationData: finalData } });
   };
 
@@ -115,40 +166,18 @@ export const ProRegisterPage = () => {
         minute: '2-digit'
       })
     };
+    ensureProUser(finalData);
     navigate('/pro/en-attente', { state: { applicationData: finalData } });
   };
 
-  // Prior Authentication Gate
-  if (!currentUser) {
+  // Prior Authentication & Account Gate (Embed complete login & forgot pw flow)
+  // Shows login by default, unless explicitly registering or selected a specific pricing plan
+  if (!isRegistering) {
     return (
-      <div className="habitoo-reg-auth-gate">
-        <div className="habitoo-auth-gate-card">
-          <div className="habitoo-auth-gate-icon">
-            <Shield size={28} strokeWidth={1.8} />
-          </div>
-          <span className="habitoo-auth-gate-tag">Espace Professionnel</span>
-          <h1 className="habitoo-auth-gate-title">
-            Authentification requise
-          </h1>
-          <p className="habitoo-auth-gate-lead">
-            Pour rattacher votre matricule et garantir la conformité de vos annonces, veuillez vous connecter.
-          </p>
-          
-          <button 
-            type="button" 
-            onClick={() => setIsAuthModalOpen(true)}
-            className="habitoo-reg-btn-primary habitoo-auth-gate-btn"
-          >
-            <UserCheck size={16} />
-            <span>Se connecter / S'inscrire</span>
-          </button>
-
-          <div className="habitoo-auth-gate-hint">
-            <Lock size={13} />
-            <span>Connexion instantanée par Google ou code SMS/Email</span>
-          </div>
-        </div>
-      </div>
+      <StepProAuth
+        onLoginSuccess={handleLoginSuccess}
+        onStartRegistration={() => setIsRegistering(true)}
+      />
     );
   }
 
@@ -170,6 +199,7 @@ export const ProRegisterPage = () => {
               formData={formData} 
               updateFormData={updateFormData} 
               onNext={() => setCurrentStep(2)} 
+              onBackToLogin={() => setIsRegistering(false)}
             />
           )}
 

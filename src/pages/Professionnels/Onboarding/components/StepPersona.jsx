@@ -1,7 +1,7 @@
 import React from 'react';
 import { UserCheck, Building2, CheckCircle2, ArrowRight } from 'lucide-react';
 
-export const StepPersona = ({ formData, updateFormData, onNext }) => {
+export const StepPersona = ({ formData, updateFormData, onNext, onBackToLogin }) => {
   const handleSelect = (persona) => {
     updateFormData({ persona });
   };
@@ -77,7 +77,28 @@ export const StepPersona = ({ formData, updateFormData, onNext }) => {
       {/* Step Actions */}
       <div className="habitoo-step-actions-row">
         <div className="habitoo-step-actions-hint">
-          Statut modifiable ultérieurement depuis vos paramètres.
+          {onBackToLogin ? (
+            <span>
+              Déjà un compte professionnel ?{' '}
+              <button
+                type="button"
+                onClick={onBackToLogin}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--primary-red)',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  padding: 0,
+                  textDecoration: 'underline'
+                }}
+              >
+                Se connecter
+              </button>
+            </span>
+          ) : (
+            'Statut modifiable ultérieurement depuis vos paramètres.'
+          )}
         </div>
         <button 
           type="button" 
