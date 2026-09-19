@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   Zap,
   GraduationCap,
@@ -8,7 +9,8 @@ import {
   User,
   Building2,
   ShieldCheck,
-  ChevronRight
+  ChevronRight,
+  ExternalLink
 } from 'lucide-react';
 
 const MORE_ITEMS = [
@@ -67,24 +69,29 @@ export const ProMoreDrawer = ({
         {/* Corps du tiroir */}
         <div className="pro-more-body">
 
-          {/* Carte profil compacte */}
+          {/* Carte profil empilée verticalement */}
           <div className="pro-more-profile-card">
-            <img
-              src={profile.avatar}
-              alt={profile.name}
-              className="pro-more-profile-card__avatar"
-            />
-            <div className="pro-more-profile-card__info">
-              <span className="pro-more-profile-card__name">{profile.name}</span>
-              <span className="pro-more-profile-card__badge">
-                <ShieldCheck size={11} />
-                {badgeText}
-              </span>
+            <div className="pro-more-profile-card__top">
+              <img
+                src={profile.avatar}
+                alt={profile.name}
+                className="pro-more-profile-card__avatar"
+              />
+              <div className="pro-more-profile-card__info">
+                <span className="pro-more-profile-card__name">{profile.name}</span>
+                <span className="pro-more-profile-card__badge">
+                  <ShieldCheck size={11} />
+                  {badgeText}
+                </span>
+              </div>
             </div>
-            <div className="pro-more-profile-card__credits">
-              <Zap size={13} className="pro-more-profile-card__credits-icon" />
-              <strong>{credits}</strong>
-              <span>crédits</span>
+
+            <div className="pro-more-profile-card__credits-row">
+              <div className="pro-more-profile-card__credits">
+                <Zap size={13} className="pro-more-profile-card__credits-icon" />
+                <strong>{credits}</strong>
+                <span>crédits disponibles</span>
+              </div>
             </div>
           </div>
 
@@ -106,6 +113,21 @@ export const ProMoreDrawer = ({
               <Building2 size={13} />
               <span>Agence</span>
             </button>
+          </div>
+
+          {/* Bouton Vitrine style desktop pleine largeur */}
+          <div className="pro-more-vitrine-wrapper">
+            <Link
+              to={persona === 'agence' ? '/vitrine/agence-ivoire' : '/vitrine/demarcheur-kouassi'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="habitoo-dash-btn-ghost pro-more-vitrine-btn-desktop"
+              onClick={onClose}
+              title="Consulter ma vitrine publique (nouvel onglet)"
+            >
+              <ExternalLink size={14} />
+              <span>Ma vitrine</span>
+            </Link>
           </div>
 
           {/* Liste des entrées */}

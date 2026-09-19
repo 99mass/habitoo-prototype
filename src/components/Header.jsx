@@ -42,6 +42,7 @@ export const Header = () => {
   const isHome = location.pathname === '/';
 
   useEffect(() => {
+    document.title = 'Habitoo - Trouver son logement en France en toute simplicité et sécurité';
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 30);
     };

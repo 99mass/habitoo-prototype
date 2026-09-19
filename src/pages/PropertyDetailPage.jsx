@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import L from 'leaflet';
 import { useHabitoo } from '../context/HabitooContext';
@@ -24,7 +24,9 @@ import {
   Maximize,
   Building,
   Navigation,
-  Star
+  Star,
+  ArrowRight,
+  ExternalLink
 } from 'lucide-react';
 
 // Leaflet Mini Map Component
@@ -147,13 +149,14 @@ export const PropertyDetailPage = () => {
     isFavorite, 
     toggleFavorite, 
     bookVisit,
-    userProperties
+    userProperties,
+    proProfiles
   } = useHabitoo();
 
-  // Check if viewing preview from publish page
+  // 1. Resolve raw property data from preview, location.state, userProperties or static data
   const isPreview = id === 'preview-card' || id === 'preview';
   let previewData = null;
-  if (isPreview) {
+  if (isPreview || location.state?.previewProperty) {
     if (location.state?.previewProperty) {
       previewData = location.state.previewProperty;
     } else {
@@ -166,53 +169,112 @@ export const PropertyDetailPage = () => {
     }
   }
 
-  // Find property in userProperties or PROPERTIES_DATA
-  const property = isPreview && previewData
-    ? {
-        id: 'preview-card',
-        title: previewData.title || "Titre de l'annonce",
-        type: previewData.type || "Villa d'architecte",
-        category: previewData.category || "LOCATION",
-        city: previewData.city || "Abidjan",
-        country: previewData.country || "Côte d'Ivoire",
-        neighborhood: previewData.neighborhood || "Quartier",
-        address: previewData.address || `${previewData.neighborhood || 'Quartier'}, ${previewData.city || 'Abidjan'}`,
-        priceXOF: previewData.priceXOF,
-        priceUSD: previewData.priceUSD,
-        priceXAF: previewData.priceXAF,
-        period: previewData.period || '',
-        specs: previewData.specs || { bedrooms: 4, bathrooms: 4, area: 400, security: "Gardiennage certifié" },
-        amenities: previewData.amenities && previewData.amenities.length > 0
-          ? previewData.amenities
-          : ["Groupe électrogène automatique", "Forage / Réserve d'eau", "Gardiennage H24", "Climatisation intégrale"],
-        coordinates: previewData.city === 'Kinshasa' ? [-4.3217, 15.3125] : previewData.city === 'Brazzaville' ? [-4.2677, 15.2919] : [5.3484, -3.9780],
-        images: previewData.images && previewData.images.length > 0
-          ? previewData.images
-          : ["https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1600&q=85"],
-        description: previewData.description || "Propriété d'exception offrant un confort absolu et des prestations de haut standing.",
-        auditDate: "Aujourd'hui",
-        auditStatus: "Fiche en cours de publication — Données fournies par le déclarant",
-        chargesBreakdown: {
-          copropriete: "À définir",
-          securite: "Inclus",
-          depotGarantie: "Caution de garantie standard",
-          energie: "Compteur individuel"
-        },
-        agent: {
-          name: previewData.ownerName || "Propriétaire Déclarant",
-          agency: (previewData.userRole === 'AGENCE' || previewData.userRole === 'MANDATAIRE') ? "Agence Immobilière Agréée" : "Propriétaire Direct",
-          phone: previewData.ownerPhone || "+225 07 00 00 00",
-          verified: true
-        },
-        isPro: previewData.userRole === 'AGENCE' || previewData.userRole === 'MANDATAIRE' || previewData.isPro === true,
-        advertiserType: (previewData.userRole === 'AGENCE' || previewData.userRole === 'MANDATAIRE' || previewData.advertiserType === 'PRO') ? 'PRO' : 'PARTICULIER'
-      }
-    : ((userProperties && userProperties.find(p => p.id === id)) || PROPERTIES_DATA.find(p => p.id === id) || PROPERTIES_DATA[0]);
+  // Find candidate property from userProperties, previewData, static data or default fallback
+  const foundUserProp = (userProperties && userProperties.find(p => String(p.id) === String(id))) 
+    || (previewData && String(previewData.id) === String(id) ? previewData : null);
+  const foundStaticProp = PROPERTIES_DATA.find(p => String(p.id) === String(id));
+
+  let rawProperty = null;
+  if (isPreview && previewData) {
+    rawProperty = { ...previewData, id: 'preview-card' };
+  } else if (foundUserProp) {
+    rawProperty = foundUserProp;
+  } else if (previewData && id?.startsWith('prop-pub-')) {
+    rawProperty = previewData;
+  } else if (foundStaticProp) {
+    rawProperty = foundStaticProp;
+  } else if (location.state?.previewProperty) {
+    rawProperty = location.state.previewProperty;
+  } else {
+    rawProperty = PROPERTIES_DATA[0];
+  }
+
+  // 2. Normalize and guarantee all required fields so user properties render without any undefined crashes
+  const city = rawProperty.city || 'Abidjan';
+  const defaultCoords = city === 'Kinshasa' ? [-4.3217, 15.3125] : city === 'Brazzaville' ? [-4.2677, 15.2919] : [5.3484, -3.9780];
+  const isPro = rawProperty.isPro ?? (rawProperty.userRole === 'AGENCE' || rawProperty.userRole === 'MANDATAIRE' || rawProperty.advertiserType === 'PRO');
+  const advertiserType = rawProperty.advertiserType || (isPro ? 'PRO' : 'PARTICULIER');
+  const ownerNameFallback = rawProperty.ownerName || rawProperty.agent?.name || "Propriétaire Déclarant";
+
+  const property = {
+    ...rawProperty,
+    id: rawProperty.id || id || 'prop-default',
+    title: rawProperty.title || "Titre de l'annonce",
+    type: rawProperty.type || "Villa d'architecte",
+    category: rawProperty.category || "LOCATION",
+    city: city,
+    country: rawProperty.country || (city === 'Kinshasa' ? 'RD Congo' : city === 'Brazzaville' ? 'Congo' : "Côte d'Ivoire"),
+    neighborhood: rawProperty.neighborhood || 'Quartier',
+    address: rawProperty.address || `${rawProperty.neighborhood || 'Quartier'}, ${city}`,
+    priceXOF: rawProperty.priceXOF ?? (city === 'Kinshasa' ? null : (rawProperty.price || null)),
+    priceUSD: rawProperty.priceUSD ?? (city === 'Kinshasa' ? (rawProperty.price || null) : null),
+    priceXAF: rawProperty.priceXAF ?? (city === 'Brazzaville' ? (rawProperty.price || null) : null),
+    period: rawProperty.period !== undefined ? rawProperty.period : (rawProperty.category === 'VENTE' ? '' : '/mois'),
+    specs: {
+      bedrooms: rawProperty.specs?.bedrooms ?? 4,
+      bathrooms: rawProperty.specs?.bathrooms ?? 3,
+      area: rawProperty.specs?.area ?? 350,
+      security: rawProperty.specs?.security || "Gardiennage certifié"
+    },
+    amenities: rawProperty.amenities && rawProperty.amenities.length > 0
+      ? rawProperty.amenities
+      : ["Groupe électrogène automatique", "Forage / Réserve d'eau", "Gardiennage H24", "Climatisation intégrale"],
+    coordinates: rawProperty.coordinates || defaultCoords,
+    images: rawProperty.images && rawProperty.images.length > 0
+      ? rawProperty.images
+      : ["https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1600&q=85"],
+    description: rawProperty.description || "Propriété d'exception offrant un confort absolu et des prestations de haut standing.",
+    auditDate: rawProperty.auditDate || "Vérifié récemment",
+    auditStatus: rawProperty.auditStatus || (rawProperty.status ? `Annonce ${rawProperty.status}` : "Annonce certifiée conforme"),
+    chargesBreakdown: {
+      copropriete: rawProperty.chargesBreakdown?.copropriete || "Inclus",
+      securite: rawProperty.chargesBreakdown?.securite || "Inclus",
+      depotGarantie: rawProperty.chargesBreakdown?.depotGarantie || "Caution de garantie standard",
+      energie: rawProperty.chargesBreakdown?.energie || "Compteur individuel"
+    },
+    agent: {
+      name: rawProperty.agent?.name || ownerNameFallback,
+      agency: rawProperty.agent?.agency || (isPro ? "Agence Immobilière Agréée" : "Propriétaire Direct"),
+      avatar: rawProperty.agent?.avatar || rawProperty.ownerAvatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
+      phone: rawProperty.agent?.phone || rawProperty.ownerPhone || "+225 07 00 00 00",
+      verified: true,
+      proType: rawProperty.agent?.proType || (isPro ? "AGENCE" : null),
+      proId: rawProperty.agent?.proId || null,
+      title: rawProperty.agent?.title || null
+    },
+    isPro: isPro,
+    advertiserType: advertiserType
+  };
 
   const favorite = isFavorite(property.id);
   const isVente = property.category === 'VENTE';
   const isProListing = property.isPro ?? (property.advertiserType === 'PRO' || (property.agent?.agency && property.agent.agency !== 'Particulier' && !property.agent.agency.includes('Direct Propriétaire') && !property.agent.agency.includes('Propriétaire Direct')));
   const isParticulierListing = !isProListing || property.advertiserType === 'PARTICULIER';
+  const isDemarcheur = isProListing && (
+    property.agent?.proType === 'DEMARCHEUR' ||
+    property.agent?.type === 'DEMARCHEUR' ||
+    property.agent?.agency?.toLowerCase().includes('démarcheur') ||
+    (property.agent?.title && property.agent.title.toLowerCase().includes('démarcheur'))
+  );
+
+  const matchedProProfile = useMemo(() => {
+    if (!proProfiles || !isProListing) return null;
+    if (property.agent?.proId) {
+      const found = proProfiles.find(p => p.id === property.agent.proId);
+      if (found) return found;
+    }
+    if (isDemarcheur) {
+      return proProfiles.find(p => p.type === 'DEMARCHEUR');
+    }
+    return proProfiles.find(p => p.type === 'AGENCE');
+  }, [proProfiles, property.agent, isProListing, isDemarcheur]);
+
+  const proReviews = matchedProProfile?.reviews || [];
+  const proReviewsCount = proReviews.length;
+  const proAvgScore = proReviewsCount > 0 
+    ? (proReviews.reduce((acc, r) => acc + (Number(r.score) || 5), 0) / proReviewsCount).toFixed(1)
+    : null;
+
   const ownerPhone = property.agent?.phone || property.ownerPhone || "+225 07 08 09 10 11";
   const cleanPhoneForWa = ownerPhone.replace(/[^0-9]/g, '');
   const ownerName = property.agent?.name || property.ownerName || "Propriétaire Déclarant";
@@ -579,29 +641,18 @@ export const PropertyDetailPage = () => {
               </div>
 
               {/* Price Banner */}
-              <div 
-                style={{
-                  display: 'flex',
-                  alignItems: 'baseline',
-                  justifyContent: 'space-between',
-                  padding: '20px 24px',
-                  backgroundColor: 'var(--surface-white)',
-                  borderRadius: 'var(--radius-card)',
-                  border: '1px solid var(--border-color)',
-                  boxShadow: 'var(--shadow-sm)'
-                }}
-              >
+              <div className="pdp-price-banner">
                 <div>
-                  <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--graphite-gray)', display: 'block', fontWeight: 600 }}>
+                  <span className="pdp-price-label">
                     {property.category === 'LOCATION' ? 'Loyer mensuel' : 'Prix de vente'}
                   </span>
-                  <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--obsidian-black)' }}>
+                  <div className="pdp-price-amount">
                     {formatPrice(property.priceXOF, property.priceUSD, property.priceXAF, property.period)}
                   </div>
                 </div>
-                <div style={{ textAlign: 'right' }}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--graphite-gray)', display: 'block', fontWeight: 600 }}>Charges de copropriété</span>
-                  <span style={{ fontSize: '0.9375rem', fontWeight: 700, color: 'var(--obsidian-black)' }}>
+                <div className="pdp-price-charges">
+                  <span className="pdp-charges-label">Charges de copropriété</span>
+                  <span className="pdp-charges-amount">
                     {property.chargesBreakdown.copropriete}
                   </span>
                 </div>
@@ -705,20 +756,41 @@ export const PropertyDetailPage = () => {
                     {isProListing ? (
                       <span className="agency-partner-badge">
                         <ShieldCheck size={12} strokeWidth={2.5} />
-                        <span>Agence Professionnelle Partenaire</span>
+                        <span>{isDemarcheur ? 'Démarcheur Agréé PRO' : 'Agence Professionnelle Partenaire'}</span>
                       </span>
                     ) : (
                       <span className="agency-direct-badge">
                         <span>Annonce Directe</span>
                       </span>
                     )}
+
+                    {isProListing && (
+                      <Link
+                        to={
+                          property.agent?.proId 
+                            ? `/vitrine/${property.agent.proId}` 
+                            : (isDemarcheur ? '/vitrine/demarcheur-kouassi' : '/vitrine/agence-ivoire')
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="agency-card-vitrine-btn"
+                        title="Consulter la vitrine certifiée"
+                      >
+                        <ExternalLink size={12} />
+                        <span>Vitrine</span>
+                      </Link>
+                    )}
                   </div>
                   <h4 className="agency-name-title">
-                    {property.agent.agency}
+                    {isDemarcheur ? property.agent.name : property.agent.agency}
                   </h4>
                   <div className="agency-advisor-text">
                     {isProListing ? (
-                      <>Conseiller dédié : <strong>{property.agent.name}</strong></>
+                      isDemarcheur ? (
+                        <>Démarcheur Indépendant Agréé • <strong>{property.neighborhood}, {property.city}</strong></>
+                      ) : (
+                        <>Conseiller dédié : <strong>{property.agent.name}</strong></>
+                      )
                     ) : (
                       <>Contact direct : <strong>{property.agent.name}</strong></>
                     )}
@@ -726,13 +798,21 @@ export const PropertyDetailPage = () => {
 
                   {isProListing && (
                     <div className="agency-rating-row">
-                      <div className="agency-rating-pill">
-                        <Star size={11} fill="#D97706" color="#D97706" />
-                        <span>4.9 / 5</span>
-                      </div>
-                      <span className="agency-rating-count">
-                        (18 avis certifiés)
-                      </span>
+                      {proReviewsCount > 0 ? (
+                        <>
+                          <div className="agency-rating-pill">
+                            <Star size={11} fill="#D97706" color="#D97706" />
+                            <span>{proAvgScore} / 5</span>
+                          </div>
+                          <span className="agency-rating-count">
+                            ({proReviewsCount} avis)
+                          </span>
+                        </>
+                      ) : (
+                        <span style={{ fontSize: '0.75rem', color: '#6B7280', fontWeight: 500 }}>
+                          Nouveau professionnel certifié • Aucun avis pour l'instant
+                        </span>
+                      )}
                     </div>
                   )}
                 </div>
@@ -1284,12 +1364,7 @@ export const PropertyDetailPage = () => {
         </div>
         <button
           onClick={() => setIsMobileDrawerOpen(true)}
-          className="btn-primary"
-          style={{ 
-            padding: '10px 18px', 
-            fontSize: '0.875rem', 
-            gap: '6px',
-          }}
+          className="btn-primary pdp-sticky-cta-btn"
         >
           {isParticulierListing ? <Phone size={15} /> : <Calendar size={15} />}
           <span>{isParticulierListing ? "Contacter" : "Réserver visite"}</span>
@@ -1306,6 +1381,44 @@ export const PropertyDetailPage = () => {
           align-items: start;
           margin-top: 28px;
           position: relative;
+        }
+
+        .pdp-price-banner {
+          display: flex;
+          align-items: baseline;
+          justify-content: space-between;
+          padding: 20px 24px;
+          background-color: var(--surface-white);
+          border-radius: var(--radius-card);
+          border: 1px solid var(--border-color);
+          box-shadow: var(--shadow-sm);
+        }
+        .pdp-price-label {
+          font-size: 0.75rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          color: var(--graphite-gray);
+          display: block;
+          font-weight: 600;
+        }
+        .pdp-price-amount {
+          font-size: 2rem;
+          font-weight: 800;
+          color: var(--obsidian-black);
+        }
+        .pdp-price-charges {
+          text-align: right;
+        }
+        .pdp-charges-label {
+          font-size: 0.75rem;
+          color: var(--graphite-gray);
+          display: block;
+          font-weight: 600;
+        }
+        .pdp-charges-amount {
+          font-size: 0.9375rem;
+          font-weight: 700;
+          color: var(--obsidian-black);
         }
 
         .pdp-booking-col {
@@ -1574,8 +1687,33 @@ export const PropertyDetailPage = () => {
         .agency-card-badge-row {
           display: flex;
           align-items: center;
-          gap: 8px;
+          justify-content: space-between;
+          gap: 10px;
           margin-bottom: 5px;
+          width: 100%;
+        }
+        .agency-card-vitrine-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          background: transparent;
+          border: 1px solid rgba(0, 0, 0, 0.15);
+          color: #1A1A1A;
+          padding: 4px 10px;
+          border-radius: 6px;
+          font-size: 0.74rem;
+          font-weight: 600;
+          text-decoration: none;
+          cursor: pointer;
+          transition: background-color 0.15s ease, border-color 0.15s ease;
+          white-space: nowrap;
+          flex-shrink: 0;
+          font-family: inherit;
+        }
+        .agency-card-vitrine-btn:hover {
+          background-color: #F4F5F7;
+          border-color: rgba(0, 0, 0, 0.25);
+          color: #111111;
         }
         .agency-partner-badge {
           display: inline-flex;
@@ -1761,25 +1899,52 @@ export const PropertyDetailPage = () => {
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-top: 1px solid var(--border-color);
-            padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px)) 20px;
+            padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)) 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 12px;
             z-index: 950;
             box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.08);
           }
           .mobile-sticky-price-label {
             display: block;
-            font-size: 0.6875rem;
+            font-size: 0.65rem;
             color: var(--graphite-gray);
             text-transform: uppercase;
             letter-spacing: 0.5px;
           }
           .mobile-sticky-price-val {
-            font-size: 1.15rem;
+            font-size: 1.05rem;
             font-weight: 800;
             color: var(--obsidian-black);
             line-height: 1.2;
+            white-space: nowrap;
+          }
+          .pdp-sticky-cta-btn {
+            white-space: nowrap !important;
+            flex-shrink: 0 !important;
+            padding: 10px 16px !important;
+            font-size: 0.85rem !important;
+            gap: 6px !important;
+          }
+
+          @media (max-width: 640px) {
+            .pdp-price-banner {
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 12px;
+              padding: 16px 18px;
+            }
+            .pdp-price-amount {
+              font-size: 1.75rem;
+            }
+            .pdp-price-charges {
+              text-align: left !important;
+              width: 100%;
+              padding-top: 10px;
+              border-top: 1px dashed var(--border-color);
+            }
           }
 
           /* AGENT & AGENCY CONTACT CARD (RESPONSIVE) */
@@ -1794,19 +1959,34 @@ export const PropertyDetailPage = () => {
             width: 48px;
             height: 48px;
           }
-          .agency-partner-badge {
+          .agency-card-badge-row {
+            display: contents;
+          }
+          .agency-partner-badge,
+          .agency-direct-badge {
+            order: 1;
             font-size: 0.62rem;
             padding: 2px 7px;
+            margin-bottom: 5px;
+            align-self: flex-start;
           }
           .agency-name-title {
+            order: 2;
             font-size: 1.02rem;
           }
           .agency-advisor-text {
+            order: 3;
             font-size: 0.78rem;
           }
           .agency-rating-row {
+            order: 4;
             gap: 6px;
             margin-top: 6px;
+          }
+          .agency-card-vitrine-btn {
+            order: 5;
+            margin-top: 8px;
+            align-self: flex-start;
           }
           .agency-rating-pill {
             font-size: 0.72rem;

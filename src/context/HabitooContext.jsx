@@ -48,7 +48,7 @@ const INITIAL_VISITS = [
     fee: 10000,
     escrowStatus: "Visite honorée",
     agentName: "Jean-Marc Kouassi",
-    agentAgency: "Ivoire Prestige Properties",
+    agentAgency: "Démarcheur Agréé Habitoo",
     paymentMethod: "Portefeuille Habitoo",
     rating: null
   },
@@ -63,7 +63,7 @@ const INITIAL_VISITS = [
     fee: 10000,
     escrowStatus: "Séquestre actif",
     agentName: "Jean-Marc Kouassi",
-    agentAgency: "Ivoire Prestige Properties",
+    agentAgency: "Démarcheur Agréé Habitoo",
     paymentMethod: "Portefeuille Habitoo"
   },
 ];
@@ -86,6 +86,137 @@ const INITIAL_NOTIFICATIONS = [
     date: "20 Février 2025",
     read: true,
     link: "/mon-compte?tab=settings"
+  }
+];
+
+const INITIAL_PRO_PROFILES = [
+  {
+    id: "demarcheur-kouassi",
+    type: "DEMARCHEUR",
+    name: "Jean-Marc Kouassi",
+    title: "Démarcheur Immobilier Agréé",
+    badge: "Démarcheur Agréé PRO",
+    license: "AGR-CI-2024-0892",
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80",
+    city: "Abidjan",
+    country: "Côte d'Ivoire",
+    neighborhoods: ["Cocody", "Riviera Golf", "Plateau", "Deux-Plateaux"],
+    bio: "Professionnel accrédité sur le marché immobilier d'Abidjan depuis plus de 8 ans. Spécialisé dans les villas d'exception et appartements résidentiels de haut standing. Audit rigoureux des titres fonciers et accompagnement complet des acquéreurs et locataires.",
+    stats: {
+      propertyCount: 2,
+      verifiedVisitsRate: "100%",
+      memberSince: "Janvier 2024",
+      avgResponseTime: "< 2h"
+    },
+    propertyIds: ["hab-ci-01", "hab-ci-05"],
+    reviews: [
+      {
+        id: "rev-01",
+        author: "Dr. Patrick Ahoua",
+        date: "14 Février 2025",
+        score: 5,
+        criteria: { punctuality: 5, professionalism: 5, compliance: 5 },
+        comment: "Visite de la villa à la Riviera Golf parfaitement organisée. Dossier technique complet remis dès le début. Ponctuel et très précis sur les charges de copropriété.",
+        verifiedVisit: true,
+        propertyTitle: "Villa Signature 'Le Belvédère' — Riviera Golf"
+      },
+      {
+        id: "rev-02",
+        author: "Mme Clarisse Bédié",
+        date: "28 Janvier 2025",
+        score: 5,
+        criteria: { punctuality: 5, professionalism: 5, compliance: 4 },
+        comment: "Démarcheur extrêmement courtois et transparent. Pas de mauvaises surprises entre les photos de l'annonce et l'état réel du bien.",
+        verifiedVisit: true,
+        propertyTitle: "Manoir Contemporain 'Le Vallon' — 2 Plateaux"
+      },
+      {
+        id: "rev-03",
+        author: "Marc-Aurèle K.",
+        date: "10 Janvier 2025",
+        score: 5,
+        criteria: { punctuality: 5, professionalism: 5, compliance: 5 },
+        comment: "Procédure de séquestre Habitoo respectée à la lettre. Très bonne connaissance du quartier Riviera 3.",
+        verifiedVisit: true,
+        propertyTitle: "Villa Signature 'Le Belvédère'"
+      }
+    ]
+  },
+  {
+    id: "agence-ivoire",
+    type: "AGENCE",
+    name: "Ivoire Prestige Properties",
+    title: "Agence Immobilière Agréée & Conseil Patrimonial",
+    badge: "Agence Certifiée PRO",
+    license: "RCCM-CI-ABJ-2021-B-14902",
+    avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=300&q=80",
+    banner: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80",
+    city: "Abidjan",
+    country: "Côte d'Ivoire",
+    neighborhoods: ["Cocody", "Marcory Zone 4", "Riviera", "Plateau"],
+    bio: "Cabinet d'administration de biens et de transactions d'exception implanté à Abidjan. Nos conseillers certifiés auditent chaque mandat selon les protocoles stricts d'Habitoo (vérification du titre foncier, audit technique du bâtiment et compte séquestre sécurisé).",
+    stats: {
+      propertyCount: 1,
+      verifiedVisitsRate: "100%",
+      memberSince: "Novembre 2023",
+      avgResponseTime: "< 1h"
+    },
+    teamMembers: [
+      {
+        name: "Jean-Marc Kouassi",
+        role: "Directeur des transactions résidentielles",
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
+      },
+      {
+        name: "Sarah Bamba",
+        role: "Responsable Gestion Locative & Audit",
+        avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80"
+      }
+    ],
+    propertyIds: ["hab-ci-02"],
+    reviews: [
+      {
+        id: "rev-ag-01",
+        author: "Stéphane Konan",
+        date: "02 Février 2025",
+        score: 5,
+        criteria: { punctuality: 5, professionalism: 5, compliance: 5 },
+        comment: "Excellente prise en charge pour la location de notre résidence d'expatriation. Réactivité exemplaire de l'équipe et suivi sans faille.",
+        verifiedVisit: true,
+        propertyTitle: "Penthouse Panoramique 'Laguna Sky' — Plateau"
+      },
+      {
+        id: "rev-ag-02",
+        author: "Nathalie Diop",
+        date: "19 Janvier 2025",
+        score: 4,
+        criteria: { punctuality: 4, professionalism: 5, compliance: 5 },
+        comment: "Agence professionnelle et sérieuse. Documents juridiques clairs et conformes aux exigences du bail notarié.",
+        verifiedVisit: true,
+        propertyTitle: "Penthouse Panoramique 'Laguna Sky' — Plateau"
+      }
+    ]
+  },
+  {
+    id: "demarcheur-nouveau",
+    type: "DEMARCHEUR",
+    name: "Aminata Traoré",
+    title: "Démarcheur Indépendant Accrédité",
+    badge: "Démarcheur Agréé PRO",
+    license: "AGR-CI-2025-1140",
+    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
+    city: "Abidjan",
+    country: "Côte d'Ivoire",
+    neighborhoods: ["Cocody", "Angré", "Riviera Palmeraie", "Marcory Zone 4"],
+    bio: "Démarcheuse immobilière indépendante nouvellement accréditée par le réseau Habitoo. Sélection rigoureuse de biens vérifiés sur site avec audits techniques préalables et vérification de la disponibilité.",
+    stats: {
+      propertyCount: 1,
+      verifiedVisitsRate: "100%",
+      memberSince: "Février 2025",
+      avgResponseTime: "< 15min"
+    },
+    propertyIds: ["hab-ci-04"],
+    reviews: [] // AUCUN AVIS !
   }
 ];
 
@@ -240,6 +371,62 @@ const DEFAULT_USER = {
       }
       return p;
     }));
+  };
+
+  // Vitrines des Professionnels (Démarcheurs & Agences) avec synchronisation de version
+  const PRO_PROFILES_VERSION = "v3_demarcheurs_simulation";
+  const [proProfiles, setProProfiles] = useState(() => {
+    try {
+      const storedVersion = localStorage.getItem('habitoo_pro_profiles_version');
+      if (storedVersion !== PRO_PROFILES_VERSION) {
+        localStorage.setItem('habitoo_pro_profiles_version', PRO_PROFILES_VERSION);
+        localStorage.setItem('habitoo_pro_profiles', JSON.stringify(INITIAL_PRO_PROFILES));
+        return INITIAL_PRO_PROFILES;
+      }
+      const saved = localStorage.getItem('habitoo_pro_profiles');
+      return saved ? JSON.parse(saved) : INITIAL_PRO_PROFILES;
+    } catch (e) {
+      console.warn("Erreur lecture proProfiles localStorage, fallback INITIAL_PRO_PROFILES:", e);
+      return INITIAL_PRO_PROFILES;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('habitoo_pro_profiles', JSON.stringify(proProfiles));
+      localStorage.setItem('habitoo_pro_profiles_version', PRO_PROFILES_VERSION);
+    } catch (e) {
+      console.error("Erreur sauvegarde proProfiles localStorage:", e);
+    }
+  }, [proProfiles]);
+
+  const addProReview = (proId, reviewData) => {
+    const newReview = {
+      id: `rev-usr-${Date.now().toString().slice(-4)}`,
+      author: reviewData.author?.trim() || 'Client Vérifié Habitoo',
+      date: 'Aujourd\'hui',
+      score: Number(reviewData.score) || 5,
+      criteria: {
+        punctuality: Number(reviewData.criteria?.punctuality) || 5,
+        professionalism: Number(reviewData.criteria?.professionalism) || 5,
+        compliance: Number(reviewData.criteria?.compliance) || 5
+      },
+      comment: reviewData.comment?.trim() || 'Avis certifié suite à une visite effectuée.',
+      verifiedVisit: true,
+      propertyTitle: reviewData.propertyTitle || 'Bien immobilier vérifié'
+    };
+
+    setProProfiles(prev => prev.map(pro => {
+      if (pro.id === proId) {
+        return {
+          ...pro,
+          reviews: [newReview, ...(pro.reviews || [])]
+        };
+      }
+      return pro;
+    }));
+
+    return newReview;
   };
 
   // Notifications State
@@ -520,7 +707,10 @@ const DEFAULT_USER = {
         closeDepositModal: () => {
           setIsDepositModalOpen(false);
           setDepositInitialData(null);
-        }
+        },
+        proProfiles,
+        addProReview,
+        getProProfile: (id) => proProfiles.find(p => p.id === id) || proProfiles[0]
       }}
     >
       {children}

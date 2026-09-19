@@ -65,7 +65,7 @@ export const ProHeader = () => {
         {/* Right Actions */}
         <div className="habitoo-pro-header-actions">
 
-          <Link to="/" className="habitoo-pro-back-link" title="Accéder au portail grand public">
+          <Link to="/" target='_blank' className="habitoo-pro-back-link" title="Accéder au portail grand public">
             <span>Espace Particuliers</span>
             <ArrowUpRight size={14} />
           </Link>
@@ -96,13 +96,13 @@ export const ProHeader = () => {
               Accueil
             </a>
             <a href="#avantages" onClick={(e) => scrollToSection(e, 'avantages')} className="habitoo-pro-mobile-link">
-              Avantages stratégiques
+              Avantages
             </a>
             <a href="#cibles" onClick={(e) => scrollToSection(e, 'cibles')} className="habitoo-pro-mobile-link">
-              Solutions Démarcheurs et Agences
+              Solutions
             </a>
             <a href="#tarifs" onClick={(e) => scrollToSection(e, 'tarifs')} className="habitoo-pro-mobile-link">
-              Grille tarifaire
+              Tarifs
             </a>
             <a href="#reassurance" onClick={(e) => scrollToSection(e, 'reassurance')} className="habitoo-pro-mobile-link">
               Accréditation

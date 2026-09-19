@@ -292,7 +292,7 @@ export const DashboardPage = () => {
                     <p className="avatar-meta-hint">
                       Format JPG, PNG ou WEBP. Cette photo sera affichée sur vos annonces et lors de la réservation de visites.
                     </p>
-                    <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+                    <div className="avatar-actions-wrap">
                       <button
                         type="button"
                         className="btn-ghost-dark btn-small"
@@ -480,7 +480,7 @@ export const DashboardPage = () => {
 
                       <div className="user-prop-actions">
                         <Link 
-                          to={`/bien/${property.id}`} 
+                          to={`/bien/${property.id || 'preview-card'}`} 
                           state={{ previewProperty: property }}
                           className="btn-ghost-dark btn-small"
                           style={{ flex: 1, textDecoration: 'none', justifyContent: 'center' }}
@@ -576,15 +576,19 @@ export const DashboardPage = () => {
                       <div className="visit-address">{visit.propertyAddress}</div>
                       
                       <div className="visit-meta-row">
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                          <Calendar size={12} /> {visit.date} ({visit.time})
+                        <span className="visit-meta-item">
+                          <Calendar size={13} />
+                          <span>{visit.date} ({visit.time})</span>
                         </span>
-                        <span>•</span>
-                        <span>Agent : <strong>{visit.agentName}</strong> {visit.agentAgency && <span style={{ color: 'var(--graphite-gray)', fontWeight: 400 }}>({visit.agentAgency})</span>}</span>
+                        <span className="visit-meta-divider">•</span>
+                        <span className="visit-meta-item">
+                          <User size={13} />
+                          <span>Agent : <strong>{visit.agentName}</strong> {visit.agentAgency && <span style={{ color: 'var(--graphite-gray)', fontWeight: 400 }}>({visit.agentAgency})</span>}</span>
+                        </span>
                       </div>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', alignSelf: 'center', flexWrap: 'wrap' }}>
+                    <div className="visit-card-actions">
                       {visit.status === 'Effectuée' && (
                         visit.rating ? (
                           <button
@@ -1455,6 +1459,25 @@ export const DashboardPage = () => {
           display: flex;
           align-items: center;
           gap: 6px;
+          flex-wrap: wrap;
+        }
+        .visit-meta-item {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+        }
+        .visit-card-actions {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          align-self: center;
+          flex-wrap: wrap;
+        }
+        .avatar-actions-wrap {
+          display: flex;
+          gap: 8px;
+          margin-top: 8px;
+          flex-wrap: wrap;
         }
 
         /* NOTIFICATIONS */
@@ -1497,10 +1520,13 @@ export const DashboardPage = () => {
           font-size: 0.86rem;
           font-weight: 700;
           color: var(--obsidian-black);
+          line-height: 1.35;
         }
         .notif-time {
           font-size: 0.72rem;
           color: var(--graphite-gray);
+          white-space: nowrap;
+          flex-shrink: 0;
         }
         .notif-message {
           font-size: 0.78rem;
@@ -1710,6 +1736,87 @@ export const DashboardPage = () => {
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(4px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* RESPONSIVE MOBILE ADAPTATIONS (< 640px) */
+        @media (max-width: 640px) {
+          .userspace-tab-btn {
+            padding: 10px 12px;
+            font-size: 0.82rem;
+            gap: 6px;
+          }
+          .avatar-actions-wrap {
+            flex-direction: column;
+            align-items: stretch;
+            width: 100%;
+            gap: 8px;
+          }
+          .avatar-actions-wrap button {
+            width: 100%;
+            justify-content: center;
+            min-height: 42px;
+          }
+          .visit-card-item {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 16px;
+            gap: 12px;
+          }
+          .visit-card-icon-box {
+            display: none;
+          }
+          .visit-card-content {
+            width: 100%;
+            min-width: 0;
+          }
+          .visit-meta-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+          }
+          .visit-meta-divider {
+            display: none;
+          }
+          .visit-card-actions {
+            width: 100%;
+            align-self: stretch;
+            margin-top: 6px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 8px;
+          }
+          .visit-card-actions > * {
+            flex: 1 1 auto;
+            justify-content: center;
+            text-align: center;
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+          }
+
+          /* Notifications Mobile Layout */
+          .notif-card-item {
+            padding: 12px 14px;
+            gap: 12px;
+          }
+          .notif-top-row {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 3px !important;
+            margin-bottom: 5px !important;
+          }
+          .notif-title {
+            width: 100% !important;
+            font-size: 0.85rem !important;
+            line-height: 1.35 !important;
+          }
+          .notif-time {
+            white-space: nowrap !important;
+            font-size: 0.70rem !important;
+            color: var(--graphite-gray) !important;
+            display: inline-block !important;
+          }
         }
       `}</style>
     </div>

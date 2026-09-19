@@ -1086,6 +1086,16 @@ export const AuthModal = () => {
           from { transform: scale(0.8); opacity: 0; }
           to { transform: scale(1); opacity: 1; }
         }
+
+        @media (max-width: 480px) {
+          .auth-modal-overlay {
+            padding: 12px;
+          }
+          .auth-modal-card {
+            padding: 24px 18px;
+            border-radius: var(--radius-card);
+          }
+        }
       `}</style>
     </div>
   );

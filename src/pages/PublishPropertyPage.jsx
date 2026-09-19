@@ -1142,7 +1142,7 @@ export const PublishPropertyPage = () => {
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                       <span className="preview-agent-name">{userName}</span>
-                      <span className="preview-owner-tag">Propriétaire direct</span>
+                      <span className="preview-owner-tag">Particulier</span>
                     </div>
                     <span className="preview-contact-caption">
                       WhatsApp direct : {formData.ownerPhone || "Numéro certifié"}
@@ -2259,6 +2259,7 @@ export const PublishPropertyPage = () => {
         @media (max-width: 1024px) {
           .publish-layout-grid {
             grid-template-columns: 1fr;
+            padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
           }
 
           /* Masquer le module sticky dans le flux ordinaire */
@@ -2299,6 +2300,24 @@ export const PublishPropertyPage = () => {
           .preview-carousel-main-wrap {
             height: 250px;
             border-radius: var(--radius-card);
+          }
+
+          @media (max-width: 640px) {
+            .preview-price-banner {
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 10px;
+              padding: 14px 16px;
+            }
+            .preview-price-val {
+              font-size: 1.4rem;
+            }
+            .preview-charges-box {
+              text-align: left;
+              width: 100%;
+              padding-top: 8px;
+              border-top: 1px dashed var(--border-color);
+            }
           }
 
           /* Volet plein écran latéral (100vw) pour éliminer tout débordement */

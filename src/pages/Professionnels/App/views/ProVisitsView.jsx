@@ -10,8 +10,10 @@ import {
   CalendarDays,
   Plus,
   Trash2,
+  Star,
   X
 } from 'lucide-react';
+import { ProVisitRatingModal } from '../components/ProVisitRatingModal';
 
 const UPCOMING_VISITS = [
   {
@@ -55,7 +57,11 @@ const PAST_VISITS = [
     phone: '+225 07 11 22 33 44',
     property: "Villa Signature 'Le Belvédère'",
     address: 'Cocody Riviera Golf',
-    result: 'Visite honorée • Offre d\'achat en cours'
+    result: 'Visite honorée • Offre d\'achat en cours',
+    rating: {
+      score: 5,
+      comment: 'Très bonne prise en charge, ponctuelle et professionnelle. Les informations sur le bien étaient claires.'
+    }
   },
   {
     id: 'vis-past-2',
@@ -65,7 +71,11 @@ const PAST_VISITS = [
     phone: '+225 05 99 88 77 66',
     property: "Résidence Balcon du Golf",
     address: 'Riviera 3',
-    result: 'Visite honorée • Seconde visite souhaitée'
+    result: 'Visite honorée • Seconde visite souhaitée',
+    rating: {
+      score: 4,
+      comment: ''
+    }
   },
   {
     id: 'vis-past-3',
@@ -103,6 +113,7 @@ export const ProVisitsView = () => {
   const [days, setDays] = useState(DAYS);
   const [visitDuration, setVisitDuration] = useState('45');
   const [savedFeedback, setSavedFeedback] = useState(false);
+  const [ratingVisit, setRatingVisit] = useState(null);
 
   // État d'ajout de créneau personnalisé
   const [isAddingSlot, setIsAddingSlot] = useState(false);
@@ -251,6 +262,16 @@ export const ProVisitsView = () => {
                   <span className={`habitoo-dash-visit-status-badge ${subTab === 'UPCOMING' ? 'habitoo-dash-visit-status-badge--upcoming' : 'habitoo-dash-visit-status-badge--done'}`}>
                     {subTab === 'UPCOMING' ? 'À faire' : 'Passée'}
                   </span>
+                  {subTab === 'PAST' && vis.rating && (
+                    <button
+                      type="button"
+                      className="habitoo-dash-btn-view-rating"
+                      onClick={() => setRatingVisit(vis)}
+                    >
+                      <Star size={13} />
+                      <span>Voir la note</span>
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -416,6 +437,8 @@ export const ProVisitsView = () => {
         </div>
 
       </div>
+
+      <ProVisitRatingModal visit={ratingVisit} onClose={() => setRatingVisit(null)} />
 
     </div>
   );

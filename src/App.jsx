@@ -21,6 +21,7 @@ import { ProPendingPass } from './pages/Professionnels/Onboarding/ProPendingPass
 import { ProHeader } from './components/ProHeader';
 import { ProTunnelHeader } from './components/ProTunnelHeader';
 import { ProDashboardLayout } from './pages/Professionnels/App/ProDashboardLayout';
+import { VitrinePage } from './pages/VitrinePage';
 
 // Auto scroll to top on navigation
 const ScrollToTop = () => {
@@ -62,6 +63,8 @@ const AppContent = () => {
           <Route path="/pro/en-attente" element={<ProPendingPass />} />
           <Route path="/pro/app" element={<ProDashboardLayout />} />
           <Route path="/pro/app/dashboard" element={<ProDashboardLayout />} />
+          <Route path="/vitrine" element={<VitrinePage />} />
+          <Route path="/vitrine/:proId" element={<VitrinePage />} />
           <Route path="/publier" element={<PublishPropertyPage />} />
           <Route path="/publier-une-annonce" element={<PublishPropertyPage />} />
           <Route path="*" element={<HomePage />} />

@@ -106,9 +106,8 @@ export const DepositModal = () => {
   return (
     <div className="modal-overlay" onClick={handleClose}>
       <div 
-        className="modal-content" 
+        className="modal-content deposit-modal-box" 
         onClick={(e) => e.stopPropagation()}
-        style={{ padding: '32px' }}
         role="dialog"
         aria-modal="true"
         aria-labelledby="deposit-modal-title"
@@ -187,7 +186,7 @@ export const DepositModal = () => {
               <div>
                 <div className="form-group">
                   <label className="form-label">Type d'opération</label>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <div className="deposit-form-grid-2">
                     <button
                       type="button"
                       onClick={() => setFormData({ ...formData, category: 'LOCATION' })}
@@ -220,7 +219,7 @@ export const DepositModal = () => {
                   </select>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div className="deposit-form-grid-2">
                   <div className="form-group">
                     <label className="form-label">Ville</label>
                     <select
@@ -272,7 +271,7 @@ export const DepositModal = () => {
             {/* Step 2: Spécifications & Prix */}
             {step === 2 && (
               <div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div className="deposit-form-grid-2">
                   <div className="form-group">
                     <label className="form-label">Loyer mensuel ou Prix ({activeCity.currency})</label>
                     <input
@@ -295,7 +294,7 @@ export const DepositModal = () => {
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div className="deposit-form-grid-2">
                   <div className="form-group">
                     <label className="form-label">Nombre de Chambres</label>
                     <input
@@ -379,7 +378,7 @@ export const DepositModal = () => {
                   />
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div className="deposit-form-grid-2">
                   <div className="form-group">
                     <label className="form-label">Téléphone (WhatsApp)</label>
                     <input
@@ -426,6 +425,26 @@ export const DepositModal = () => {
           </div>
         )}
       </div>
+
+      <style>{`
+        .deposit-modal-box {
+          padding: 32px;
+        }
+        .deposit-form-grid-2 {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+        @media (max-width: 640px) {
+          .deposit-modal-box {
+            padding: 24px 18px !important;
+          }
+          .deposit-form-grid-2 {
+            grid-template-columns: 1fr !important;
+            gap: 10px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };

@@ -1,0 +1,608 @@
+/* ==========================================================================
+   HABITOO — VITRINE PROFESSIONNELLE (DÉMARCHEUR & AGENCE)
+   Vanilla CSS Scoped (.vitrine-)
+   Design épuré, minéral et ultra-premium (Zéro overflow garanti)
+   ========================================================================== */
+
+.vitrine-page {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--bg-main, #F8F9FA);
+  color: var(--obsidian-black, #1A1A1A);
+  font-family: var(--font-body, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  padding: 24px 0 80px 0;
+  overflow-x: clip;
+}
+
+.vitrine-container {
+  width: 100%;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+  overflow-x: clip;
+}
+
+/* Navigation / Bouton Retour */
+.vitrine-top-nav {
+  margin-bottom: 16px;
+}
+
+.vitrine-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  color: #1A1A1A;
+  padding: 6px 13px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+  text-decoration: none;
+}
+
+.vitrine-back-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.22);
+}
+
+/* --------------------------------------------------------------------------
+   1. MINI CARTE D'IDENTITÉ (HEADER)
+   Structure identique pour Démarcheur et Agence, finitions différenciées
+   -------------------------------------------------------------------------- */
+.vitrine-id-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "avatar top"
+    "avatar meta";
+  column-gap: 22px;
+  row-gap: 6px;
+  padding: 22px 26px;
+  border-radius: 8px;
+  margin-bottom: 36px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+  width: 100%;
+  align-items: center;
+}
+
+/* Variante Démarcheur : Style minéral et épuré */
+.vitrine-id-card--broker {
+  background-color: var(--surface-white, #FFFFFF);
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.vitrine-id-card--broker .vitrine-id-name {
+  color: #111111;
+}
+
+.vitrine-id-card--broker .vitrine-id-badge {
+  background-color: #F1F5F9;
+  color: #1E293B;
+  border: 1px solid #CBD5E1;
+}
+
+.vitrine-id-card--broker .vitrine-id-role {
+  color: #555555;
+}
+
+.vitrine-id-card--broker .vitrine-id-meta-item,
+.vitrine-id-card--broker .vitrine-id-meta-sep,
+.vitrine-id-card--broker .vitrine-id-license {
+  color: #666666;
+}
+
+/* Variante Agence : Rendu ultra-premium sombre avec dégradé minéral et or */
+.vitrine-id-card--agency {
+  background: linear-gradient(135deg, #1F2228 0%, #131418 55%, #0D0E10 100%);
+  color: #FFFFFF;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.28);
+}
+
+.vitrine-id-card--agency .vitrine-id-name {
+  color: #FFFFFF;
+}
+
+.vitrine-id-card--agency .vitrine-id-badge {
+  background-color: rgba(212, 175, 55, 0.15);
+  color: #FBBF24;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+}
+
+.vitrine-id-card--agency .vitrine-id-role {
+  color: #E2E8F0;
+}
+
+.vitrine-id-card--agency .vitrine-id-meta-item,
+.vitrine-id-card--agency .vitrine-id-meta-sep,
+.vitrine-id-card--agency .vitrine-id-license {
+  color: #A3A3A3;
+}
+
+.vitrine-id-card--agency .vitrine-id-meta-icon {
+  color: #FBBF24;
+}
+
+/* Éléments internes de la Mini Carte d'Identité */
+.vitrine-id-avatar-wrap {
+  grid-area: avatar;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.vitrine-id-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 6px;
+  object-fit: cover;
+  display: block;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background-color: #E5E7EB;
+}
+
+.vitrine-id-card--agency .vitrine-id-avatar {
+  border: 1px solid rgba(212, 175, 55, 0.4);
+}
+
+.vitrine-id-top-block {
+  grid-area: top;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.vitrine-id-header-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.vitrine-id-name {
+  font-family: var(--font-heading, inherit);
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.vitrine-id-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.vitrine-id-role {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin: 2px 0 6px 0;
+}
+
+.vitrine-id-meta-row {
+  grid-area: meta;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  font-size: 0.82rem;
+}
+
+.vitrine-id-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.vitrine-id-meta-icon {
+  flex-shrink: 0;
+}
+
+.vitrine-id-meta-sep {
+  opacity: 0.4;
+}
+
+.vitrine-id-license {
+  font-family: monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
+/* --------------------------------------------------------------------------
+   2. CARROUSEL MODERNE DES BIENS (ZÉRO OVERFLOW + PEEK EFFECT)
+   -------------------------------------------------------------------------- */
+.vitrine-carousel-section {
+  width: 100%;
+  margin-bottom: 44px;
+  box-sizing: border-box;
+}
+
+.vitrine-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.vitrine-section-title-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.vitrine-section-title {
+  font-family: var(--font-heading, inherit);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--obsidian-black, #111111);
+  margin: 0;
+}
+
+.vitrine-section-count {
+  font-size: 0.82rem;
+  color: var(--graphite-light, #737373);
+  font-weight: 500;
+}
+
+/* Filtres de catégorie contemporains */
+.vitrine-filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: var(--surface-white, #FFFFFF);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  padding: 3px;
+}
+
+.vitrine-filter-btn {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 4px;
+  border: none;
+  background-color: transparent;
+  color: var(--graphite-gray, #555555);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.vitrine-filter-btn:hover {
+  color: #111111;
+}
+
+.vitrine-filter-btn--active {
+  background-color: #111111;
+  color: #FFFFFF;
+}
+
+.vitrine-filter-btn--active:hover {
+  color: #FFFFFF;
+}
+
+/* Conteneur Carrousel */
+.vitrine-carousel-viewport {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.vitrine-carousel-track-peek {
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 4px 2px 14px 2px;
+  box-sizing: border-box;
+}
+
+.vitrine-carousel-track-peek::-webkit-scrollbar {
+  display: none;
+}
+
+.vitrine-carousel-card-wrap {
+  flex: 0 0 320px;
+  max-width: 320px;
+  scroll-snap-align: start;
+  box-sizing: border-box;
+}
+
+/* Pied de carrousel : Ligne de progression fine et boutons de navigation */
+.vitrine-carousel-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.vitrine-carousel-progress-track {
+  flex-grow: 1;
+  height: 3px;
+  background-color: #E2E8F0;
+  border-radius: 2px;
+  overflow: hidden;
+  max-width: 240px;
+}
+
+.vitrine-carousel-progress-bar {
+  height: 100%;
+  background-color: #111111;
+  border-radius: 2px;
+  transition: width 0.25s ease;
+}
+
+.vitrine-carousel-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vitrine-carousel-btn-modern {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background-color: var(--surface-white, #FFFFFF);
+  color: #111111;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.vitrine-carousel-btn-modern:hover {
+  background-color: #F1F5F9;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.vitrine-carousel-btn-modern:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------------------
+   3. SECTION AVIS CLIENTS RESTRUCTURÉE
+   -------------------------------------------------------------------------- */
+.vitrine-reviews-section {
+  width: 100%;
+  background-color: var(--surface-white, #FFFFFF);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  padding: 24px 26px;
+  box-sizing: border-box;
+}
+
+.vitrine-reviews-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 22px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.vitrine-reviews-heading {
+  font-family: var(--font-heading, inherit);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111111;
+  margin: 0;
+}
+
+.vitrine-reviews-score-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background-color: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #111111;
+}
+
+/* Grille des cartes d'avis modernes */
+.vitrine-reviews-grid-v2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 16px;
+}
+
+.vitrine-review-card-v2 {
+  background-color: var(--bg-main, #F8F9FA);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 6px;
+  padding: 18px 18px 14px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.vitrine-review-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.vitrine-reviewer-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vitrine-reviewer-initials {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #111111;
+  color: #FFFFFF;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.vitrine-reviewer-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #111111;
+  display: block;
+  line-height: 1.2;
+}
+
+.vitrine-review-date-text {
+  font-size: 0.72rem;
+  color: #888888;
+  display: block;
+}
+
+.vitrine-review-stars-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.vitrine-review-quote {
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: #333333;
+  margin: 0 0 12px 0;
+}
+
+.vitrine-review-property-footer {
+  padding-top: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  font-size: 0.72rem;
+  color: #777777;
+}
+
+/* --------------------------------------------------------------------------
+   4. BOÎTE ÉPURÉE "AUCUN AVIS POUR LE MOMENT" (EMPTY STATE)
+   -------------------------------------------------------------------------- */
+.vitrine-empty-reviews-box-clean {
+  background-color: var(--bg-main, #F8F9FA);
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  border-radius: 6px;
+  padding: 32px 20px;
+  text-align: center;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.vitrine-empty-reviews-icon {
+  color: #777777;
+  margin-bottom: 10px;
+}
+
+.vitrine-empty-reviews-title {
+  font-family: var(--font-heading, inherit);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111111;
+  margin: 0 0 6px 0;
+}
+
+.vitrine-empty-reviews-desc {
+  font-size: 0.82rem;
+  color: #666666;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE & MOBILE DESIGN (375px ET INFÉRIEUR)
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .vitrine-page {
+    padding: 16px 0 60px 0;
+  }
+
+  .vitrine-container {
+    padding: 0 16px;
+  }
+
+  /* Mini Carte d'Identité sur mobile : avatar sur 2 lignes (nom/badge + rôle), métadonnées en dessous */
+  .vitrine-id-card {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "avatar top"
+      "meta meta";
+    column-gap: 14px;
+    row-gap: 12px;
+    padding: 16px;
+    margin-bottom: 26px;
+    align-items: center;
+  }
+
+  .vitrine-id-avatar {
+    width: 60px;
+    height: 60px;
+  }
+
+  .vitrine-id-name {
+    font-size: 1.15rem;
+  }
+
+  .vitrine-id-role {
+    font-size: 0.82rem;
+    margin: 2px 0 0 0;
+  }
+
+  .vitrine-id-meta-row {
+    font-size: 0.75rem;
+    gap: 6px 10px;
+    width: 100%;
+    padding-top: 10px;
+    border-top: 1px solid rgba(0, 0, 0, 0.07);
+  }
+
+  .vitrine-id-card--agency .vitrine-id-meta-row {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Carrousel sur mobile : Peek Effect 82vw */
+  .vitrine-carousel-card-wrap {
+    flex: 0 0 82vw;
+    max-width: 82vw;
+  }
+
+  .vitrine-reviews-section {
+    padding: 18px 16px;
+  }
+
+  .vitrine-reviews-grid-v2 {
+    grid-template-columns: 1fr;
+  }
+}

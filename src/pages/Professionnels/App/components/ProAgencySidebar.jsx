@@ -10,7 +10,8 @@ import {
   Plus,
   Zap,
   ShieldCheck,
-  Briefcase
+  Briefcase,
+  ExternalLink
 } from 'lucide-react';
 
 export const ProAgencySidebar = ({
@@ -108,6 +109,21 @@ export const ProAgencySidebar = ({
               </li>
             );
           })}
+
+          {/* Lien direct Vitrine Publique */}
+          <li className="habitoo-agency-sidebar__nav-li" style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid rgba(0, 0, 0, 0.06)' }}>
+            <Link
+              to="/vitrine/agence-ivoire"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="habitoo-agency-sidebar__nav-btn"
+              style={{ textDecoration: 'none' }}
+              title="Ouvrir la vitrine publique de l'agence dans un nouvel onglet"
+            >
+              <ExternalLink size={15} className="habitoo-agency-sidebar__nav-icon" />
+              <span className="habitoo-agency-sidebar__nav-label">Vitrine publique</span>
+            </Link>
+          </li>
         </ul>
       </nav>
 

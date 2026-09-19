@@ -49,7 +49,10 @@ export const PROPERTIES_DATA = [
     },
     agent: {
       name: "Jean-Marc Kouassi",
-      agency: "Ivoire Prestige Properties",
+      agency: "Démarcheur Indépendant Agréé",
+      title: "Démarcheur Immobilier Agréé",
+      proType: "DEMARCHEUR",
+      proId: "demarcheur-kouassi",
       certified: true,
       phone: "+225 07 08 09 10 11",
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
@@ -265,7 +268,10 @@ export const PROPERTIES_DATA = [
     },
     agent: {
       name: "Jean-Marc Kouassi",
-      agency: "Ivoire Prestige Properties",
+      agency: "Démarcheur Indépendant Agréé",
+      title: "Démarcheur Immobilier Agréé",
+      proType: "DEMARCHEUR",
+      proId: "demarcheur-kouassi",
       certified: true,
       phone: "+225 07 08 09 10 11",
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
@@ -371,10 +377,13 @@ export const PROPERTIES_DATA = [
       energie: "Groupe centralisé immeuble"
     },
     agent: {
-      name: "Fatoumata Bamba",
-      agency: "Abidjan Prime Real Estate",
+      name: "Sarah Bamba",
+      agency: "Ivoire Prestige Properties",
+      title: "Agence Immobilière Agréée",
+      proType: "AGENCE",
+      proId: "agence-ivoire",
       certified: true,
-      phone: "+225 05 44 33 22 11",
+      phone: "+225 07 08 09 10 11",
       avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80"
     },
     description: "Une vue époustouflante sur la lagune Ébrié et le pont Alassane Ouattara. Ce penthouse d'angle propose des finitions en marbre de Carrare, une cuisine italienne Boffi et une terrasse de 120 m² avec bassin chauffé."
@@ -532,9 +541,12 @@ export const PROPERTIES_DATA = [
       energie: "Compteur prépayé"
     },
     agent: {
-      name: "Aïcha Traoré",
-      agency: "Lagune Living",
-      certified: false,
+      name: "Aminata Traoré",
+      agency: "Démarcheur Indépendant",
+      title: "Démarcheur Indépendant Accrédité",
+      proType: "DEMARCHEUR",
+      proId: "demarcheur-nouveau",
+      certified: true,
       phone: "+225 07 88 99 00 11",
       avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"
     },

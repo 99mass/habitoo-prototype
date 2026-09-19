@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useHabitoo } from '../../../../context/HabitooContext';
 import { 
   Lock, 
   Bell, 
@@ -15,6 +17,8 @@ import {
 } from 'lucide-react';
 
 export const ProSettingsView = () => {
+  const navigate = useNavigate();
+  const { logout } = useHabitoo();
   // Changement de mot de passe
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -87,6 +91,11 @@ export const ProSettingsView = () => {
     setSessions(prev => prev.filter(s => s.current));
     setSessionsMessage('Toutes les autres sessions ont été révoquées avec succès.');
     setTimeout(() => setSessionsMessage(''), 4000);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/professionnels');
   };
 
   // Calcul force du mot de passe
@@ -331,18 +340,30 @@ export const ProSettingsView = () => {
             ))}
           </div>
 
-          {sessions.length > 1 && (
-            <div style={{ marginTop: '16px' }}>
+          {/* Actions de déconnexion structurées */}
+          <div className="habitoo-dash-sessions-actions">
+            {sessions.length > 1 && (
               <button
                 type="button"
                 onClick={handleRevokeOtherSessions}
-                className="habitoo-dash-btn-ghost"
+                className="habitoo-dash-btn-sessions-secondary"
+                title="Déconnecter les autres appareils"
               >
                 <LogOut size={13} />
-                <span>Déconnecter toutes les autres sessions</span>
+                <span>Déconnecter les autres sessions</span>
               </button>
-            </div>
-          )}
+            )}
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="habitoo-dash-btn-sessions-danger"
+              title="Se déconnecter de cette session et revenir à l'accueil"
+            >
+              <LogOut size={13} />
+              <span>Se déconnecter</span>
+            </button>
+          </div>
         </div>
 
       </div>

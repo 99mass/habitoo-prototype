@@ -6,7 +6,8 @@ import {
   ShieldCheck,
   Building2,
   User,
-  Menu
+  Menu,
+  ExternalLink
 } from 'lucide-react';
 
 export const ProTopHeader = ({
@@ -104,6 +105,21 @@ export const ProTopHeader = ({
               <span>Crédits</span>
             </button>
           </div>
+
+          <div className="habitoo-dash-divider-v" />
+
+          {/* Accès rapide à la Vitrine publique */}
+          <Link
+            to={persona === 'agence' ? '/vitrine/agence-ivoire' : '/vitrine/demarcheur-kouassi'}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="habitoo-dash-btn-ghost habitoo-dash-btn-ghost--small habitoo-dash-vitrine-header-btn"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', textDecoration: 'none' }}
+            title="Consulter ma vitrine publique (nouvel onglet)"
+          >
+            <ExternalLink size={12} />
+            <span>Ma vitrine</span>
+          </Link>
 
           <div className="habitoo-dash-divider-v" />
 
