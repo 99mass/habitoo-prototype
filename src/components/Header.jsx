@@ -15,7 +15,12 @@ import {
   ShieldCheck,
   Megaphone,
   Settings,
-  LayoutDashboard
+  LayoutDashboard,
+  Award,
+  Sparkles,
+  BarChart3,
+  CreditCard,
+  ArrowRight
 } from 'lucide-react';
 
 export const Header = () => {
@@ -34,8 +39,12 @@ export const Header = () => {
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(() => searchParams.get('menu') === '1');
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isProMenuOpen, setIsProMenuOpen] = useState(false);
+  const [isMobileProAccordionOpen, setIsMobileProAccordionOpen] = useState(false);
   const dropdownRef = useRef(null);
   const userDropdownRef = useRef(null);
+  const proMenuRef = useRef(null);
+  const proTriggerRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -50,14 +59,16 @@ export const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close mobile menu on route change unless menu=1 query param is set
+  // Close menus on route change
   useEffect(() => {
+    setIsProMenuOpen(false);
+    setIsMobileProAccordionOpen(false);
     if (searchParams.get('menu') === '1') {
       setMobileMenuOpen(true);
     } else {
       setMobileMenuOpen(false);
     }
-  }, [location, searchParams]);
+  }, [location.pathname, searchParams]);
 
   // Close dropdowns on click outside
   useEffect(() => {
@@ -68,9 +79,30 @@ export const Header = () => {
       if (userDropdownRef.current && !userDropdownRef.current.contains(e.target)) {
         setIsUserDropdownOpen(false);
       }
+      if (
+        proMenuRef.current && 
+        !proMenuRef.current.contains(e.target) &&
+        proTriggerRef.current &&
+        !proTriggerRef.current.contains(e.target)
+      ) {
+        setIsProMenuOpen(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setIsProMenuOpen(false);
+        setIsCityDropdownOpen(false);
+        setIsUserDropdownOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   // Scoped mobile menu handling managed via searchParams and location above
@@ -87,7 +119,7 @@ export const Header = () => {
   });
 
   return (
-    <header className={`site-header ${isHome ? 'is-home' : ''} ${isScrolled ? 'is-scrolled' : ''} ${mobileMenuOpen ? 'menu-open' : ''}`}>
+    <header className={`site-header ${isHome ? 'is-home' : ''} ${isScrolled ? 'is-scrolled' : ''} ${mobileMenuOpen ? 'menu-open' : ''} ${isProMenuOpen ? 'pro-open' : ''}`}>
       <div className="container-wide header-inner">
         
         {/* Brand Logo — Red version with brand name + motto */}
@@ -114,14 +146,18 @@ export const Header = () => {
           <Link to="/conciergerie" style={navLinkStyle(location.pathname === '/conciergerie')}>
             Conciergerie
           </Link>
-          <a 
-            href="#/professionnels" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            style={navLinkStyle(location.pathname === '/professionnels' || location.pathname === '/pro')}
+          <button
+            type="button"
+            ref={proTriggerRef}
+            onClick={() => setIsProMenuOpen(!isProMenuOpen)}
+            className={`header-pro-trigger ${isProMenuOpen ? 'active' : ''}`}
+            style={navLinkStyle(isProMenuOpen || location.pathname === '/professionnels' || location.pathname === '/pro')}
+            aria-expanded={isProMenuOpen}
+            aria-haspopup="true"
           >
-            Professionnels
-          </a>
+            <span>Professionnels</span>
+            <ChevronDown size={14} className={`header-pro-chevron ${isProMenuOpen ? 'open' : ''}`} />
+          </button>
           <Link 
             to="/a-propos" 
             style={navLinkStyle(location.pathname === '/a-propos' || location.pathname === '/about')}
@@ -323,6 +359,131 @@ export const Header = () => {
 
       </div>
 
+      {/* Desktop Pro Curtain & Backdrop */}
+      {isProMenuOpen && (
+        <>
+          <div 
+            className="header-pro-backdrop" 
+            onClick={() => setIsProMenuOpen(false)} 
+            aria-hidden="true"
+          />
+          <div 
+            className="header-pro-curtain" 
+            ref={proMenuRef}
+            role="region"
+            aria-label="Habitoo pour les professionnels"
+          >
+            <div className="container-wide">
+              {/* En-tête épuré */}
+              <div className="header-pro-head">
+                <div>
+                  <span className="header-pro-tag">ESPACE PROFESSIONNEL</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsProMenuOpen(false)}
+                  className="header-pro-close-btn"
+                  title="Fermer le volet"
+                  aria-label="Fermer"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Corps du volet épuré : 2 zones */}
+              <div className="header-pro-body">
+                {/* 4 atouts réels */}
+                <div className="header-pro-features-grid">
+                  <div className="header-pro-feature">
+                    <div className="header-pro-icon-wrap">
+                      <Award size={18} color="var(--primary-red)" />
+                    </div>
+                    <div>
+                      <h4 className="header-pro-feature-title">Badge PRO certifié</h4>
+                      <p className="header-pro-feature-desc">Crédibilité immédiate auprès des acquéreurs et locataires.</p>
+                    </div>
+                  </div>
+
+                  <div className="header-pro-feature">
+                    <div className="header-pro-icon-wrap">
+                      <Sparkles size={18} color="var(--primary-red)" />
+                    </div>
+                    <div>
+                      <h4 className="header-pro-feature-title">Diffusion & Boost</h4>
+                      <p className="header-pro-feature-desc">Mise en avant prioritaire de vos mandats sur votre secteur.</p>
+                    </div>
+                  </div>
+
+                  <div className="header-pro-feature">
+                    <div className="header-pro-icon-wrap">
+                      <BarChart3 size={18} color="var(--primary-red)" />
+                    </div>
+                    <div>
+                      <h4 className="header-pro-feature-title">Tableau de bord</h4>
+                      <p className="header-pro-feature-desc">Suivi en temps réel de vos mandats, vues et prises de contact.</p>
+                    </div>
+                  </div>
+
+                  <div className="header-pro-feature">
+                    <div className="header-pro-icon-wrap">
+                      <CreditCard size={18} color="var(--primary-red)" />
+                    </div>
+                    <div>
+                      <h4 className="header-pro-feature-title">Règlement Mobile Money</h4>
+                      <p className="header-pro-feature-desc">Encaissement sécurisé et instantané de vos commissions.</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Encadré d'action compact */}
+                <div className="header-pro-action-card">
+                  <p className="header-pro-action-text">Rejoignez le réseau de référence et valorisez votre portefeuille immobilier.</p>
+
+                  <div className="header-pro-action-buttons">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsProMenuOpen(false);
+                        navigate('/pro/inscription');
+                      }}
+                      className="btn-primary header-pro-btn-primary"
+                    >
+                      <span>Créer un compte PRO</span>
+                      <ArrowRight size={15} />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsProMenuOpen(false);
+                        navigate('/professionnels');
+                      }}
+                      className="header-pro-btn-secondary"
+                    >
+                      Découvrir l'Espace PRO
+                    </button>
+
+                    {!currentUser && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsProMenuOpen(false);
+                          openAuthModal();
+                        }}
+                        className="header-pro-btn-login"
+                      >
+                        Déjà membre ? Se connecter
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </>
+      )}
+
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="mobile-drawer">
@@ -382,15 +543,84 @@ export const Header = () => {
           <Link to="/conciergerie" className="mobile-drawer-link" onClick={() => setMobileMenuOpen(false)}>
             Conciergerie
           </Link>
-          <a 
-            href="#/professionnels" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className={`mobile-drawer-link ${(location.pathname === '/professionnels' || location.pathname === '/pro') ? 'active' : ''}`}
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Professionnels
-          </a>
+          {/* Section Professionnels Accordion */}
+          <div className="mobile-pro-accordion">
+            <button
+              type="button"
+              className={`mobile-drawer-link mobile-pro-toggle ${isMobileProAccordionOpen ? 'open' : ''}`}
+              onClick={() => setIsMobileProAccordionOpen(!isMobileProAccordionOpen)}
+              aria-expanded={isMobileProAccordionOpen}
+            >
+              <span>Professionnels</span>
+              <ChevronDown size={18} className={`mobile-pro-chevron ${isMobileProAccordionOpen ? 'open' : ''}`} />
+            </button>
+
+            {isMobileProAccordionOpen && (
+              <div className="mobile-pro-panel">
+                <div className="mobile-pro-features">
+                  <div className="mobile-pro-feature-item">
+                    <div>
+                      <strong>Badge PRO certifié :</strong> crédibilité immédiate.
+                    </div>
+                  </div>
+                  <div className="mobile-pro-feature-item">
+                    <div>
+                      <strong>Diffusion & Boost :</strong> visibilité prioritaire.
+                    </div>
+                  </div>
+                  <div className="mobile-pro-feature-item">
+                    <div>
+                      <strong>Tableau de bord :</strong> mandats, vues et contacts.
+                    </div>
+                  </div>
+                  <div className="mobile-pro-feature-item">
+                    <div>
+                      <strong>Mobile Money :</strong> encaissement sécurisé.
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mobile-pro-actions">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setIsMobileProAccordionOpen(false);
+                      navigate('/pro/inscription');
+                    }}
+                    className="btn-primary mobile-pro-btn-primary"
+                  >
+                    <span>Créer un compte PRO</span>
+                    <ArrowRight size={15} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setIsMobileProAccordionOpen(false);
+                      navigate('/professionnels');
+                    }}
+                    className="mobile-pro-btn-secondary"
+                  >
+                    Découvrir l'Espace PRO
+                  </button>
+                  {!currentUser && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        setIsMobileProAccordionOpen(false);
+                        openAuthModal();
+                      }}
+                      className="mobile-pro-btn-login"
+                    >
+                      Déjà membre ? Se connecter
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
           <Link 
             to="/a-propos" 
             className={`mobile-drawer-link ${(location.pathname === '/a-propos' || location.pathname === '/about') ? 'active' : ''}`}
@@ -938,6 +1168,344 @@ export const Header = () => {
           .hide-mobile {
             display: inline-flex !important;
           }
+        }
+
+        /* ===== VOLET PRO DEROULANT (DESKTOP) ===== */
+        .header-pro-trigger {
+          background: none;
+          border: none;
+          cursor: pointer;
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          font-family: var(--font-heading);
+          font-weight: 600;
+          font-size: 0.9rem;
+          color: #262626;
+          padding: 6px 0;
+          position: relative;
+          white-space: nowrap;
+          transition: color 0.15s ease;
+        }
+        .header-pro-trigger:hover,
+        .header-pro-trigger.active {
+          color: var(--primary-red);
+        }
+        .header-pro-chevron {
+          transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .header-pro-chevron.open {
+          transform: rotate(180deg);
+        }
+
+        .site-header.pro-open {
+          background-color: #FFFFFF !important;
+          backdrop-filter: blur(12px) !important;
+          -webkit-backdrop-filter: blur(12px) !important;
+          border-bottom: 1px solid var(--border-color) !important;
+          z-index: 1000 !important;
+        }
+
+        .header-pro-backdrop {
+          position: fixed;
+          top: var(--header-height);
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0, 0, 0, 0.35);
+          backdrop-filter: blur(2px);
+          -webkit-backdrop-filter: blur(2px);
+          z-index: 998;
+          animation: proBackdropFadeIn 0.2s ease;
+        }
+
+        @keyframes proBackdropFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        .header-pro-curtain {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          width: 100%;
+          background-color: #FFFFFF;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+          box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
+          z-index: 999;
+          padding: 24px 0 28px;
+          animation: proCurtainSlideDown 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes proCurtainSlideDown {
+          from {
+            opacity: 0;
+            transform: translateY(-8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .header-pro-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding-bottom: 16px;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+          margin-bottom: 20px;
+        }
+        .header-pro-tag {
+          font-size: 0.72rem;
+          font-weight: 700;
+          color: var(--primary-red);
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          display: block;
+          margin-bottom: 3px;
+        }
+        .header-pro-title {
+          font-size: 1.2rem;
+          font-weight: 700;
+          color: var(--obsidian-black);
+          margin: 0;
+        }
+        .header-pro-close-btn {
+          background-color: #FFFFFF;
+          border: 1px solid rgba(0, 0, 0, 0.1);
+          border-radius: 6px;
+          width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: var(--graphite-gray);
+          transition: all 0.15s ease;
+        }
+        .header-pro-close-btn:hover {
+          background-color: #FFFFFF;
+          border-color: rgba(0, 0, 0, 0.25);
+          color: var(--obsidian-black);
+        }
+
+        .header-pro-body {
+          display: grid;
+          grid-template-columns: 1.55fr 1fr;
+          gap: 0;
+          align-items: stretch;
+        }
+        .header-pro-features-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 24px 32px;
+          padding-right: 36px;
+        }
+        .header-pro-feature {
+          display: flex;
+          gap: 14px;
+          align-items: flex-start;
+          background: transparent;
+          border: none;
+          padding: 0;
+        }
+        .header-pro-icon-wrap {
+          width: 34px;
+          height: 34px;
+          border-radius: 6px;
+          background-color: #FFFFFF;
+          border: 1px solid rgba(0, 0, 0, 0.08);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        .header-pro-feature-title {
+          font-size: 0.9rem;
+          font-weight: 700;
+          color: var(--obsidian-black);
+          margin-bottom: 3px;
+        }
+        .header-pro-feature-desc {
+          font-size: 0.8rem;
+          color: var(--graphite-gray);
+          line-height: 1.4;
+          margin: 0;
+        }
+
+        .header-pro-action-card {
+          background-color: #FFFFFF;
+          border: none;
+          border-left: 1px solid rgba(0, 0, 0, 0.08);
+          padding: 0 0 0 36px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          gap: 14px;
+        }
+        .header-pro-target-pill {
+          align-self: flex-start;
+          font-size: 0.7rem;
+          font-weight: 700;
+          letter-spacing: 0.05em;
+          color: var(--obsidian-black);
+          background-color: #FFFFFF;
+          border: 1px solid rgba(0, 0, 0, 0.1);
+          border-radius: 4px;
+          padding: 3px 8px;
+          text-transform: uppercase;
+        }
+        .header-pro-action-text {
+          font-size: 0.84rem;
+          color: var(--graphite-gray);
+          line-height: 1.45;
+          margin: 0;
+        }
+        .header-pro-action-buttons {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+          margin-top: 4px;
+        }
+        .header-pro-btn-primary {
+          width: auto;
+          align-self: flex-start;
+          font-size: 0.84rem;
+          padding: 9px 20px;
+          border-radius: 6px;
+        }
+        .header-pro-btn-secondary {
+          width: auto;
+          align-self: flex-start;
+          background: #FFFFFF;
+          border: 1px solid rgba(0, 0, 0, 0.14);
+          color: var(--obsidian-black);
+          font-size: 0.82rem;
+          font-weight: 600;
+          padding: 8px 18px;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+        .header-pro-btn-secondary:hover {
+          background: #FFFFFF;
+          border-color: rgba(0, 0, 0, 0.3);
+        }
+        .header-pro-btn-login {
+          align-self: flex-start;
+          background: none;
+          border: none;
+          font-size: 0.78rem;
+          font-weight: 600;
+          color: var(--graphite-gray);
+          cursor: pointer;
+          padding: 2px 0;
+          text-decoration: underline;
+          transition: color 0.15s ease;
+        }
+        .header-pro-btn-login:hover {
+          color: var(--primary-red);
+        }
+
+        /* ===== ACCORDEON PRO (MOBILE) ===== */
+        .mobile-pro-accordion {
+          border-bottom: 1px solid var(--border-light);
+        }
+        .mobile-pro-toggle {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+          background: none;
+          border: none;
+          text-align: left;
+          cursor: pointer;
+          padding: 12px 0;
+          border-bottom: none;
+        }
+        .mobile-pro-chevron {
+          transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .mobile-pro-chevron.open {
+          transform: rotate(180deg);
+        }
+        .mobile-pro-panel {
+          background: #FFFFFF;
+          border: none;
+          padding: 8px 0 12px;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          animation: mobileProFadeIn 0.2s ease;
+        }
+        @keyframes mobileProFadeIn {
+          from { opacity: 0; transform: translateY(-4px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .mobile-pro-features {
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+        }
+        .mobile-pro-feature-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+          font-size: 0.82rem;
+          color: var(--obsidian-black);
+          line-height: 1.4;
+          padding: 14px 0;
+          margin-left: 3%;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+        .mobile-pro-feature-item:last-child {
+          border-bottom: none;
+        }
+        .mobile-pro-feature-item svg {
+          flex-shrink: 0;
+          margin-top: 2px;
+        }
+        .mobile-pro-actions { 
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+          padding-top: 14px;
+          border-top: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        .mobile-pro-btn-primary {
+          width: auto;
+          align-self: flex-start;
+          font-size: 0.84rem;
+          padding: 9px 20px;
+          border-radius: 6px;
+        }
+        .mobile-pro-btn-secondary {
+          width: auto;
+          align-self: flex-start;
+          background: #FFFFFF;
+          border: 1px solid rgba(0, 0, 0, 0.14);
+          color: var(--obsidian-black);
+          font-size: 0.82rem;
+          font-weight: 600;
+          padding: 8px 18px;
+          border-radius: 6px;
+          cursor: pointer;
+        }
+        .mobile-pro-btn-login {
+          align-self: flex-start;
+          background: none;
+          border: none;
+          font-size: 0.78rem;
+          font-weight: 600;
+          color: var(--graphite-gray);
+          cursor: pointer;
+          padding: 2px 0;
+          text-decoration: underline;
         }
       `}</style>
     </header>

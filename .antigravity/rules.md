@@ -90,3 +90,10 @@ Tu ne dois **JAMAIS** modifier ou créer de fichiers directement lors de ta prem
 - **Composants aux lignes franches :**
   - Arrondis légers et discrets (`border-radius: 4px` à `8px` maximum). Bannis les arrondis excessifs (`border-radius: 24px` ou `9999px` sur les cartes).
   - Ombres imperceptibles ou absentes : privilégie des bordures ultra-fines (`1px solid rgba(0, 0, 0, 0.08)`) plutôt que des ombres portées épaisses.
+
+---
+
+## 11. Sobriété du Contenu & Élagage de l'UI
+- **Zéro section de remplissage :** N'ajoute jamais de sections, blocs secondaires ou composants non sollicités dans l'unique but de « meubler » l'espace. Seuls les éléments strictement requis par le besoin fonctionnel doivent figurer sur l'interface.
+- **Concision textuelle absolue :** Supprime tout verbiage, explication redondante ou texte de remplissage évident. Privilégie des intitulés courts, factuels et percutants : moins il y a de mots, plus l'information utile ressort.
+- **Priorité au vide (Whitespace) :** Ne cherche jamais à saturer chaque zone de l'écran. Une mise en page aérée et épurée avec des espaces négatifs maîtrisés est indispensable pour éviter toute surcharge cognitive et visuelle.

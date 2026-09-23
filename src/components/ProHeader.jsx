@@ -65,7 +65,7 @@ export const ProHeader = () => {
         {/* Right Actions */}
         <div className="habitoo-pro-header-actions">
 
-          <Link to="/" target='_blank' className="habitoo-pro-back-link" title="Accéder au portail grand public">
+          <Link to="/" className="habitoo-pro-back-link" title="Accéder au portail grand public">
             <span>Espace Particuliers</span>
             <ArrowUpRight size={14} />
           </Link>
