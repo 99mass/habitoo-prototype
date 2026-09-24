@@ -143,6 +143,12 @@ export const Header = () => {
           <Link to="/recherche?type=LOCATION" style={navLinkStyle(location.search.includes('type=LOCATION'))}>
             Louer
           </Link>
+          <Link 
+            to="/immobilier-professionnel" 
+            style={navLinkStyle(location.pathname === '/immobilier-professionnel' || location.pathname === '/pro-immo')}
+          >
+            Immobilier pro
+          </Link>
           <Link to="/conciergerie" style={navLinkStyle(location.pathname === '/conciergerie')}>
             Conciergerie
           </Link>
@@ -536,6 +542,9 @@ export const Header = () => {
           </Link>
           <Link to="/recherche?type=LOCATION" className="mobile-drawer-link" onClick={() => setMobileMenuOpen(false)}>
             Louer
+          </Link>
+          <Link to="/immobilier-professionnel" className="mobile-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+            Immobilier professionnel
           </Link>
           <Link to="/publier" className="mobile-drawer-link" onClick={() => setMobileMenuOpen(false)}>
             Vendre

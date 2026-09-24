@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useHabitoo } from '../context/HabitooContext';
+import { PRO_CATEGORIES } from '../data/propertiesData';
 import { 
   Heart, 
   Bed, 
@@ -11,7 +12,13 @@ import {
   Calendar,
   CheckCircle2,
   Zap,
-  Droplets
+  Droplets,
+  Briefcase,
+  Store,
+  Warehouse,
+  Users,
+  FileText,
+  Building2
 } from 'lucide-react';
 
 export const PropertyCard = ({ property, onHover = null, isHighlighted = false }) => {
@@ -19,6 +26,8 @@ export const PropertyCard = ({ property, onHover = null, isHighlighted = false }
   const favorite = isFavorite(property.id);
   const isProListing = property.isPro ?? (property.advertiserType === 'PRO' || (property.agent?.agency && property.agent.agency !== 'Particulier' && property.agent.agency !== 'Direct Propriétaire'));
   const isVente = property.category === 'VENTE';
+  const isProDestination = property.destination === 'PRO';
+  const proCat = PRO_CATEGORIES.find(c => c.id === property.proCategory);
 
   return (
     <div
@@ -99,6 +108,30 @@ export const PropertyCard = ({ property, onHover = null, isHighlighted = false }
           >
             {isVente ? 'À VENDRE' : 'À LOUER'}
           </span>
+
+          {/* Pro Category Badge */}
+          {isProDestination && (
+            <span 
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                padding: '4px 9px',
+                fontSize: '0.7rem',
+                fontWeight: 800,
+                borderRadius: '9999px',
+                backgroundColor: '#1E293B',
+                color: '#F8FAFC',
+                border: '1px solid rgba(255,255,255,0.25)',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
+                letterSpacing: '0.4px',
+                textTransform: 'uppercase'
+              }}
+            >
+              <Briefcase size={11} />
+              {proCat ? proCat.shortLabel : 'PRO'}
+            </span>
+          )}
 
           {/* PRO vs PARTICULIER badge */}
           {isProListing ? (
@@ -229,18 +262,85 @@ export const PropertyCard = ({ property, onHover = null, isHighlighted = false }
               color: 'var(--graphite-gray)'
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Bed size={14} color="var(--obsidian-black)" />
-              <span style={{ fontWeight: 600, color: 'var(--obsidian-black)' }}>{property.specs.bedrooms}</span> ch.
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Bath size={14} color="var(--obsidian-black)" />
-              <span style={{ fontWeight: 600, color: 'var(--obsidian-black)' }}>{property.specs.bathrooms}</span> sdb
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Maximize2 size={14} color="var(--obsidian-black)" />
-              <span style={{ fontWeight: 600, color: 'var(--obsidian-black)' }}>{property.specs.area}</span> m²
-            </div>
+            {isProDestination ? (
+              <>
+                {/* Surface utile */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Maximize2 size={14} color="var(--obsidian-black)" />
+                  <span style={{ fontWeight: 600, color: 'var(--obsidian-black)' }}>{property.specs.area}</span> m²
+                </div>
+
+                {/* Specific metric according to pro category */}
+                {property.proCategory === 'BUREAU' && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Briefcase size={14} color="var(--obsidian-black)" />
+                    <span style={{ fontWeight: 600, color: 'var(--obsidian-black)' }}>
+                      {property.specs.offices ?? (property.specs.workstations ? `${property.specs.workstations}p.` : 'Bureaux')}
+                    </span>
+                    {property.specs.offices ? ' bur.' : ''}
+                  </div>
+                )}
+
+                {property.proCategory === 'COMMERCE' && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Store size={14} color="var(--obsidian-black)" />
+                    <span>Vitrine <strong style={{ color: 'var(--obsidian-black)' }}>{property.specs.windowDisplay || 'sur rue'}</strong></span>
+                  </div>
+                )}
+
+                {property.proCategory === 'ENTREPOT' && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Warehouse size={14} color="var(--obsidian-black)" />
+                    <span style={{ fontWeight: 600, color: 'var(--obsidian-black)' }}>
+                      {property.specs.loadingDock ? 'Quai déchargement' : 'Haute charge'}
+                    </span>
+                  </div>
+                )}
+
+                {property.proCategory === 'COWORKING' && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Users size={14} color="var(--obsidian-black)" />
+                    <span style={{ fontWeight: 600, color: 'var(--obsidian-black)' }}>{property.specs.workstations || 20}</span> postes
+                  </div>
+                )}
+
+                {(!property.proCategory || (property.proCategory !== 'BUREAU' && property.proCategory !== 'COMMERCE' && property.proCategory !== 'ENTREPOT' && property.proCategory !== 'COWORKING')) && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Building2 size={14} color="var(--obsidian-black)" />
+                    <span style={{ fontWeight: 600, color: 'var(--obsidian-black)' }}>{property.specs.offices ? `${property.specs.offices} bur.` : 'Local pro'}</span>
+                  </div>
+                )}
+
+                {/* Sanitaires */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Bath size={14} color="var(--obsidian-black)" />
+                  <span style={{ fontWeight: 600, color: 'var(--obsidian-black)' }}>{property.specs.restrooms ?? property.specs.bathrooms ?? 1}</span> san.
+                </div>
+
+                {/* Bail */}
+                {property.leaseType && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.72rem', backgroundColor: '#F1F5F9', padding: '2px 6px', borderRadius: '4px' }}>
+                    <FileText size={11} color="var(--primary-red)" />
+                    <span style={{ fontWeight: 600, color: '#334155' }}>{property.leaseType}</span>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Bed size={14} color="var(--obsidian-black)" />
+                  <span style={{ fontWeight: 600, color: 'var(--obsidian-black)' }}>{property.specs.bedrooms}</span> ch.
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Bath size={14} color="var(--obsidian-black)" />
+                  <span style={{ fontWeight: 600, color: 'var(--obsidian-black)' }}>{property.specs.bathrooms}</span> sdb
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Maximize2 size={14} color="var(--obsidian-black)" />
+                  <span style={{ fontWeight: 600, color: 'var(--obsidian-black)' }}>{property.specs.area}</span> m²
+                </div>
+              </>
+            )}
           </div>
         </div>
         </Link>

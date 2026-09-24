@@ -159,6 +159,11 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/immobilier-professionnel" style={{ color: '#9CA3AF', transition: 'color 0.15s' }} onMouseOver={(e) => e.target.style.color = '#FFF'} onMouseOut={(e) => e.target.style.color = '#9CA3AF'}>
+                  Immobilier professionnel
+                </Link>
+              </li>
+              <li>
                 <Link to="/publier" style={{ color: '#9CA3AF', transition: 'color 0.15s' }} onMouseOver={(e) => e.target.style.color = '#FFF'} onMouseOut={(e) => e.target.style.color = '#9CA3AF'}>
                   Vendre
                 </Link>

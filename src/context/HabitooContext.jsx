@@ -484,20 +484,25 @@ const DEFAULT_USER = {
 
   // Format Price based on active currency
   const formatPrice = (priceXOF, priceUSD, priceXAF, period = "") => {
-    if (activeCity.currency === "USD") {
-      const val = priceUSD || Math.round(priceXOF / 600);
-      return `$ ${val.toLocaleString('en-US')}${period}`;
+    if (activeCity?.currency === "USD") {
+      const val = priceUSD != null ? priceUSD : (priceXOF ? Math.round(priceXOF / 600) : (priceXAF ? Math.round(priceXAF / 600) : 0));
+      return `$ ${Number(val || 0).toLocaleString('en-US')}${period}`;
     }
-    const val = activeCity.currency === "XAF" ? (priceXAF || priceXOF) : priceXOF;
-    return `${val.toLocaleString('fr-FR')} ${activeCity.symbol}${period}`;
+    if (activeCity?.currency === "XAF") {
+      const val = priceXAF != null ? priceXAF : (priceXOF != null ? priceXOF : (priceUSD ? Math.round(priceUSD * 600) : 0));
+      return `${Number(val || 0).toLocaleString('fr-FR')} ${activeCity?.symbol || 'FCFA'}${period}`;
+    }
+    const val = priceXOF != null ? priceXOF : (priceXAF != null ? priceXAF : (priceUSD ? Math.round(priceUSD * 600) : 0));
+    return `${Number(val || 0).toLocaleString('fr-FR')} ${activeCity?.symbol || 'FCFA'}${period}`;
   };
 
   // Convert raw FCFA to active currency
   const formatCurrencyAmount = (amountFCFA) => {
-    if (activeCity.currency === "USD") {
-      return `$ ${(Math.round(amountFCFA / 600)).toLocaleString('en-US')}`;
+    const raw = Number(amountFCFA) || 0;
+    if (activeCity?.currency === "USD") {
+      return `$ ${(Math.round(raw / 600)).toLocaleString('en-US')}`;
     }
-    return `${amountFCFA.toLocaleString('fr-FR')} ${activeCity.symbol}`;
+    return `${raw.toLocaleString('fr-FR')} ${activeCity?.symbol || 'FCFA'}`;
   };
 
   // Book Escrow Visit

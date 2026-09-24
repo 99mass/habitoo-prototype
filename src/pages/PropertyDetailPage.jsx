@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import L from 'leaflet';
 import { useHabitoo } from '../context/HabitooContext';
-import { PROPERTIES_DATA } from '../data/propertiesData';
+import { PROPERTIES_DATA, PRO_CATEGORIES } from '../data/propertiesData';
 import { 
   Heart, 
   Share2, 
@@ -26,7 +26,12 @@ import {
   Navigation,
   Star,
   ArrowRight,
-  ExternalLink
+  ExternalLink,
+  Briefcase,
+  Users,
+  FileText,
+  Store,
+  Building2
 } from 'lucide-react';
 
 // Leaflet Mini Map Component
@@ -192,6 +197,8 @@ export const PropertyDetailPage = () => {
   // 2. Normalize and guarantee all required fields so user properties render without any undefined crashes
   const city = rawProperty.city || 'Abidjan';
   const defaultCoords = city === 'Kinshasa' ? [-4.3217, 15.3125] : city === 'Brazzaville' ? [-4.2677, 15.2919] : [5.3484, -3.9780];
+  const isProDestination = rawProperty.destination === 'PRO';
+  const proCategoryObj = PRO_CATEGORIES.find(c => c.id === rawProperty.proCategory);
   const isPro = rawProperty.isPro ?? (rawProperty.userRole === 'AGENCE' || rawProperty.userRole === 'MANDATAIRE' || rawProperty.advertiserType === 'PRO');
   const advertiserType = rawProperty.advertiserType || (isPro ? 'PRO' : 'PARTICULIER');
   const ownerNameFallback = rawProperty.ownerName || rawProperty.agent?.name || "Propriétaire Déclarant";
@@ -199,8 +206,11 @@ export const PropertyDetailPage = () => {
   const property = {
     ...rawProperty,
     id: rawProperty.id || id || 'prop-default',
+    destination: rawProperty.destination || 'HABITATION',
+    proCategory: rawProperty.proCategory || null,
+    leaseType: rawProperty.leaseType || null,
     title: rawProperty.title || "Titre de l'annonce",
-    type: rawProperty.type || "Villa d'architecte",
+    type: rawProperty.type || (isProDestination ? (proCategoryObj?.label || 'Bureaux') : "Villa d'architecte"),
     category: rawProperty.category || "LOCATION",
     city: city,
     country: rawProperty.country || (city === 'Kinshasa' ? 'RD Congo' : city === 'Brazzaville' ? 'Congo' : "Côte d'Ivoire"),
@@ -211,25 +221,32 @@ export const PropertyDetailPage = () => {
     priceXAF: rawProperty.priceXAF ?? (city === 'Brazzaville' ? (rawProperty.price || null) : null),
     period: rawProperty.period !== undefined ? rawProperty.period : (rawProperty.category === 'VENTE' ? '' : '/mois'),
     specs: {
-      bedrooms: rawProperty.specs?.bedrooms ?? 4,
+      bedrooms: rawProperty.specs?.bedrooms ?? (isProDestination ? 0 : 4),
       bathrooms: rawProperty.specs?.bathrooms ?? 3,
-      area: rawProperty.specs?.area ?? 350,
+      area: rawProperty.specs?.area ?? (isProDestination ? 250 : 350),
+      offices: rawProperty.specs?.offices ?? null,
+      workstations: rawProperty.specs?.workstations ?? null,
+      restrooms: rawProperty.specs?.restrooms ?? rawProperty.specs?.bathrooms ?? null,
+      windowDisplay: rawProperty.specs?.windowDisplay ?? null,
+      loadingDock: rawProperty.specs?.loadingDock ?? false,
       security: rawProperty.specs?.security || "Gardiennage certifié"
     },
     amenities: rawProperty.amenities && rawProperty.amenities.length > 0
       ? rawProperty.amenities
-      : ["Groupe électrogène automatique", "Forage / Réserve d'eau", "Gardiennage H24", "Climatisation intégrale"],
+      : (isProDestination 
+          ? ["Fibre optique très haut débit", "Groupe électrogène automatique", "Climatisation intégrale", "Gardiennage H24 & Vidéosurveillance"]
+          : ["Groupe électrogène automatique", "Forage / Réserve d'eau", "Gardiennage H24", "Climatisation intégrale"]),
     coordinates: rawProperty.coordinates || defaultCoords,
     images: rawProperty.images && rawProperty.images.length > 0
       ? rawProperty.images
       : ["https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1600&q=85"],
-    description: rawProperty.description || "Propriété d'exception offrant un confort absolu et des prestations de haut standing.",
+    description: rawProperty.description || (isProDestination ? "Espace professionnel de premier ordre bénéficiant d'aménagements modernes et d'un emplacement stratégique pour votre entreprise." : "Propriété d'exception offrant un confort absolu et des prestations de haut standing."),
     auditDate: rawProperty.auditDate || "Vérifié récemment",
     auditStatus: rawProperty.auditStatus || (rawProperty.status ? `Annonce ${rawProperty.status}` : "Annonce certifiée conforme"),
     chargesBreakdown: {
       copropriete: rawProperty.chargesBreakdown?.copropriete || "Inclus",
       securite: rawProperty.chargesBreakdown?.securite || "Inclus",
-      depotGarantie: rawProperty.chargesBreakdown?.depotGarantie || "Caution de garantie standard",
+      depotGarantie: rawProperty.chargesBreakdown?.depotGarantie || (isProDestination ? "3 mois de garantie sous séquestre" : "Caution de garantie standard"),
       energie: rawProperty.chargesBreakdown?.energie || "Compteur individuel"
     },
     agent: {
@@ -438,7 +455,13 @@ export const PropertyDetailPage = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8125rem', color: 'var(--graphite-gray)', minWidth: 0, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
               <Link to="/" style={{ color: 'var(--graphite-gray)' }}>Accueil</Link>
               <span>/</span>
-              <Link to={`/recherche?location=${property.city}`} style={{ color: 'var(--graphite-gray)' }}>{property.city}</Link>
+              <Link to={isProDestination ? "/immobilier-professionnel" : "/recherche"} style={{ color: 'var(--graphite-gray)' }}>
+                {isProDestination ? "Immobilier professionnel" : "Recherche"}
+              </Link>
+              <span>/</span>
+              <Link to={isProDestination ? `/immobilier-professionnel?city=${property.city}` : `/recherche?location=${property.city}`} style={{ color: 'var(--graphite-gray)' }}>
+                {property.city}
+              </Link>
               <span>/</span>
               <span style={{ color: 'var(--obsidian-black)', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis' }}>{property.neighborhood}</span>
             </div>
@@ -517,7 +540,7 @@ export const PropertyDetailPage = () => {
                 />
 
                 {/* Category & Advertiser Badges */}
-                <div style={{ position: 'absolute', top: '16px', left: '16px', zIndex: 5, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ position: 'absolute', top: '16px', left: '16px', zIndex: 5, display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                   <span 
                     style={{
                       display: 'inline-flex',
@@ -537,6 +560,29 @@ export const PropertyDetailPage = () => {
                   >
                     {isVente ? 'À VENDRE' : 'À LOUER'}
                   </span>
+
+                  {isProDestination && (
+                    <span 
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        padding: '5px 11px',
+                        fontSize: '0.72rem',
+                        fontWeight: 800,
+                        borderRadius: '9999px',
+                        backgroundColor: '#1E293B',
+                        color: '#F8FAFC',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+                        letterSpacing: '0.4px',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      <Briefcase size={12} />
+                      {proCategoryObj?.label || 'Immo Pro'}
+                    </span>
+                  )}
 
                   {isProListing ? (
                     <span 
@@ -669,41 +715,122 @@ export const PropertyDetailPage = () => {
                 backgroundColor: 'var(--surface-white)',
                 borderRadius: 'var(--radius-card)',
                 border: '1px solid var(--border-color)',
-                marginBottom: '32px'
+                marginBottom: isProDestination && (property.specs.windowDisplay || property.specs.loadingDock) ? '16px' : '32px'
               }}
             >
-              <div>
-                <span style={{ fontSize: '0.75rem', color: 'var(--graphite-gray)', display: 'block' }}>Chambres</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '1.2rem', fontWeight: 700, marginTop: '2px' }}>
-                  <Bed size={18} color="var(--primary-red)" />
-                  <span>{property.specs.bedrooms} suites</span>
-                </div>
-              </div>
+              {isProDestination ? (
+                <>
+                  <div>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--graphite-gray)', display: 'block' }}>Superficie utile</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '1.2rem', fontWeight: 700, marginTop: '2px' }}>
+                      <Maximize2 size={18} color="var(--primary-red)" />
+                      <span>{property.specs.area} m²</span>
+                    </div>
+                  </div>
 
-              <div>
-                <span style={{ fontSize: '0.75rem', color: 'var(--graphite-gray)', display: 'block' }}>Salles de bain</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '1.2rem', fontWeight: 700, marginTop: '2px' }}>
-                  <Bath size={18} color="var(--primary-red)" />
-                  <span>{property.specs.bathrooms} bains</span>
-                </div>
-              </div>
+                  <div>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--graphite-gray)', display: 'block' }}>
+                      {property.specs.workstations ? 'Postes de travail' : 'Bureaux fermés'}
+                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '1.2rem', fontWeight: 700, marginTop: '2px' }}>
+                      {property.specs.workstations ? (
+                        <>
+                          <Users size={18} color="var(--primary-red)" />
+                          <span>{property.specs.workstations} postes</span>
+                        </>
+                      ) : (
+                        <>
+                          <Briefcase size={18} color="var(--primary-red)" />
+                          <span>{property.specs.offices ?? (property.specs.bedrooms || 1)} bureaux</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
 
-              <div>
-                <span style={{ fontSize: '0.75rem', color: 'var(--graphite-gray)', display: 'block' }}>Surface habitable</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '1.2rem', fontWeight: 700, marginTop: '2px' }}>
-                  <Maximize2 size={18} color="var(--primary-red)" />
-                  <span>{property.specs.area} m²</span>
-                </div>
-              </div>
+                  <div>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--graphite-gray)', display: 'block' }}>Sanitaires</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '1.2rem', fontWeight: 700, marginTop: '2px' }}>
+                      <Bath size={18} color="var(--primary-red)" />
+                      <span>{property.specs.restrooms ?? property.specs.bathrooms ?? 2} points d'eau</span>
+                    </div>
+                  </div>
 
-              <div>
-                <span style={{ fontSize: '0.75rem', color: 'var(--graphite-gray)', display: 'block' }}>Sécurité</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', fontWeight: 700, marginTop: '6px', color: 'var(--verified-green)' }}>
-                  <ShieldCheck size={16} />
-                  <span>H24 et Blindé</span>
-                </div>
-              </div>
+                  <div>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--graphite-gray)', display: 'block' }}>Bail / Régime</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', fontWeight: 700, marginTop: '6px', color: 'var(--obsidian-black)' }}>
+                      <FileText size={16} color="var(--primary-red)" />
+                      <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {property.leaseType || (isVente ? 'Pleine propriété' : 'Bail commercial 3-6-9')}
+                      </span>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--graphite-gray)', display: 'block' }}>Chambres</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '1.2rem', fontWeight: 700, marginTop: '2px' }}>
+                      <Bed size={18} color="var(--primary-red)" />
+                      <span>{property.specs.bedrooms} suites</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--graphite-gray)', display: 'block' }}>Salles de bain</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '1.2rem', fontWeight: 700, marginTop: '2px' }}>
+                      <Bath size={18} color="var(--primary-red)" />
+                      <span>{property.specs.bathrooms} bains</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--graphite-gray)', display: 'block' }}>Surface habitable</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '1.2rem', fontWeight: 700, marginTop: '2px' }}>
+                      <Maximize2 size={18} color="var(--primary-red)" />
+                      <span>{property.specs.area} m²</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--graphite-gray)', display: 'block' }}>Sécurité</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', fontWeight: 700, marginTop: '6px', color: 'var(--verified-green)' }}>
+                      <ShieldCheck size={16} />
+                      <span>H24 et Blindé</span>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
+
+            {/* Extra Pro Characteristics (Vitrine / Quai de chargement) */}
+            {isProDestination && (property.specs.windowDisplay || property.specs.loadingDock) && (
+              <div 
+                style={{
+                  display: 'flex',
+                  gap: '12px',
+                  flexWrap: 'wrap',
+                  marginBottom: '32px',
+                  padding: '12px 16px',
+                  backgroundColor: '#F8FAFC',
+                  border: '1px solid #E2E8F0',
+                  borderRadius: 'var(--radius-input)',
+                  fontSize: '0.875rem'
+                }}
+              >
+                {property.specs.windowDisplay && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Store size={16} color="var(--primary-red)" />
+                    <span><strong>Vitrine & linéaire :</strong> {property.specs.windowDisplay}</span>
+                  </div>
+                )}
+                {property.specs.loadingDock && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Building2 size={16} color="var(--primary-red)" />
+                    <span><strong>Accès logistique :</strong> Quai de déchargement lourd opérationnel</span>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* 4. DESCRIPTION */}
             <div style={{ marginBottom: '32px' }}>
@@ -858,14 +985,14 @@ export const PropertyDetailPage = () => {
               /* BLOC PARTICULIER : CONTACT DIRECT SANS FRAIS DE VISITE   */
               /* ========================================================= */
               <div className="pdp-particulier-booking-box">
-                {/* Header Particulier */}
                 <div style={{ marginBottom: '16px', paddingBottom: '14px', borderBottom: '2px solid var(--border-light)' }}>
-              
                   <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.3rem', fontWeight: 700, marginTop: '8px' }}>
-                    Contacter pour une visite
+                    {isProDestination ? "Contacter pour visite d'entreprise" : "Contacter pour une visite"}
                   </h3>
                   <p style={{ fontSize: '0.8rem', color: 'var(--graphite-gray)', marginTop: '4px', lineHeight: 1.4 }}>
-                    Échangez directement avec le propriétaire pour convenir d'une visite.
+                    {isProDestination 
+                      ? "Échangez directement avec le bailleur pour obtenir le bail, le plan et convenir d'une visite des locaux."
+                      : "Échangez directement avec le propriétaire pour convenir d'une visite."}
                   </p>
                 </div>
 
@@ -885,23 +1012,25 @@ export const PropertyDetailPage = () => {
                       backgroundColor: 'rgba(247,0,0,0.1)', 
                       display: 'flex', 
                       alignItems: 'center', 
-                      justifyContent: 'center',
-                      color: 'var(--primary-red)',
-                      fontWeight: 700,
-                      fontSize: '1rem'
+                      justifyContent: 'center', 
+                      color: 'var(--primary-red)', 
+                      fontWeight: 700, 
+                      fontSize: '1rem' 
                     }}>
                       {ownerName.charAt(0)}
                     </div>
                     <div>
                       <strong style={{ display: 'block', fontSize: '0.875rem', color: 'var(--obsidian-black)' }}>{ownerName}</strong>
-                      <span style={{ fontSize: '0.72rem', color: 'var(--graphite-gray)' }}>Propriétaire Déclarant</span>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--graphite-gray)' }}>
+                        {isProDestination ? "Bailleur / Propriétaire Direct" : "Propriétaire Déclarant"}
+                      </span>
                     </div>
                   </div>
 
                   <div style={{ 
                     display: 'flex', 
                     alignItems: 'center', 
-                    justifyContent: 'space-between',
+                    justifyContent: 'space-between', 
                     padding: '8px 12px', 
                     background: '#FFFFFF', 
                     borderRadius: '6px', 
@@ -935,7 +1064,7 @@ export const PropertyDetailPage = () => {
                     style={{ width: '100%', height: '46px', fontSize: '0.875rem', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                   >
                     <Phone size={15} />
-                    <span>Contacter le propriétaire</span>
+                    <span>Contacter le bailleur</span>
                   </a>
                 </div>
               </div>
@@ -948,10 +1077,12 @@ export const PropertyDetailPage = () => {
                 {/* Header */}
                 <div style={{ marginBottom: '20px', paddingBottom: '16px', borderBottom: '2px solid var(--border-light)' }}>
                   <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary-red)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    {isVente ? "Acquisition" : "Réservation Directe"}
+                    {isProDestination 
+                      ? (isVente ? "Acquisition B2B" : "Location Professionnelle")
+                      : (isVente ? "Acquisition" : "Réservation Directe")}
                   </span>
                   <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.35rem', fontWeight: 700, marginTop: '2px' }}>
-                    Planifier une Visite
+                    {isProDestination ? "Dossier & Visite d'Entreprise" : "Planifier une Visite"}
                   </h3>
                 </div>
 
@@ -1014,10 +1145,10 @@ export const PropertyDetailPage = () => {
                 }}>
                   <div>
                     <span style={{ fontSize: '0.72rem', color: 'var(--graphite-gray)', display: 'block', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 700 }}>
-                      Frais de réservation
+                      {isProDestination ? "Dossier technique & visite" : "Frais de réservation"}
                     </span>
                     <span style={{ fontSize: '0.8125rem', color: 'var(--obsidian-black)', fontWeight: 600 }}>
-                      Dossier et visite dédiée
+                      {isProDestination ? "Dossier complet et visite dédiée" : "Dossier et visite dédiée"}
                     </span>
                   </div>
                   <div style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', fontWeight: 700, color: 'var(--obsidian-black)' }}>
@@ -1145,10 +1276,16 @@ export const PropertyDetailPage = () => {
                 textTransform: 'uppercase', 
                 letterSpacing: '0.5px' 
               }}>
-                {isParticulierListing ? "Direct Particulier • Sans Frais" : isVente ? "Acquisition" : "Réservation Directe"}
+                {isParticulierListing 
+                  ? (isProDestination ? "Direct Bailleur • Sans Frais" : "Direct Particulier • Sans Frais") 
+                  : isProDestination 
+                    ? (isVente ? "Acquisition B2B" : "Location Professionnelle") 
+                    : (isVente ? "Acquisition" : "Réservation Directe")}
               </span>
               <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>
-                {isParticulierListing ? "Contacter pour visiter" : "Planifier une Visite"}
+                {isParticulierListing 
+                  ? (isProDestination ? "Contacter pour locaux" : "Contacter pour visiter") 
+                  : (isProDestination ? "Dossier & Visite Pro" : "Planifier une Visite")}
               </h3>
             </div>
             <button
@@ -1232,7 +1369,11 @@ export const PropertyDetailPage = () => {
                 </a>
 
                 <a 
-                  href={`https://wa.me/${cleanPhoneForWa}?text=${encodeURIComponent(`Bonjour, je vous contacte au sujet de votre annonce Habitoo : "${property.title}". Est-il possible d'organiser une visite ?`)}`}
+                  href={`https://wa.me/${cleanPhoneForWa}?text=${encodeURIComponent(
+                    isProDestination
+                      ? `Bonjour, je vous contacte concernant votre bien professionnel Habitoo : "${property.title}". Nous souhaiterions recevoir le dossier technique et convenir d'une visite des locaux.`
+                      : `Bonjour, je vous contacte au sujet de votre annonce Habitoo : "${property.title}". Est-il possible d'organiser une visite ?`
+                  )}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ 

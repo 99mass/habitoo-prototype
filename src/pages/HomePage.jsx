@@ -103,18 +103,22 @@ export const HomePage = () => {
   const [carouselIndex, setCarouselIndex] = useState(0);
   const itemsPerPage = 4;
 
-  const proCount = PROPERTIES_DATA.filter(p => p.isPro || p.advertiserType === 'PRO').length;
-  const particulierCount = PROPERTIES_DATA.filter(p => !p.isPro || p.advertiserType === 'PARTICULIER').length;
+  const residentialProperties = useMemo(() => {
+    return PROPERTIES_DATA.filter(p => p.destination !== 'PRO');
+  }, []);
+
+  const proCount = residentialProperties.filter(p => p.isPro || p.advertiserType === 'PRO').length;
+  const particulierCount = residentialProperties.filter(p => !p.isPro || p.advertiserType === 'PARTICULIER').length;
 
   const filteredProperties = useMemo(() => {
     if (showcaseFilter === 'PRO') {
-      return PROPERTIES_DATA.filter(p => p.isPro || p.advertiserType === 'PRO');
+      return residentialProperties.filter(p => p.isPro || p.advertiserType === 'PRO');
     }
     if (showcaseFilter === 'PARTICULIER') {
-      return PROPERTIES_DATA.filter(p => !p.isPro || p.advertiserType === 'PARTICULIER');
+      return residentialProperties.filter(p => !p.isPro || p.advertiserType === 'PARTICULIER');
     }
-    return PROPERTIES_DATA;
-  }, [showcaseFilter]);
+    return residentialProperties;
+  }, [showcaseFilter, residentialProperties]);
 
   const totalFiltered = filteredProperties.length;
 

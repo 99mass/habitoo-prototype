@@ -2,7 +2,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import L from 'leaflet';
 import { useHabitoo } from '../context/HabitooContext';
-import { PROPERTY_TYPES } from '../data/propertiesData';
+import { 
+  PROPERTY_TYPES, 
+  PRO_CATEGORIES, 
+  PRO_LEASE_TYPES, 
+  PRO_AMENITIES_FILTERS 
+} from '../data/propertiesData';
 import { 
   CheckCircle2, 
   ArrowRight, 
@@ -24,7 +29,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Navigation,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Building,
+  Briefcase,
+  Store,
+  Warehouse,
+  Users
 } from 'lucide-react';
 
 const COUNTRY_CODES = [
@@ -165,23 +175,41 @@ export const PublishPropertyPage = () => {
   const userAvatar = currentUser?.avatar || SIMULATED_USER_AVATAR;
   const userName = currentUser?.name || "M. Abdoulaye Touré";
 
+  const [searchParams] = useSearchParams();
+  const initialIsPro = searchParams.get('destination') === 'PRO' || searchParams.get('pro') === '1';
+
   const [step, setStep] = useState(1);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [publishedRefNumber, setPublishedRefNumber] = useState('');
 
   // Form state - Statut verrouillé de manière fixe à 'PROPRIETAIRE'
   const [formData, setFormData] = useState({
+    destination: initialIsPro ? 'PRO' : 'HABITATION', // 'HABITATION' | 'PRO'
+    proCategory: 'BUREAU', // 'BUREAU' | 'COMMERCE' | 'LOCAL_PRO' | 'ENTREPOT' | 'COWORKING' | 'SPECIFIQUE' | 'AUTRE'
+    leaseType: 'Bail commercial 3-6-9',
     category: 'LOCATION', // 'LOCATION' | 'VENTE'
-    type: "Villa d'architecte",
+    type: initialIsPro ? "Bureaux" : "Villa d'architecte",
     city: activeCity?.name || 'Abidjan',
-    neighborhood: 'Riviera Golf',
-    title: "Somptueuse Villa Contemporaine avec Vue Lagune",
-    description: "Propriété d'exception aux volumes généreux, finitions haut de gamme, grand jardin paysager et sécurité maximale.",
-    price: 3500000,
-    area: 550,
+    neighborhood: initialIsPro ? 'Le Plateau' : 'Riviera Golf',
+    title: initialIsPro ? "Plateau de Bureaux Équipé — Quartier d'Affaires" : "Somptueuse Villa Contemporaine avec Vue Lagune",
+    description: initialIsPro ? "Locaux professionnels d'exception, modulables, climatisés et sécurisés avec connectivité fibre optique." : "Propriété d'exception aux volumes généreux, finitions haut de gamme, grand jardin paysager et sécurité maximale.",
+    price: initialIsPro ? 4500000 : 3500000,
+    area: initialIsPro ? 280 : 550,
     bedrooms: 4,
-    bathrooms: 4,
-    amenities: [
+    bathrooms: 2,
+    offices: 4,
+    workstations: 15,
+    windowDisplay: '6 mètres sur rue',
+    storageArea: '25 m²',
+    ceilingHeight: '7.5 m',
+    loadingDock: 'Quai de déchargement niveleur',
+    waitingRoom: "Salle d'attente dédiée",
+    amenities: initialIsPro ? [
+      'Fibre optique très haut débit',
+      'Groupe électrogène automatique',
+      'Climatisation intégrale',
+      'Gardiennage H24 & Vidéosurveillance'
+    ] : [
       'Groupe électrogène automatique',
       "Forage / Réserve d'eau",
       'Gardiennage H24',
@@ -199,8 +227,6 @@ export const PublishPropertyPage = () => {
 
   // Active photo index for preview carousel
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
-
-  const [searchParams] = useSearchParams();
 
   // Mobile drawer state
   const [isDrawerOpen, setIsDrawerOpen] = useState(() => searchParams.get('edit') === '1');
@@ -285,8 +311,13 @@ export const PublishPropertyPage = () => {
   // Construct property object formatted for detailed preview and storage
   const previewProperty = {
     id: 'preview-card',
+    destination: formData.destination || 'HABITATION',
+    proCategory: formData.destination === 'PRO' ? formData.proCategory : null,
+    leaseType: formData.destination === 'PRO' ? formData.leaseType : null,
     title: formData.title || "Titre de l'annonce",
-    type: formData.type || "Villa d'architecte",
+    type: formData.destination === 'PRO' 
+      ? (PRO_CATEGORIES.find(c => c.id === formData.proCategory)?.label || formData.type)
+      : formData.type,
     category: formData.category,
     city: formData.city,
     country: formData.city === 'Kinshasa' ? 'RD Congo' : formData.city === 'Brazzaville' ? 'Congo' : "Côte d'Ivoire",
@@ -295,9 +326,17 @@ export const PublishPropertyPage = () => {
     description: formData.description || "Propriété d'exception aux finitions de haut standing, volumes généreux et sécurité maximale.",
     images: uploadedPhotos.length > 0 ? uploadedPhotos : [DEFAULT_COVER_IMAGE],
     specs: {
-      bedrooms: formData.bedrooms,
+      bedrooms: formData.destination === 'PRO' ? 0 : formData.bedrooms,
       bathrooms: formData.bathrooms,
       area: formData.area || 0,
+      offices: formData.destination === 'PRO' && (formData.proCategory === 'BUREAU' || formData.proCategory === 'LOCAL_PRO' || formData.proCategory === 'COWORKING') ? (Number(formData.offices) || null) : null,
+      workstations: formData.destination === 'PRO' && (formData.proCategory === 'BUREAU' || formData.proCategory === 'COWORKING') ? (Number(formData.workstations) || null) : null,
+      restrooms: formData.destination === 'PRO' ? (Number(formData.bathrooms) || 1) : null,
+      windowDisplay: formData.destination === 'PRO' && formData.proCategory === 'COMMERCE' ? (formData.windowDisplay || null) : null,
+      storageArea: formData.destination === 'PRO' && formData.proCategory === 'COMMERCE' ? (formData.storageArea || null) : null,
+      ceilingHeight: formData.destination === 'PRO' && formData.proCategory === 'ENTREPOT' ? (formData.ceilingHeight || null) : null,
+      loadingDock: formData.destination === 'PRO' && formData.proCategory === 'ENTREPOT' ? Boolean(formData.loadingDock && !String(formData.loadingDock).toLowerCase().includes('sans')) : false,
+      waitingRoom: formData.destination === 'PRO' && formData.proCategory === 'LOCAL_PRO' ? (formData.waitingRoom || null) : null,
       security: "Gardiennage certifié"
     },
     amenities: formData.amenities || [],
@@ -436,6 +475,38 @@ export const PublishPropertyPage = () => {
       {step === 1 && (
         <div className="publish-step-body animate-fadeIn">
           
+          {/* Destination Selector: Habitation vs Immobilier professionnel */}
+          <div className="compact-form-row">
+            <label className="compact-label" style={{ margin: 0 }}>Destination :</label>
+            <div className="compact-segmented-control">
+              <button
+                type="button"
+                className={`seg-btn ${formData.destination !== 'PRO' ? 'active' : ''}`}
+                onClick={() => setFormData(prev => ({
+                  ...prev,
+                  destination: 'HABITATION',
+                  type: "Villa d'architecte",
+                  title: prev.destination === 'PRO' ? "Somptueuse Villa Contemporaine avec Vue Lagune" : prev.title
+                }))}
+              >
+                Habitation
+              </button>
+              <button
+                type="button"
+                className={`seg-btn ${formData.destination === 'PRO' ? 'active' : ''}`}
+                onClick={() => setFormData(prev => ({
+                  ...prev,
+                  destination: 'PRO',
+                  type: "Bureaux",
+                  proCategory: prev.proCategory || 'BUREAU',
+                  title: prev.destination !== 'PRO' ? "Plateau de Bureaux Équipé — Quartier d'Affaires" : prev.title
+                }))}
+              >
+                Immobilier professionnel
+              </button>
+            </div>
+          </div>
+
           {/* Operation Toggle: À Louer / À Vendre */}
           <div className="compact-form-row">
             <label className="compact-label" style={{ margin: 0 }}>Opération :</label>
@@ -459,18 +530,41 @@ export const PublishPropertyPage = () => {
 
           {/* Typology & Country */}
           <div className="publish-grid-2">
-            <div className="compact-field">
-              <label className="compact-label">Type de bien</label>
-              <select
-                className="form-select compact-input"
-                value={formData.type}
-                onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-              >
-                {PROPERTY_TYPES.map(t => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
-              </select>
-            </div>
+            {formData.destination === 'PRO' ? (
+              <div className="compact-field">
+                <label className="compact-label">Catégorie professionnelle</label>
+                <select
+                  className="form-select compact-input"
+                  value={formData.proCategory}
+                  onChange={(e) => {
+                    const newCat = e.target.value;
+                    const catObj = PRO_CATEGORIES.find(c => c.id === newCat);
+                    setFormData(prev => ({
+                      ...prev,
+                      proCategory: newCat,
+                      type: catObj?.label || newCat
+                    }));
+                  }}
+                >
+                  {PRO_CATEGORIES.map(c => (
+                    <option key={c.id} value={c.id}>{c.label}</option>
+                  ))}
+                </select>
+              </div>
+            ) : (
+              <div className="compact-field">
+                <label className="compact-label">Type de bien</label>
+                <select
+                  className="form-select compact-input"
+                  value={formData.type}
+                  onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                >
+                  {PROPERTY_TYPES.map(t => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             <div className="compact-field">
               <label className="compact-label">Pays</label>
@@ -569,7 +663,9 @@ export const PublishPropertyPage = () => {
             </div>
 
             <div className="compact-field">
-              <label className="compact-label">Superficie (m²)</label>
+              <label className="compact-label">
+                {formData.destination === 'PRO' ? 'Superficie utile (m²)' : 'Superficie habitable (m²)'}
+              </label>
               <div className="compact-affix-box">
                 <input
                   type="number"
@@ -584,55 +680,264 @@ export const PublishPropertyPage = () => {
             </div>
           </div>
 
-          {/* Bedrooms & Bathrooms Counter */}
-          <div className="publish-grid-2">
-            <div className="compact-field">
-              <label className="compact-label">Chambres</label>
-              <div className="compact-counter">
-                <button
-                  type="button"
-                  className="counter-btn"
-                  onClick={() => setFormData(prev => ({ ...prev, bedrooms: Math.max(1, prev.bedrooms - 1) }))}
-                >
-                  <Minus size={12} />
-                </button>
-                <span className="counter-text">{formData.bedrooms} ch.</span>
-                <button
-                  type="button"
-                  className="counter-btn"
-                  onClick={() => setFormData(prev => ({ ...prev, bedrooms: prev.bedrooms + 1 }))}
-                >
-                  <Plus size={12} />
-                </button>
+          {/* Critères dynamiques selon Destination */}
+          {formData.destination === 'PRO' ? (
+            <>
+              {/* Socle Commun Pro : Sanitaires & Type de bail */}
+              <div className="publish-grid-2">
+                <div className="compact-field">
+                  <label className="compact-label">Sanitaires / Points d'eau</label>
+                  <div className="compact-counter">
+                    <button
+                      type="button"
+                      className="counter-btn"
+                      onClick={() => setFormData(prev => ({ ...prev, bathrooms: Math.max(1, prev.bathrooms - 1) }))}
+                    >
+                      <Minus size={12} />
+                    </button>
+                    <span className="counter-text">{formData.bathrooms} sanitaires</span>
+                    <button
+                      type="button"
+                      className="counter-btn"
+                      onClick={() => setFormData(prev => ({ ...prev, bathrooms: prev.bathrooms + 1 }))}
+                    >
+                      <Plus size={12} />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="compact-field">
+                  <label className="compact-label">Type de bail contractuel</label>
+                  <select
+                    className="form-select compact-input"
+                    value={formData.leaseType}
+                    onChange={(e) => setFormData({ ...formData, leaseType: e.target.value })}
+                  >
+                    {PRO_LEASE_TYPES.map(lease => (
+                      <option key={lease} value={lease}>{lease}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Critères Spécifiques Dédiés selon la Typologie */}
+              {formData.proCategory === 'BUREAU' && (
+                <div className="publish-grid-2">
+                  <div className="compact-field">
+                    <label className="compact-label">Bureaux fermés</label>
+                    <div className="compact-counter">
+                      <button
+                        type="button"
+                        className="counter-btn"
+                        onClick={() => setFormData(prev => ({ ...prev, offices: Math.max(0, (prev.offices || 1) - 1) }))}
+                      >
+                        <Minus size={12} />
+                      </button>
+                      <span className="counter-text">{formData.offices || 0} bureau(x)</span>
+                      <button
+                        type="button"
+                        className="counter-btn"
+                        onClick={() => setFormData(prev => ({ ...prev, offices: (prev.offices || 0) + 1 }))}
+                      >
+                        <Plus size={12} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="compact-field">
+                    <label className="compact-label">Postes en open-space</label>
+                    <input
+                      type="number"
+                      className="form-input compact-input"
+                      placeholder="ex: 15"
+                      value={formData.workstations || ''}
+                      onChange={(e) => setFormData({ ...formData, workstations: Number(e.target.value) })}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {formData.proCategory === 'COMMERCE' && (
+                <div className="publish-grid-2">
+                  <div className="compact-field">
+                    <label className="compact-label">Linéaire de vitrine</label>
+                    <input
+                      type="text"
+                      className="form-input compact-input"
+                      placeholder="ex: 8 mètres sur rue"
+                      value={formData.windowDisplay || ''}
+                      onChange={(e) => setFormData({ ...formData, windowDisplay: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="compact-field">
+                    <label className="compact-label">Espace réserve / Stockage</label>
+                    <input
+                      type="text"
+                      className="form-input compact-input"
+                      placeholder="ex: 25 m² arrière-boutique"
+                      value={formData.storageArea || ''}
+                      onChange={(e) => setFormData({ ...formData, storageArea: e.target.value })}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {formData.proCategory === 'ENTREPOT' && (
+                <div className="publish-grid-2">
+                  <div className="compact-field">
+                    <label className="compact-label">Hauteur sous plafond (m)</label>
+                    <input
+                      type="text"
+                      className="form-input compact-input"
+                      placeholder="ex: 8.5 mètres"
+                      value={formData.ceilingHeight || ''}
+                      onChange={(e) => setFormData({ ...formData, ceilingHeight: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="compact-field">
+                    <label className="compact-label">Accès logistique / Quai</label>
+                    <select
+                      className="form-select compact-input"
+                      value={formData.loadingDock || 'Quai de déchargement niveleur'}
+                      onChange={(e) => setFormData({ ...formData, loadingDock: e.target.value })}
+                    >
+                      <option value="Quai de déchargement niveleur">Quai niveleur gros porteurs</option>
+                      <option value="Accès plain-pied semi-remorque">Accès de plain-pied camion</option>
+                      <option value="Sans quai">Sans quai de déchargement</option>
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              {formData.proCategory === 'LOCAL_PRO' && (
+                <div className="publish-grid-2">
+                  <div className="compact-field">
+                    <label className="compact-label">Cabinets / Salles de consultation</label>
+                    <div className="compact-counter">
+                      <button
+                        type="button"
+                        className="counter-btn"
+                        onClick={() => setFormData(prev => ({ ...prev, offices: Math.max(1, (prev.offices || 1) - 1) }))}
+                      >
+                        <Minus size={12} />
+                      </button>
+                      <span className="counter-text">{formData.offices || 1} cabinet(s)</span>
+                      <button
+                        type="button"
+                        className="counter-btn"
+                        onClick={() => setFormData(prev => ({ ...prev, offices: (prev.offices || 0) + 1 }))}
+                      >
+                        <Plus size={12} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="compact-field">
+                    <label className="compact-label">Salle d'attente</label>
+                    <select
+                      className="form-select compact-input"
+                      value={formData.waitingRoom || "Salle d'attente dédiée"}
+                      onChange={(e) => setFormData({ ...formData, waitingRoom: e.target.value })}
+                    >
+                      <option value="Salle d'attente dédiée">Salle d'attente dédiée</option>
+                      <option value="Espace d'attente partagé">Espace d'attente partagé</option>
+                      <option value="Sans salle d'attente">Sans salle d'attente</option>
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              {formData.proCategory === 'COWORKING' && (
+                <div className="publish-grid-2">
+                  <div className="compact-field">
+                    <label className="compact-label">Capacité postes de travail</label>
+                    <input
+                      type="number"
+                      className="form-input compact-input"
+                      placeholder="ex: 30"
+                      value={formData.workstations || ''}
+                      onChange={(e) => setFormData({ ...formData, workstations: Number(e.target.value) })}
+                    />
+                  </div>
+
+                  <div className="compact-field">
+                    <label className="compact-label">Salles de réunion équipées</label>
+                    <div className="compact-counter">
+                      <button
+                        type="button"
+                        className="counter-btn"
+                        onClick={() => setFormData(prev => ({ ...prev, offices: Math.max(0, (prev.offices || 1) - 1) }))}
+                      >
+                        <Minus size={12} />
+                      </button>
+                      <span className="counter-text">{formData.offices || 0} salle(s)</span>
+                      <button
+                        type="button"
+                        className="counter-btn"
+                        onClick={() => setFormData(prev => ({ ...prev, offices: (prev.offices || 0) + 1 }))}
+                      >
+                        <Plus size={12} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            /* Chambres & Salles de bain (Résidentiel) */
+            <div className="publish-grid-2">
+              <div className="compact-field">
+                <label className="compact-label">Chambres</label>
+                <div className="compact-counter">
+                  <button
+                    type="button"
+                    className="counter-btn"
+                    onClick={() => setFormData(prev => ({ ...prev, bedrooms: Math.max(1, prev.bedrooms - 1) }))}
+                  >
+                    <Minus size={12} />
+                  </button>
+                  <span className="counter-text">{formData.bedrooms} ch.</span>
+                  <button
+                    type="button"
+                    className="counter-btn"
+                    onClick={() => setFormData(prev => ({ ...prev, bedrooms: prev.bedrooms + 1 }))}
+                  >
+                    <Plus size={12} />
+                  </button>
+                </div>
+              </div>
+
+              <div className="compact-field">
+                <label className="compact-label">Salles de bain</label>
+                <div className="compact-counter">
+                  <button
+                    type="button"
+                    className="counter-btn"
+                    onClick={() => setFormData(prev => ({ ...prev, bathrooms: Math.max(1, prev.bathrooms - 1) }))}
+                  >
+                    <Minus size={12} />
+                  </button>
+                  <span className="counter-text">{formData.bathrooms} sdb</span>
+                  <button
+                    type="button"
+                    className="counter-btn"
+                    onClick={() => setFormData(prev => ({ ...prev, bathrooms: prev.bathrooms + 1 }))}
+                  >
+                    <Plus size={12} />
+                  </button>
+                </div>
               </div>
             </div>
+          )}
 
-            <div className="compact-field">
-              <label className="compact-label">Salles de bain</label>
-              <div className="compact-counter">
-                <button
-                  type="button"
-                  className="counter-btn"
-                  onClick={() => setFormData(prev => ({ ...prev, bathrooms: Math.max(1, prev.bathrooms - 1) }))}
-                >
-                  <Minus size={12} />
-                </button>
-                <span className="counter-text">{formData.bathrooms} sdb</span>
-                <button
-                  type="button"
-                  className="counter-btn"
-                  onClick={() => setFormData(prev => ({ ...prev, bathrooms: prev.bathrooms + 1 }))}
-                >
-                  <Plus size={12} />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Commodités: Liste déroulante multi-sélection avec tags */}
+          {/* Commodités: Liste déroulante multi-sélection avec tags (adaptée PRO / HABITATION) */}
           <div className="compact-field" ref={amenitiesDropdownRef} style={{ position: 'relative' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3px' }}>
-              <label className="compact-label" style={{ margin: 0 }}>Commodités</label>
+              <label className="compact-label" style={{ margin: 0 }}>
+                {formData.destination === 'PRO' ? 'Prestations & Équipements professionnels' : 'Commodités'}
+              </label>
               <span style={{ fontSize: '0.68rem', color: 'var(--graphite-gray)', fontWeight: 600 }}>
                 {formData.amenities.length} sélectionnée(s)
               </span>
@@ -644,7 +949,7 @@ export const PublishPropertyPage = () => {
             >
               <div className="multi-select-tags-wrap">
                 {formData.amenities.length === 0 ? (
-                  <span className="multi-placeholder">Sélectionner des commodités...</span>
+                  <span className="multi-placeholder">Sélectionner des équipements...</span>
                 ) : (
                   formData.amenities.map(item => (
                     <span key={item} className="amenity-chip-tag">
@@ -669,7 +974,7 @@ export const PublishPropertyPage = () => {
             {isAmenitiesOpen && (
               <div className="multi-select-popover">
                 <div className="popover-scroll-area">
-                  {ALL_AMENITIES.map(amenity => {
+                  {(formData.destination === 'PRO' ? PRO_AMENITIES_FILTERS : ALL_AMENITIES).map(amenity => {
                     const isSelected = formData.amenities.includes(amenity);
                     return (
                       <button
@@ -923,9 +1228,15 @@ export const PublishPropertyPage = () => {
                 <span>Gérer mes annonces</span>
                 <ArrowRight size={15} />
               </Link>
-              <Link to="/recherche" className="btn-ghost-dark" style={{ padding: '8px 18px', fontSize: '0.8125rem', justifyContent: 'center' }}>
-                <span>Voir le catalogue</span>
-              </Link>
+              {formData.destination === 'PRO' ? (
+                <Link to="/immobilier-professionnel" className="btn-ghost-dark" style={{ padding: '8px 18px', fontSize: '0.8125rem', justifyContent: 'center' }}>
+                  <span>Voir l'espace Immobilier professionnel</span>
+                </Link>
+              ) : (
+                <Link to="/recherche" className="btn-ghost-dark" style={{ padding: '8px 18px', fontSize: '0.8125rem', justifyContent: 'center' }}>
+                  <span>Voir le catalogue</span>
+                </Link>
+              )}
               <button 
                 onClick={() => {
                   setIsSubmitted(false);
@@ -963,6 +1274,11 @@ export const PublishPropertyPage = () => {
                     <span className={`preview-badge-category ${formData.category === 'VENTE' ? 'vente' : 'location'}`}>
                       {formData.category === 'VENTE' ? 'À VENDRE' : 'À LOUER'}
                     </span>
+                    {formData.destination === 'PRO' && (
+                      <span className="preview-badge-status" style={{ backgroundColor: 'rgba(17,17,17,0.85)', color: '#FFFFFF' }}>
+                        PRO
+                      </span>
+                    )}
                     <span className="preview-badge-status">
                       PARTICULIER
                     </span>
@@ -1048,37 +1364,91 @@ export const PublishPropertyPage = () => {
 
               {/* 3. GRILLE DES 4 CARACTÉRISTIQUES CLÉS */}
               <div className="preview-specs-grid">
-                <div className="preview-spec-card">
-                  <span className="spec-label">Chambres</span>
-                  <div className="spec-val-row">
-                    <Bed size={17} color="var(--primary-red)" />
-                    <span>{formData.bedrooms} suites</span>
-                  </div>
-                </div>
+                {formData.destination === 'PRO' ? (
+                  <>
+                    <div className="preview-spec-card">
+                      <span className="spec-label">
+                        {formData.proCategory === 'COMMERCE' ? 'Vitrine' :
+                         formData.proCategory === 'ENTREPOT' ? 'Logistique' :
+                         formData.proCategory === 'LOCAL_PRO' ? 'Cabinets' :
+                         formData.proCategory === 'COWORKING' ? 'Postes' : 'Bureaux'}
+                      </span>
+                      <div className="spec-val-row">
+                        {formData.proCategory === 'COMMERCE' ? <Store size={17} color="var(--primary-red)" /> :
+                         formData.proCategory === 'ENTREPOT' ? <Warehouse size={17} color="var(--primary-red)" /> :
+                         formData.proCategory === 'COWORKING' ? <Users size={17} color="var(--primary-red)" /> :
+                         <Building size={17} color="var(--primary-red)" />}
+                        <span>
+                          {formData.proCategory === 'COMMERCE' ? (formData.windowDisplay || 'Vitrine sur rue') :
+                           formData.proCategory === 'ENTREPOT' ? (formData.ceilingHeight ? `Hsp ${formData.ceilingHeight}` : 'Accès logistique') :
+                           formData.proCategory === 'LOCAL_PRO' ? `${formData.offices || 1} cabinet(s)` :
+                           formData.proCategory === 'COWORKING' ? `${formData.workstations || 15} postes` :
+                           `${formData.offices || 1} bureau(x)`}
+                        </span>
+                      </div>
+                    </div>
 
-                <div className="preview-spec-card">
-                  <span className="spec-label">Salles de bain</span>
-                  <div className="spec-val-row">
-                    <Bath size={17} color="var(--primary-red)" />
-                    <span>{formData.bathrooms} bains</span>
-                  </div>
-                </div>
+                    <div className="preview-spec-card">
+                      <span className="spec-label">Sanitaires</span>
+                      <div className="spec-val-row">
+                        <Bath size={17} color="var(--primary-red)" />
+                        <span>{formData.bathrooms || 1} sanitaires</span>
+                      </div>
+                    </div>
 
-                <div className="preview-spec-card">
-                  <span className="spec-label">Superficie</span>
-                  <div className="spec-val-row">
-                    <Maximize2 size={17} color="var(--primary-red)" />
-                    <span>{formData.area || 0} m²</span>
-                  </div>
-                </div>
+                    <div className="preview-spec-card">
+                      <span className="spec-label">Superficie</span>
+                      <div className="spec-val-row">
+                        <Maximize2 size={17} color="var(--primary-red)" />
+                        <span>{formData.area || 0} m²</span>
+                      </div>
+                    </div>
 
-                <div className="preview-spec-card">
-                  <span className="spec-label">Sécurité</span>
-                  <div className="spec-val-row" style={{ color: 'var(--verified-green)' }}>
-                    <ShieldCheck size={17} />
-                    <span>Certifiée</span>
-                  </div>
-                </div>
+                    <div className="preview-spec-card">
+                      <span className="spec-label">Usage / Bail</span>
+                      <div className="spec-val-row" style={{ color: 'var(--obsidian-black)' }}>
+                        <Briefcase size={17} color="var(--primary-red)" />
+                        <span style={{ fontSize: '0.75rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {formData.leaseType ? formData.leaseType.split(' ')[0] + ' ' + (formData.leaseType.split(' ')[1] || '') : 'Bail commercial'}
+                        </span>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="preview-spec-card">
+                      <span className="spec-label">Chambres</span>
+                      <div className="spec-val-row">
+                        <Bed size={17} color="var(--primary-red)" />
+                        <span>{formData.bedrooms} suites</span>
+                      </div>
+                    </div>
+
+                    <div className="preview-spec-card">
+                      <span className="spec-label">Salles de bain</span>
+                      <div className="spec-val-row">
+                        <Bath size={17} color="var(--primary-red)" />
+                        <span>{formData.bathrooms} bains</span>
+                      </div>
+                    </div>
+
+                    <div className="preview-spec-card">
+                      <span className="spec-label">Superficie</span>
+                      <div className="spec-val-row">
+                        <Maximize2 size={17} color="var(--primary-red)" />
+                        <span>{formData.area || 0} m²</span>
+                      </div>
+                    </div>
+
+                    <div className="preview-spec-card">
+                      <span className="spec-label">Sécurité</span>
+                      <div className="spec-val-row" style={{ color: 'var(--verified-green)' }}>
+                        <ShieldCheck size={17} />
+                        <span>Certifiée</span>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* 4. DESCRIPTION DU BIEN */}

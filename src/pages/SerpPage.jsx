@@ -97,6 +97,9 @@ export const SerpPage = () => {
   // Filter Properties
   const filteredProperties = useMemo(() => {
     return PROPERTIES_DATA.filter(prop => {
+      // Étanchéité stricte : Exclure tout bien à usage professionnel
+      if (prop.destination === 'PRO') return false;
+
       // Transaction type filter (LOCATION vs VENTE)
       if (typeParam !== 'ALL' && prop.category !== typeParam) return false;
 
@@ -891,6 +894,7 @@ export const SerpPage = () => {
         .serp-select.active-filter {
           border-color: var(--obsidian-black);
           background-color: #F8F9FA;
+          color: var(--obsidian-black, #111111) !important;
           font-weight: 700;
           box-shadow: 0 0 0 1px var(--obsidian-black);
         }

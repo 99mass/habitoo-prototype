@@ -18,10 +18,11 @@ import { CheckoutPage } from './pages/Checkout/CheckoutPage';
 import { ProLandingPage } from './pages/Professionnels/ProLandingPage';
 import { ProRegisterPage } from './pages/Professionnels/Onboarding/ProRegisterPage';
 import { ProPendingPass } from './pages/Professionnels/Onboarding/ProPendingPass';
+import {ProDashboardLayout} from './pages/Professionnels/App/ProDashboardLayout'
 import { ProHeader } from './components/ProHeader';
 import { ProTunnelHeader } from './components/ProTunnelHeader';
-import { ProDashboardLayout } from './pages/Professionnels/App/ProDashboardLayout';
 import { VitrinePage } from './pages/VitrinePage';
+import { ProRealEstatePage } from './pages/ProRealEstatePage';
 
 // Auto scroll to top on navigation
 const ScrollToTop = () => {
@@ -50,6 +51,8 @@ const AppContent = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/recherche" element={<SerpPage />} />
+          <Route path="/immobilier-professionnel" element={<ProRealEstatePage />} />
+          <Route path="/pro-immo" element={<ProRealEstatePage />} />
           <Route path="/bien/:id" element={<PropertyDetailPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/reservation/paiement" element={<CheckoutPage />} />

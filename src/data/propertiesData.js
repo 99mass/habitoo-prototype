@@ -550,7 +550,381 @@ export const PROPERTIES_DATA = [
       phone: "+225 07 88 99 00 11",
       avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"
     },
-    description: "Situé au cœur de la vie gastronomique et festive de Marcory Zone 4, cet appartement meublé avec des œuvres d'artistes ivoiriens contemporains offre un confort hôtelier 5 étoiles."
+    description: "Situé au cœur de la vie gastronomique et festive de Marcory Zone 4, cet appartement meublé avec des œuvres d'artistes ivoiriens contemporains offre un confort hôtelier 5 étoiles.",
+    destination: "HABITATION"
+  },
+  {
+    id: "hab-pro-01",
+    destination: "PRO",
+    proCategory: "BUREAU",
+    isPro: true,
+    advertiserType: "PRO",
+    title: "Plateau d'Affaires Haussmannien Moderne — Le Plateau",
+    type: "Bureaux",
+    category: "LOCATION",
+    city: "Abidjan",
+    country: "Côte d'Ivoire",
+    neighborhood: "Le Plateau",
+    address: "Avenue Chardy, Le Plateau, Abidjan",
+    priceXOF: 4800000,
+    priceXAF: 4800000,
+    priceUSD: 8000,
+    period: "/mois",
+    leaseType: "Bail commercial 3-6-9",
+    specs: {
+      area: 320,
+      offices: 8,
+      workstations: 35,
+      restrooms: 4,
+      floor: 5,
+      parkingSpaces: 4,
+      windowDisplay: null,
+      loadingDock: false,
+      security: "Contrôle d'accès biométrique, SAS d'accueil et gardiennage H24"
+    },
+    amenities: [
+      "Fibre optique très haut débit dédiée",
+      "Groupe électrogène automatique (150 kVA)",
+      "Climatisation intégrale multizone",
+      "Gardiennage H24 & Vidéosurveillance",
+      "Ascenseur privatif sécurisé",
+      "Salle de serveurs climatisée (Baie 19 pouces)",
+      "Kitchenette d'entreprise équipée",
+      "4 Places de parking souterrain"
+    ],
+    coordinates: [5.3260, -4.0197],
+    images: [
+      "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=85",
+      "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=1200&q=85",
+      "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1200&q=85"
+    ],
+    floorPlan: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&w=1200&q=85",
+    auditDate: "22 Février 2025",
+    auditStatus: "Audit technique ERP & Sécurité incendie conforme — Titre foncier commercial validé",
+    chargesBreakdown: {
+      copropriete: "450 000 FCFA / mois",
+      securite: "Inclus dans les charges d'immeuble",
+      depotGarantie: "3 mois de loyer sous séquestre notarié",
+      energie: "Compteur divisionnaire triphasé"
+    },
+    agent: {
+      name: "Ivoire Prestige Properties",
+      agency: "Agence Immobilière Agréée",
+      title: "Pôle Immobilier d'Entreprise",
+      proType: "AGENCE",
+      proId: "agence-ivoire",
+      certified: true,
+      phone: "+225 27 20 22 23 24",
+      avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80"
+    },
+    description: "Plateau de bureaux contemporain situé en plein cœur financier d'Abidjan. Aménagement rationnel comprenant 8 bureaux fermés de direction, un open-space modulable pour 25 collaborateurs, une grande salle de conseil et une salle d'archives sécurisée."
+  },
+  {
+    id: "hab-pro-02",
+    destination: "PRO",
+    proCategory: "COMMERCE",
+    isPro: false,
+    advertiserType: "PARTICULIER",
+    title: "Boutique d'Angle & Emplacement Stratégique — Zone 4",
+    type: "Commerce",
+    category: "LOCATION",
+    city: "Abidjan",
+    country: "Côte d'Ivoire",
+    neighborhood: "Marcory Zone 4",
+    address: "Boulevard de Marseille angle Rue Pierre et Marie Curie, Abidjan",
+    priceXOF: 2600000,
+    priceXAF: 2600000,
+    priceUSD: 4330,
+    period: "/mois",
+    leaseType: "Bail commercial 3-6-9",
+    specs: {
+      area: 145,
+      offices: 1,
+      workstations: null,
+      restrooms: 2,
+      floor: 0,
+      parkingSpaces: 5,
+      windowDisplay: "Linéaire vitrine de 14 mètres en angle",
+      loadingDock: false,
+      security: "Rideau métallique motorisé et système alarme téléconnecté"
+    },
+    amenities: [
+      "Linéaire vitrine de 14 mètres sur grand axe",
+      "Climatisation intégrale inverter",
+      "Accès PMR de plain-pied",
+      "Groupe électrogène automatique",
+      "Réserve de stockage attenante 30 m²",
+      "Parking clientèle direct 5 véhicules"
+    ],
+    coordinates: [5.2915, -3.9850],
+    images: [
+      "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=85",
+      "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?auto=format&fit=crop&w=1200&q=85",
+      "https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=1200&q=85"
+    ],
+    floorPlan: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&w=1200&q=85",
+    auditDate: "15 Février 2025",
+    auditStatus: "Emplacement no 1 validé — Tous commerces autorisés hors nuisances sonores",
+    chargesBreakdown: {
+      copropriete: "150 000 FCFA / mois",
+      securite: "Gardiennage commun de rue inclus",
+      depotGarantie: "2 mois sous séquestre",
+      energie: "Compteur individuel CIE"
+    },
+    agent: {
+      name: "Dr. Patrick Ahoua",
+      agency: "Propriétaire Particulier",
+      title: "Bailleur Privé",
+      certified: false,
+      phone: "+225 05 06 07 08 09",
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
+    },
+    description: "Rare opportunité d'implantation commerciale sur le Boulevard de Marseille. Visibilité maximale avec un linéaire vitré de 14 mètres en angle. Idéal enseigne premium, agence bancaire, showroom de design ou franchise internationale."
+  },
+  {
+    id: "hab-pro-03",
+    destination: "PRO",
+    proCategory: "LOCAL_PRO",
+    isPro: true,
+    advertiserType: "PRO",
+    title: "Cabinet Professionnel d'Exercice Libéral — Vallon",
+    type: "Local professionnel",
+    category: "VENTE",
+    city: "Abidjan",
+    country: "Côte d'Ivoire",
+    neighborhood: "Deux Plateaux",
+    address: "Rue des Jardins, Deux Plateaux Vallon, Abidjan",
+    priceXOF: 240000000,
+    priceXAF: 240000000,
+    priceUSD: 400000,
+    period: "",
+    leaseType: "Vente en pleine propriété commerciale",
+    specs: {
+      area: 210,
+      offices: 5,
+      workstations: 10,
+      restrooms: 3,
+      floor: 1,
+      parkingSpaces: 3,
+      windowDisplay: null,
+      loadingDock: false,
+      security: "Interphone vidéo, SAS d'accueil et gardiennage d'immeuble"
+    },
+    amenities: [
+      "Salle d'attente patientèle / clientèle séparée",
+      "5 Cabinets de consultation ou bureaux indépendants",
+      "Climatisation intégrale",
+      "Normes d'accessibilité PMR",
+      "Groupe électrogène de secours",
+      "Fibre optique professionnelle"
+    ],
+    coordinates: [5.3620, -3.9980],
+    images: [
+      "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1200&q=85",
+      "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1200&q=85"
+    ],
+    floorPlan: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&w=1200&q=85",
+    auditDate: "08 Février 2025",
+    auditStatus: "Titre Foncier vérifié et acte notarié disponible sans hypothèque",
+    chargesBreakdown: {
+      copropriete: "180 000 FCFA / trimestre",
+      securite: "Inclus",
+      depotGarantie: "Compte séquestre notarié 10%",
+      energie: "Autonome"
+    },
+    agent: {
+      name: "Jean-Marc Kouassi",
+      agency: "Démarcheur Indépendant Agréé",
+      title: "Démarcheur Immobilier Agréé",
+      proType: "DEMARCHEUR",
+      proId: "demarcheur-kouassi",
+      certified: true,
+      phone: "+225 07 08 09 10 11",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
+    },
+    description: "Local professionnel agencé sur mesure pour profession libérale (cabinet médical, cabinet d'avocats, étude notariale ou cabinet d'expertise comptable). Environnement calme et prestigieux à proximité immédiate de la Rue des Jardins."
+  },
+  {
+    id: "hab-pro-04",
+    destination: "PRO",
+    proCategory: "ENTREPOT",
+    isPro: true,
+    advertiserType: "PRO",
+    title: "Entrepôt Logistique Hauteur 9m avec Quai — Limete",
+    type: "Entrepôt et local d'activité",
+    category: "LOCATION",
+    city: "Kinshasa",
+    country: "RDC",
+    neighborhood: "Kinshasa Gombe",
+    address: "Zone d'Activité Poids Lourds, Limete, Kinshasa",
+    priceXOF: 5700000,
+    priceXAF: 5700000,
+    priceUSD: 9500,
+    period: "/mois",
+    leaseType: "Bail commercial d'activité",
+    specs: {
+      area: 1250,
+      offices: 3,
+      workstations: 12,
+      restrooms: 4,
+      floor: 0,
+      parkingSpaces: 10,
+      windowDisplay: null,
+      loadingDock: true,
+      security: "Guérite de contrôle poids lourds, barbelés et caméras thermique"
+    },
+    amenities: [
+      "Quai de déchargement double porte sectionnelle",
+      "Hauteur sous poutre utile de 9 mètres",
+      "Dalle béton traitée anti-poussière (charge 5T/m²)",
+      "Poste transformateur électrique MT dédié 250 kVA",
+      "Bureaux d'exploitation climatisés (90 m²)",
+      "Aire de giration semi-remorques"
+    ],
+    coordinates: [-4.3500, 15.3400],
+    images: [
+      "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=85",
+      "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?auto=format&fit=crop&w=1200&q=85"
+    ],
+    floorPlan: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&w=1200&q=85",
+    auditDate: "12 Février 2025",
+    auditStatus: "Audit technique structurel et autorisation d'exploitation industrielle valide",
+    chargesBreakdown: {
+      copropriete: "N/A — Parcelle autonome",
+      securite: "Gardiennage privatif sur site",
+      depotGarantie: "3 mois de loyer sous séquestre",
+      energie: "Ligne directe SNEL + cuve fioul 5000L"
+    },
+    agent: {
+      name: "Kabila & Partners Immobilier",
+      agency: "Agence Agréée Kinshasa",
+      title: "Département Industriel & Logistique",
+      certified: true,
+      phone: "+243 81 22 33 444",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
+    },
+    description: "Bâtiment d'activité logistique aux normes internationales, conçu pour transit et stockage de marchandises sous température contrôlée. Accès aisé vers le port fluvial et les axes majeurs de Kinshasa."
+  },
+  {
+    id: "hab-pro-05",
+    destination: "PRO",
+    proCategory: "COWORKING",
+    isPro: true,
+    advertiserType: "PRO",
+    title: "Espace Coworking & Bureaux Prêts à l'Emploi — Gombe",
+    type: "Coworking",
+    category: "LOCATION",
+    city: "Kinshasa",
+    country: "RDC",
+    neighborhood: "Kinshasa Gombe",
+    address: "Boulevard du 30 Juin, Gombe, Kinshasa",
+    priceXOF: 2100000,
+    priceXAF: 2100000,
+    priceUSD: 3500,
+    period: "/mois",
+    leaseType: "Contrat prestation coworking",
+    specs: {
+      area: 340,
+      offices: 6,
+      workstations: 40,
+      restrooms: 4,
+      floor: 3,
+      parkingSpaces: 6,
+      windowDisplay: null,
+      loadingDock: false,
+      security: "Badge électronique crypté et gardiennage 24/7"
+    },
+    amenities: [
+      "Double liaison fibre optique redondante",
+      "3 Salles de réunion avec visioconférence 4K",
+      "Cabines acoustiques insonorisées (Phone booths)",
+      "Espace cafétéria et lounge networking",
+      "Climatisation réversible inverter",
+      "Imprimantes d'entreprise sécurisées"
+    ],
+    coordinates: [-4.3050, 15.2950],
+    images: [
+      "https://images.unsplash.com/photo-1527192491265-7e15c55b1ed2?auto=format&fit=crop&w=1200&q=85",
+      "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=85"
+    ],
+    floorPlan: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&w=1200&q=85",
+    auditDate: "20 Février 2025",
+    auditStatus: "Espace plug & play certifié Habitoo — Services et connectivité audités",
+    chargesBreakdown: {
+      copropriete: "Inclus dans la formule globale",
+      securite: "Inclus",
+      depotGarantie: "1 mois de caution sous séquestre",
+      energie: "Inclus"
+    },
+    agent: {
+      name: "Kabila & Partners Immobilier",
+      agency: "Agence Agréée Kinshasa",
+      title: "Conseil Espaces de Travail",
+      certified: true,
+      phone: "+243 81 22 33 444",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
+    },
+    description: "Espace de travail partagé haut de gamme au cœur du quartier des affaires de la Gombe. Conçu pour startups en hyper-croissance, filiales internationales et équipes agiles avec flexibilité contractuelle totale."
+  },
+  {
+    id: "hab-pro-06",
+    destination: "PRO",
+    proCategory: "BUREAU",
+    isPro: false,
+    advertiserType: "PARTICULIER",
+    title: "Siège d'Entreprise Indépendant & Showroom — Centre-Ville",
+    type: "Bureaux",
+    category: "VENTE",
+    city: "Brazzaville",
+    country: "Congo",
+    neighborhood: "Centre-Ville",
+    address: "Avenue Amilcar Cabral, Centre-Ville, Brazzaville",
+    priceXOF: 520000000,
+    priceXAF: 520000000,
+    priceUSD: 865000,
+    period: "",
+    leaseType: "Vente en pleine propriété",
+    specs: {
+      area: 580,
+      offices: 12,
+      workstations: 50,
+      restrooms: 6,
+      floor: 0,
+      parkingSpaces: 12,
+      windowDisplay: "Hall vitré showroom 80 m²",
+      loadingDock: false,
+      security: "Clôture sécurisée, poste de garde et vidéosurveillance"
+    },
+    amenities: [
+      "Showroom commercial au rez-de-chaussée",
+      "12 Bureaux et 2 salles de conférence",
+      "Cour pavée privative avec 12 places de parking",
+      "Groupe électrogène automatique 80 kVA",
+      "Forage et bâche à eau 10 000L",
+      "Climatisation intégrale"
+    ],
+    coordinates: [-4.2720, 15.2810],
+    images: [
+      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=85",
+      "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=1200&q=85"
+    ],
+    floorPlan: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&w=1200&q=85",
+    auditDate: "16 Février 2025",
+    auditStatus: "Titre Foncier notarié certifié — Propriété d'entreprise libre de toute occupation",
+    chargesBreakdown: {
+      copropriete: "N/A — Bâtiment individuel",
+      securite: "Privative",
+      depotGarantie: "Compte séquestre notarié 10%",
+      energie: "Autonome groupe + SNE"
+    },
+    agent: {
+      name: "Alain Gnahoré",
+      agency: "Propriétaire",
+      certified: false,
+      phone: "+242 06 12 34 56",
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
+    },
+    description: "Immeuble commercial et tertiaire indépendant idéal pour siège de banque, compagnie d'assurance ou multinationale à Brazzaville. Bénéficie d'une visibilité d'angle exceptionnelle et d'un stationnement privé rare en centre-ville."
   }
 ];
 
@@ -567,6 +941,36 @@ export const PROPERTY_TYPES = [
   "Résidences sécurisées"
 ];
 
+export const PRO_CATEGORIES = [
+  { id: "BUREAU", label: "Bureaux", shortLabel: "Bureaux" },
+  { id: "COMMERCE", label: "Commerces & Boutiques", shortLabel: "Commerces" },
+  { id: "LOCAL_PRO", label: "Locaux professionnels", shortLabel: "Locaux pro" },
+  { id: "ENTREPOT", label: "Entrepôts & Activité", shortLabel: "Entrepôts" },
+  { id: "COWORKING", label: "Coworking & Espaces partagés", shortLabel: "Coworking" },
+  { id: "SPECIFIQUE", label: "Activités spécifiques", shortLabel: "Spécifique" },
+  { id: "AUTRE", label: "Autres biens professionnels", shortLabel: "Autres" }
+];
+
+export const PRO_LEASE_TYPES = [
+  "Bail commercial 3-6-9",
+  "Bail professionnel",
+  "Bail dérogatoire / précaire",
+  "Contrat prestation coworking",
+  "Vente en pleine propriété"
+];
+
+export const PRO_AMENITIES_FILTERS = [
+  "Fibre optique très haut débit",
+  "Groupe électrogène automatique",
+  "Climatisation intégrale",
+  "Gardiennage H24 & Vidéosurveillance",
+  "Parking privé ou clientèle",
+  "Vitrine sur rue",
+  "Accès PMR",
+  "Quai de déchargement",
+  "Salles de réunion équipées"
+];
+
 export const LUXURY_AMENITIES_FILTERS = [
   "+ Groupe Électrogène",
   "+ Forage / Réserve d'eau",
@@ -574,3 +978,4 @@ export const LUXURY_AMENITIES_FILTERS = [
   "+ Piscine",
   "+ Entièrement Meublé"
 ];
+
