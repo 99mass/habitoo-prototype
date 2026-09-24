@@ -570,7 +570,7 @@ export const PROPERTIES_DATA = [
     priceXAF: 4800000,
     priceUSD: 8000,
     period: "/mois",
-    leaseType: "Bail commercial 3-6-9",
+    leaseType: "Bail professionnel",
     specs: {
       area: 320,
       offices: 8,
@@ -636,7 +636,7 @@ export const PROPERTIES_DATA = [
     priceXAF: 2600000,
     priceUSD: 4330,
     period: "/mois",
-    leaseType: "Bail commercial 3-6-9",
+    leaseType: "Bail professionnel",
     specs: {
       area: 145,
       offices: 1,
@@ -712,7 +712,7 @@ export const PROPERTIES_DATA = [
     },
     amenities: [
       "Salle d'attente patientèle / clientèle séparée",
-      "5 Cabinets de consultation ou bureaux indépendants",
+      "5 Pièces de consultation ou bureaux indépendants",
       "Climatisation intégrale",
       "Normes d'accessibilité PMR",
       "Groupe électrogène de secours",
@@ -761,7 +761,7 @@ export const PROPERTIES_DATA = [
     priceXAF: 5700000,
     priceUSD: 9500,
     period: "/mois",
-    leaseType: "Bail commercial d'activité",
+    leaseType: "Bail professionnel",
     specs: {
       area: 1250,
       offices: 3,
@@ -945,14 +945,12 @@ export const PRO_CATEGORIES = [
   { id: "BUREAU", label: "Bureaux", shortLabel: "Bureaux" },
   { id: "COMMERCE", label: "Commerces & Boutiques", shortLabel: "Commerces" },
   { id: "LOCAL_PRO", label: "Locaux professionnels", shortLabel: "Locaux pro" },
-  { id: "ENTREPOT", label: "Entrepôts & Activité", shortLabel: "Entrepôts" },
-  { id: "COWORKING", label: "Coworking & Espaces partagés", shortLabel: "Coworking" },
-  { id: "SPECIFIQUE", label: "Activités spécifiques", shortLabel: "Spécifique" },
+  { id: "ENTREPOT", label: "Entrepôt", shortLabel: "Entrepôt" },
+  { id: "COWORKING", label: "Coworking", shortLabel: "Coworking" },
   { id: "AUTRE", label: "Autres biens professionnels", shortLabel: "Autres" }
 ];
 
 export const PRO_LEASE_TYPES = [
-  "Bail commercial 3-6-9",
   "Bail professionnel",
   "Bail dérogatoire / précaire",
   "Contrat prestation coworking",

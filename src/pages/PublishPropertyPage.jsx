@@ -34,7 +34,9 @@ import {
   Briefcase,
   Store,
   Warehouse,
-  Users
+  Users,
+  Star,
+  ExternalLink
 } from 'lucide-react';
 
 const COUNTRY_CODES = [
@@ -175,6 +177,23 @@ export const PublishPropertyPage = () => {
   const userAvatar = currentUser?.avatar || SIMULATED_USER_AVATAR;
   const userName = currentUser?.name || "M. Abdoulaye Touré";
 
+  const isUserPro = Boolean(
+    currentUser?.isPro ||
+    currentUser?.role?.toLowerCase().includes('pro') ||
+    currentUser?.role?.toLowerCase().includes('agent') ||
+    currentUser?.role?.toLowerCase().includes('agence') ||
+    currentUser?.role?.toLowerCase().includes('démarcheur') ||
+    currentUser?.agency
+  );
+
+  const isUserDemarcheur = isUserPro && Boolean(
+    currentUser?.proType === 'DEMARCHEUR' ||
+    currentUser?.type === 'DEMARCHEUR' ||
+    currentUser?.role?.toLowerCase().includes('démarcheur')
+  );
+
+  const userAgencyName = currentUser?.agency || (isUserDemarcheur ? userName : (isUserPro ? "Agence Immobilière Partenaire" : "Propriétaire Direct"));
+
   const [searchParams] = useSearchParams();
   const initialIsPro = searchParams.get('destination') === 'PRO' || searchParams.get('pro') === '1';
 
@@ -185,8 +204,8 @@ export const PublishPropertyPage = () => {
   // Form state - Statut verrouillé de manière fixe à 'PROPRIETAIRE'
   const [formData, setFormData] = useState({
     destination: initialIsPro ? 'PRO' : 'HABITATION', // 'HABITATION' | 'PRO'
-    proCategory: 'BUREAU', // 'BUREAU' | 'COMMERCE' | 'LOCAL_PRO' | 'ENTREPOT' | 'COWORKING' | 'SPECIFIQUE' | 'AUTRE'
-    leaseType: 'Bail commercial 3-6-9',
+    proCategory: 'BUREAU', // 'BUREAU' | 'COMMERCE' | 'LOCAL_PRO' | 'ENTREPOT' | 'COWORKING' | 'AUTRE'
+    leaseType: 'Bail professionnel',
     category: 'LOCATION', // 'LOCATION' | 'VENTE'
     type: initialIsPro ? "Bureaux" : "Villa d'architecte",
     city: activeCity?.name || 'Abidjan',
@@ -348,15 +367,17 @@ export const PublishPropertyPage = () => {
     ownerAvatar: userAvatar,
     ownerPhone: formData.ownerPhone || currentUser?.phone || '',
     ownerEmail: formData.ownerEmail || currentUser?.email || '',
-    userRole: 'PROPRIETAIRE',
-    isPro: false,
-    advertiserType: 'PARTICULIER',
+    userRole: isUserPro ? (isUserDemarcheur ? 'DEMARCHEUR' : 'AGENCE') : 'PROPRIETAIRE',
+    isPro: isUserPro,
+    advertiserType: isUserPro ? 'PRO' : 'PARTICULIER',
     agent: {
       name: userName,
-      agency: "Propriétaire Direct",
+      agency: userAgencyName,
       avatar: userAvatar,
       phone: formData.ownerPhone || currentUser?.phone || '+225 07 00 00 00',
-      verified: true
+      verified: true,
+      proType: isUserDemarcheur ? 'DEMARCHEUR' : (isUserPro ? 'AGENCE' : undefined),
+      proId: currentUser?.proId || undefined
     }
   };
 
@@ -502,7 +523,7 @@ export const PublishPropertyPage = () => {
                   title: prev.destination !== 'PRO' ? "Plateau de Bureaux Équipé — Quartier d'Affaires" : prev.title
                 }))}
               >
-                Immobilier professionnel
+                Immobilier pro
               </button>
             </div>
           </div>
@@ -686,7 +707,7 @@ export const PublishPropertyPage = () => {
               {/* Socle Commun Pro : Sanitaires & Type de bail */}
               <div className="publish-grid-2">
                 <div className="compact-field">
-                  <label className="compact-label">Sanitaires / Points d'eau</label>
+                  <label className="compact-label">Toilettes</label>
                   <div className="compact-counter">
                     <button
                       type="button"
@@ -695,7 +716,7 @@ export const PublishPropertyPage = () => {
                     >
                       <Minus size={12} />
                     </button>
-                    <span className="counter-text">{formData.bathrooms} sanitaires</span>
+                    <span className="counter-text">{formData.bathrooms} toilettes</span>
                     <button
                       type="button"
                       className="counter-btn"
@@ -814,7 +835,7 @@ export const PublishPropertyPage = () => {
               {formData.proCategory === 'LOCAL_PRO' && (
                 <div className="publish-grid-2">
                   <div className="compact-field">
-                    <label className="compact-label">Cabinets / Salles de consultation</label>
+                    <label className="compact-label">Nombre de pièces</label>
                     <div className="compact-counter">
                       <button
                         type="button"
@@ -823,7 +844,7 @@ export const PublishPropertyPage = () => {
                       >
                         <Minus size={12} />
                       </button>
-                      <span className="counter-text">{formData.offices || 1} cabinet(s)</span>
+                      <span className="counter-text">{formData.offices || 1} pièce(s)</span>
                       <button
                         type="button"
                         className="counter-btn"
@@ -1071,7 +1092,7 @@ export const PublishPropertyPage = () => {
           {/* Row 1 Contact: Déclarant & Statut Verrouillé */}
           <div className="publish-grid-2">
             <div className="compact-field">
-              <label className="compact-label">Déclarant (Session)</label>
+              <label className="compact-label">Déclarant</label>
               <div className="session-user-badge">
                 <img 
                   src={userAvatar} 
@@ -1099,7 +1120,7 @@ export const PublishPropertyPage = () => {
           {/* Row 2 Contact: WhatsApp & Email */}
           <div className="publish-grid-2">
             <div className="compact-field">
-              <label className="compact-label">WhatsApp direct</label>
+              <label className="compact-label">Téléphone</label>
               <div className="compact-phone-bar">
                 <div className="phone-country-dropdown" ref={countryDropdownRef}>
                   <button
@@ -1370,7 +1391,7 @@ export const PublishPropertyPage = () => {
                       <span className="spec-label">
                         {formData.proCategory === 'COMMERCE' ? 'Vitrine' :
                          formData.proCategory === 'ENTREPOT' ? 'Logistique' :
-                         formData.proCategory === 'LOCAL_PRO' ? 'Cabinets' :
+                         formData.proCategory === 'LOCAL_PRO' ? 'Pièces' :
                          formData.proCategory === 'COWORKING' ? 'Postes' : 'Bureaux'}
                       </span>
                       <div className="spec-val-row">
@@ -1381,7 +1402,7 @@ export const PublishPropertyPage = () => {
                         <span>
                           {formData.proCategory === 'COMMERCE' ? (formData.windowDisplay || 'Vitrine sur rue') :
                            formData.proCategory === 'ENTREPOT' ? (formData.ceilingHeight ? `Hsp ${formData.ceilingHeight}` : 'Accès logistique') :
-                           formData.proCategory === 'LOCAL_PRO' ? `${formData.offices || 1} cabinet(s)` :
+                           formData.proCategory === 'LOCAL_PRO' ? `${formData.offices || 1} pièce(s)` :
                            formData.proCategory === 'COWORKING' ? `${formData.workstations || 15} postes` :
                            `${formData.offices || 1} bureau(x)`}
                         </span>
@@ -1389,10 +1410,10 @@ export const PublishPropertyPage = () => {
                     </div>
 
                     <div className="preview-spec-card">
-                      <span className="spec-label">Sanitaires</span>
+                      <span className="spec-label">Toilettes</span>
                       <div className="spec-val-row">
                         <Bath size={17} color="var(--primary-red)" />
-                        <span>{formData.bathrooms || 1} sanitaires</span>
+                        <span>{formData.bathrooms || 1} {formData.bathrooms > 1 ? 'toilettes' : 'toilette'}</span>
                       </div>
                     </div>
 
@@ -1409,7 +1430,7 @@ export const PublishPropertyPage = () => {
                       <div className="spec-val-row" style={{ color: 'var(--obsidian-black)' }}>
                         <Briefcase size={17} color="var(--primary-red)" />
                         <span style={{ fontSize: '0.75rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {formData.leaseType ? formData.leaseType.split(' ')[0] + ' ' + (formData.leaseType.split(' ')[1] || '') : 'Bail commercial'}
+                          {formData.leaseType ? formData.leaseType.split(' ')[0] + ' ' + (formData.leaseType.split(' ')[1] || '') : 'Bail professionnel'}
                         </span>
                       </div>
                     </div>
@@ -1488,10 +1509,59 @@ export const PublishPropertyPage = () => {
                 )}
               </div>
 
-              {/* 6. LOCALISATION GÉOGRAPHIQUE & MINI CARTE */}
+              {/* 6. AGENT & AGENCY CONTACT CARD */}
+              <div className="agency-contact-card">
+                <div className="agency-card-layout">
+                  <img 
+                    src={userAvatar} 
+                    alt={userName} 
+                    className="agency-card-avatar"
+                  />
+                  <div className="agency-card-info">
+                    <div className="agency-card-badge-row">
+                      {isUserPro ? (
+                        <span className="agency-partner-badge">
+                          <ShieldCheck size={12} strokeWidth={2.5} />
+                          <span>{isUserDemarcheur ? 'Démarcheur Agréé PRO' : 'Agence Professionnelle Partenaire'}</span>
+                        </span>
+                      ) : (
+                        <span className="agency-direct-badge">
+                          <span>Annonce Directe</span>
+                        </span>
+                      )}
+
+                      {isUserPro && (
+                        <span
+                          className="agency-card-vitrine-btn"
+                          title="Consulter la vitrine certifiée"
+                        >
+                          <ExternalLink size={12} />
+                          <span>Vitrine</span>
+                        </span>
+                      )}
+                    </div>
+                    <h4 className="agency-name-title">
+                      {isUserPro ? (isUserDemarcheur ? userName : userAgencyName) : userName}
+                    </h4>
+                    <div className="agency-advisor-text">
+                      {formData.neighborhood ? `${formData.neighborhood}, ${formData.city}` : formData.city}
+                    </div>
+
+                    {isUserPro && (
+                      <div className="agency-rating-row">
+                        <span style={{ fontSize: '0.75rem', color: '#6B7280', fontWeight: 500 }}>
+                          Nouveau professionnel certifié • Aucun avis pour l'instant
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* 7. LOCALISATION DU BIEN & MINI CARTE */}
               <div className="preview-section-card">
                 <h3 className="preview-section-title">
-                  Localisation
+                  Localisation du bien
                 </h3>
                 <PropertyMiniMap 
                   coordinates={currentCoordinates}
@@ -1499,26 +1569,6 @@ export const PublishPropertyPage = () => {
                   neighborhood={formData.neighborhood}
                   city={formData.city}
                 />
-              </div>
-
-              {/* 7. CONTACT & PROFIL DU DÉCLARANT */}
-              <div className="preview-section-card preview-contact-card">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                  <img 
-                    src={userAvatar} 
-                    alt={userName} 
-                    className="preview-agent-avatar" 
-                  />
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                      <span className="preview-agent-name">{userName}</span>
-                      <span className="preview-owner-tag">Particulier</span>
-                    </div>
-                    <span className="preview-contact-caption">
-                      WhatsApp direct : {formData.ownerPhone || "Numéro certifié"}
-                    </span>
-                  </div>
-                </div>
               </div>
 
             </div>
@@ -2002,40 +2052,124 @@ export const PublishPropertyPage = () => {
           white-space: nowrap;
         }
 
-        /* 7. CONTACT / DÉCLARANT */
-        .preview-contact-card {
-          margin-bottom: 20px;
+        /* 6. AGENT & AGENCY CONTACT CARD BASE STYLES */
+        .agency-contact-card {
+          background-color: var(--surface-white, #FFFFFF);
+          border-radius: var(--radius-card, 12px);
+          border: 1px solid var(--border-color, #E5E7EB);
+          padding: 22px 24px;
+          margin-bottom: 24px;
+          box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.05));
         }
-
-        .preview-agent-avatar {
-          width: 50px;
-          height: 50px;
+        .agency-card-layout {
+          display: flex;
+          align-items: flex-start;
+          gap: 16px;
+        }
+        .agency-card-avatar {
+          width: 60px;
+          height: 60px;
           border-radius: 50%;
           object-fit: cover;
-          border: 1.5px solid var(--border-color);
+          border: 2px solid var(--border-color, #E5E7EB);
+          flex-shrink: 0;
         }
-
-        .preview-agent-name {
-          font-size: 0.88rem;
-          font-weight: 700;
-          color: var(--obsidian-black);
+        .agency-card-info {
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+          flex: 1;
         }
-
-        .preview-owner-tag {
-          font-size: 0.65rem;
-          font-weight: 700;
+        .agency-card-badge-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          margin-bottom: 5px;
+          width: 100%;
+        }
+        .agency-card-vitrine-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          background: transparent;
+          border: 1px solid rgba(0, 0, 0, 0.15);
+          color: #1A1A1A;
+          padding: 4px 10px;
+          border-radius: 6px;
+          font-size: 0.74rem;
+          font-weight: 600;
+          text-decoration: none;
+          white-space: nowrap;
+          flex-shrink: 0;
+          font-family: inherit;
+        }
+        .agency-partner-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          padding: 3px 8px;
+          border-radius: 9999px;
+          background-color: #2563EB;
+          color: #FFFFFF;
+          font-size: 0.68rem;
           text-transform: uppercase;
-          letter-spacing: 0.4px;
-          padding: 2px 7px;
-          border-radius: var(--radius-pill);
-          background-color: var(--bg-main);
-          color: var(--graphite-gray);
-          border: 1px solid var(--border-color);
+          letter-spacing: 0.5px;
+          font-weight: 800;
+          line-height: 1.25;
         }
-
-        .preview-contact-caption {
-          font-size: 0.78rem;
-          color: var(--graphite-gray);
+        .agency-direct-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          padding: 3px 8px;
+          border-radius: 9999px;
+          background-color: rgba(0, 0, 0, 0.06);
+          color: var(--graphite-gray, #6B7280);
+          font-size: 0.68rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          font-weight: 700;
+        }
+        .agency-name-title {
+          font-size: 1.18rem;
+          font-weight: 800;
+          color: var(--obsidian-black, #111827);
+          margin: 0;
+          line-height: 1.25;
+          word-break: break-word;
+        }
+        .agency-advisor-text {
+          font-size: 0.85rem;
+          color: var(--graphite-gray, #6B7280);
+          margin-top: 3px;
+          line-height: 1.35;
+        }
+        .agency-rating-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-top: 7px;
+          flex-wrap: wrap;
+        }
+        .agency-rating-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          background: #FEF3C7;
+          border: 1px solid #FDE68A;
+          border-radius: 4px;
+          padding: 2px 7px;
+          font-size: 0.74rem;
+          font-weight: 700;
+          color: #92400E;
+          white-space: nowrap !important;
+          flex-shrink: 0;
+        }
+        .agency-rating-count {
+          font-size: 0.74rem;
+          color: var(--graphite-gray, #6B7280);
+          white-space: nowrap;
         }
 
         /* ========================================================= */
@@ -2670,6 +2804,52 @@ export const PublishPropertyPage = () => {
           .preview-carousel-main-wrap {
             height: 250px;
             border-radius: var(--radius-card);
+          }
+
+          /* AGENT & AGENCY CONTACT CARD (RESPONSIVE) */
+          .agency-contact-card {
+            padding: 14px 16px;
+            margin-bottom: 20px;
+          }
+          .agency-card-layout {
+            gap: 12px;
+          }
+          .agency-card-avatar {
+            width: 48px;
+            height: 48px;
+          }
+          .agency-card-badge-row {
+            display: contents;
+          }
+          .agency-partner-badge,
+          .agency-direct-badge {
+            order: 1;
+            font-size: 0.62rem;
+            padding: 2px 7px;
+            margin-bottom: 5px;
+            align-self: flex-start;
+          }
+          .agency-name-title {
+            order: 2;
+            font-size: 1.02rem;
+          }
+          .agency-advisor-text {
+            order: 3;
+            font-size: 0.78rem;
+          }
+          .agency-rating-row {
+            order: 4;
+            gap: 6px;
+            margin-top: 6px;
+          }
+          .agency-card-vitrine-btn {
+            order: 5;
+            margin-top: 8px;
+            align-self: flex-start;
+          }
+          .agency-rating-pill {
+            font-size: 0.72rem;
+            padding: 2px 6px;
           }
 
           @media (max-width: 640px) {

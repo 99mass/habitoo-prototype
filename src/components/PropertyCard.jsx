@@ -307,14 +307,16 @@ export const PropertyCard = ({ property, onHover = null, isHighlighted = false }
                 {(!property.proCategory || (property.proCategory !== 'BUREAU' && property.proCategory !== 'COMMERCE' && property.proCategory !== 'ENTREPOT' && property.proCategory !== 'COWORKING')) && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <Building2 size={14} color="var(--obsidian-black)" />
-                    <span style={{ fontWeight: 600, color: 'var(--obsidian-black)' }}>{property.specs.offices ? `${property.specs.offices} bur.` : 'Local pro'}</span>
+                    <span style={{ fontWeight: 600, color: 'var(--obsidian-black)' }}>
+                      {property.specs.offices ? `${property.specs.offices} ${property.proCategory === 'LOCAL_PRO' ? 'p.' : 'bur.'}` : 'Local pro'}
+                    </span>
                   </div>
                 )}
 
-                {/* Sanitaires */}
+                {/* Toilettes */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <Bath size={14} color="var(--obsidian-black)" />
-                  <span style={{ fontWeight: 600, color: 'var(--obsidian-black)' }}>{property.specs.restrooms ?? property.specs.bathrooms ?? 1}</span> san.
+                  <span style={{ fontWeight: 600, color: 'var(--obsidian-black)' }}>{property.specs.restrooms ?? property.specs.bathrooms ?? 1}</span> toil.
                 </div>
 
                 {/* Bail */}

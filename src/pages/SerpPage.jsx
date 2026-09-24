@@ -10,6 +10,7 @@ import {
   X, 
   Search, 
   ShieldCheck,
+  List,
   ChevronLeft,
   ChevronRight,
   MapPin,
@@ -92,7 +93,7 @@ export const SerpPage = () => {
       window.dispatchEvent(new Event('resize'));
     }, 120);
     return () => clearTimeout(timer);
-  }, [isMapExpanded, showMap]);
+  }, [isMapExpanded, showMap, mobileTab]);
 
   // Filter Properties
   const filteredProperties = useMemo(() => {
@@ -764,7 +765,15 @@ export const SerpPage = () => {
       {/* Floating mobile toggle button */}
       <div className="serp-mobile-floating-switch">
         <button
-          onClick={() => setMobileTab(mobileTab === 'list' ? 'map' : 'list')}
+          onClick={() => {
+            if (mobileTab === 'list') {
+              if (isMapExpanded) setIsMapExpanded(false);
+              setShowMap(true);
+              setMobileTab('map');
+            } else {
+              setMobileTab('list');
+            }
+          }}
           className="btn-dark"
           style={{
             borderRadius: 'var(--radius-pill)',
@@ -783,7 +792,7 @@ export const SerpPage = () => {
             </>
           ) : (
             <>
-              <ShieldCheck size={16} />
+              <List size={16} />
               <span>Afficher la liste</span>
             </>
           )}
@@ -1051,7 +1060,7 @@ export const SerpPage = () => {
           display: none;
         }
 
-        @media (max-width: 960px) {
+        @media (max-width: 1024px) {
           .serp-split-container {
             grid-template-columns: 100% !important;
           }

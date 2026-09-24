@@ -21,7 +21,7 @@ export const DepositModal = () => {
     area: '',
     bedrooms: '4',
     bathrooms: '4',
-    leaseType: 'Bail commercial 3-6-9',
+    leaseType: 'Bail professionnel',
     offices: '4',
     workstations: '15',
     windowDisplay: '6 mètres sur rue',
@@ -441,7 +441,7 @@ export const DepositModal = () => {
                     {/* Common Base: Sanitaires & Type de bail */}
                     <div className="deposit-form-grid-2">
                       <div className="form-group">
-                        <label className="form-label">Sanitaires / Points d'eau</label>
+                        <label className="form-label">Toilettes</label>
                         <input
                           type="number"
                           className="form-input"
@@ -544,7 +544,7 @@ export const DepositModal = () => {
                     {formData.proCategory === 'LOCAL_PRO' && (
                       <div className="deposit-form-grid-2">
                         <div className="form-group">
-                          <label className="form-label">Cabinets / Salles de consultation</label>
+                          <label className="form-label">Nombre de pièces</label>
                           <input
                             type="number"
                             className="form-input"

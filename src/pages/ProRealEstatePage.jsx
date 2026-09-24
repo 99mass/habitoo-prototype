@@ -29,7 +29,8 @@ import {
   Warehouse,
   Users,
   Building,
-  FileText
+  FileText,
+  List
 } from 'lucide-react';
 import './ProRealEstatePage.css';
 
@@ -60,6 +61,7 @@ export const ProRealEstatePage = () => {
   const filterBarRef = useRef(null);
   const [draftFilters, setDraftFilters] = useState({
     type: opParam,
+    category: catParam,
     lease: leaseParam,
     city: cityParam,
     minArea: minAreaParam,
@@ -87,13 +89,14 @@ export const ProRealEstatePage = () => {
   useEffect(() => {
     setDraftFilters({
       type: opParam,
+      category: catParam,
       lease: leaseParam,
       city: cityParam,
       minArea: minAreaParam,
       maxBudget: maxBudgetParam,
       amenities: [...amenitiesParam]
     });
-  }, [opParam, leaseParam, cityParam, minAreaParam, maxBudgetParam, amenitiesParam]);
+  }, [opParam, catParam, leaseParam, cityParam, minAreaParam, maxBudgetParam, amenitiesParam]);
 
   // Outside click listener for the integrated filter drawer
   useEffect(() => {
@@ -131,6 +134,7 @@ export const ProRealEstatePage = () => {
     if (!isFilterDropdownOpen) {
       setDraftFilters({
         type: opParam,
+        category: catParam,
         lease: leaseParam,
         city: cityParam,
         minArea: minAreaParam,
@@ -147,7 +151,10 @@ export const ProRealEstatePage = () => {
   const handleApplyFilters = () => {
     const params = new URLSearchParams(searchParams);
     if (draftFilters.type && draftFilters.type !== 'ALL') params.set('type', draftFilters.type);
-    else params.delete('type');
+    else { params.delete('type'); params.delete('op'); }
+
+    if (draftFilters.category && draftFilters.category !== 'ALL') params.set('category', draftFilters.category);
+    else { params.delete('category'); params.delete('cat'); }
 
     if (draftFilters.lease && draftFilters.lease !== 'ALL') params.set('lease', draftFilters.lease);
     else params.delete('lease');
@@ -175,6 +182,7 @@ export const ProRealEstatePage = () => {
   const handleResetFilters = () => {
     setDraftFilters({
       type: 'ALL',
+      category: 'ALL',
       lease: 'ALL',
       city: '',
       minArea: '',
@@ -190,17 +198,51 @@ export const ProRealEstatePage = () => {
     return [...userPro, ...staticPro];
   }, [userProperties]);
 
-  // Secondary active filters count for the "Filtres" button badge
-  const secondaryActiveCount = useMemo(() => {
+  // Active filters count for the "Filtres" button badge
+  const activeCriteriaCount = useMemo(() => {
     let count = 0;
-    if (opParam !== 'ALL') count++;
-    if (leaseParam !== 'ALL') count++;
+    if (opParam && opParam !== 'ALL') count++;
+    if (catParam && catParam !== 'ALL') count++;
+    if (leaseParam && leaseParam !== 'ALL') count++;
     if (cityParam) count++;
     if (minAreaParam) count++;
     if (maxBudgetParam) count++;
     if (amenitiesParam.length > 0) count += amenitiesParam.length;
     return count;
-  }, [opParam, leaseParam, cityParam, minAreaParam, maxBudgetParam, amenitiesParam]);
+  }, [opParam, catParam, leaseParam, cityParam, minAreaParam, maxBudgetParam, amenitiesParam]);
+
+  const secondaryActiveCount = activeCriteriaCount;
+
+  // Has active filters boolean for chips row
+  const hasActiveFilters = useMemo(() => {
+    return (
+      (opParam && opParam !== 'ALL') ||
+      (catParam && catParam !== 'ALL') ||
+      (leaseParam && leaseParam !== 'ALL') ||
+      Boolean(cityParam) ||
+      Boolean(locationParam) ||
+      Boolean(minAreaParam) ||
+      Boolean(maxBudgetParam) ||
+      amenitiesParam.length > 0
+    );
+  }, [opParam, catParam, leaseParam, cityParam, locationParam, minAreaParam, maxBudgetParam, amenitiesParam]);
+
+  // Remove individual filter chip
+  const removeFilter = (key, valueToRemove = null) => {
+    const params = new URLSearchParams(searchParams);
+    if (key === 'amenities' && valueToRemove) {
+      const current = searchParams.get('amenities')?.split(',').filter(Boolean) || [];
+      const updated = current.filter(a => a !== valueToRemove);
+      if (updated.length > 0) params.set('amenities', updated.join(','));
+      else params.delete('amenities');
+    } else {
+      params.delete(key);
+      if (key === 'type') params.delete('op');
+      if (key === 'category') params.delete('cat');
+      if (key === 'location') setLocationInput('');
+    }
+    setSearchParams(params);
+  };
 
   // Filter properties
   const filteredProperties = useMemo(() => {
@@ -304,13 +346,13 @@ export const ProRealEstatePage = () => {
     setSortBy('recommandes');
   };
 
-  // Trigger Leaflet resize on expand / collapse
+  // Trigger Leaflet resize on expand / collapse / mobile tab switch
   useEffect(() => {
     const timer = setTimeout(() => {
       window.dispatchEvent(new Event('resize'));
     }, 120);
     return () => clearTimeout(timer);
-  }, [isMapExpanded, showMap]);
+  }, [isMapExpanded, showMap, mobileTab]);
 
   return (
     <div className="pro-serp-page">
@@ -367,11 +409,11 @@ export const ProRealEstatePage = () => {
               )}
             </div>
 
-            {/* Catégorie Pro (Directement accessible) */}
+            {/* Catégorie Pro (Desktop only - accessible in drawer on mobile) */}
             <select
               value={catParam}
               onChange={(e) => updateFilter('category', e.target.value)}
-              className={`serp-select ${catParam !== 'ALL' ? 'active-filter' : ''}`}
+              className={`serp-select serp-filter-desktop-only ${catParam !== 'ALL' ? 'active-filter' : ''}`}
               title="Catégorie professionnelle"
             >
               <option value="ALL">Toutes catégories pro</option>
@@ -380,20 +422,35 @@ export const ProRealEstatePage = () => {
               ))}
             </select>
 
-            {/* Bouton Accordéon « Filtres » */}
+            {/* Bouton Accordéon « Filtres » (Desktop) */}
             <button
               type="button"
-              className={`pro-filter-btn ${secondaryActiveCount > 0 ? 'has-active' : ''} ${isFilterDropdownOpen ? 'open' : ''}`}
+              className={`pro-filter-btn serp-filter-desktop-only ${activeCriteriaCount > 0 ? 'has-active' : ''} ${isFilterDropdownOpen ? 'open' : ''}`}
               onClick={handleToggleDrawer}
               aria-expanded={isFilterDropdownOpen}
               title="Filtres avancés"
             >
               <SlidersHorizontal size={14} />
               <span>Filtres</span>
-              {secondaryActiveCount > 0 && (
-                <span className="pro-filter-btn-badge">{secondaryActiveCount}</span>
+              {activeCriteriaCount > 0 && (
+                <span className="pro-filter-btn-badge">{activeCriteriaCount}</span>
               )}
               {isFilterDropdownOpen ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+            </button>
+
+            {/* Mobile Filter Toggle Button (matches particulier.png / SerpPage) */}
+            <button
+              type="button"
+              className={`serp-mobile-filter-btn ${activeCriteriaCount > 0 ? 'has-active' : ''} ${isFilterDropdownOpen ? 'open' : ''}`}
+              onClick={handleToggleDrawer}
+              aria-expanded={isFilterDropdownOpen}
+              title="Filtrer les annonces"
+            >
+              <SlidersHorizontal size={15} />
+              <span>Filtres</span>
+              {activeCriteriaCount > 0 && (
+                <span className="serp-filter-badge">{activeCriteriaCount}</span>
+              )}
             </button>
 
           </div>
@@ -402,25 +459,24 @@ export const ProRealEstatePage = () => {
           <div className="serp-filters-right">
             
             {/* Results Count */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '1.05rem', color: 'var(--obsidian-black)' }}>
+            <div className="pro-serp-results-count">
+              <span className="pro-serp-count-num">
                 {filteredProperties.length}
               </span>
-              <span style={{ fontSize: '0.8125rem', color: 'var(--graphite-gray)', fontWeight: 600 }}>
+              <span className="pro-serp-count-label">
                 {filteredProperties.length > 1 ? 'biens pro' : 'bien pro'}
               </span>
             </div>
 
-            <span style={{ color: 'var(--border-color)', margin: '0 4px' }}>|</span>
+            <span className="serp-separator">|</span>
 
             {/* Sort Dropdown */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span className="serp-control-label">Trier :</span>
+            <div className="pro-serp-sort-group">
+              <span className="serp-control-label">Trier&nbsp;:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
                 className="serp-select"
-                style={{ paddingRight: '28px' }}
               >
                 <option value="recommandes">Recommandés</option>
                 <option value="prix-asc">Prix croissant</option>
@@ -502,7 +558,22 @@ export const ProRealEstatePage = () => {
                   </div>
                 </div>
 
-                {/* 2. Ville */}
+                {/* 2. Catégorie pro (accessible dans le tiroir sur mobile & desktop) */}
+                <div className="pro-drawer-group">
+                  <label className="pro-drawer-label">Catégorie pro</label>
+                  <select
+                    className="pro-drawer-select"
+                    value={draftFilters.category || 'ALL'}
+                    onChange={(e) => setDraftFilters(prev => ({ ...prev, category: e.target.value }))}
+                  >
+                    <option value="ALL">Toutes catégories pro</option>
+                    {PRO_CATEGORIES.map(c => (
+                      <option key={c.id} value={c.id}>{c.label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 3. Ville */}
                 <div className="pro-drawer-group">
                   <label className="pro-drawer-label">Ville</label>
                   <select
@@ -714,12 +785,92 @@ export const ProRealEstatePage = () => {
                     className="pro-drawer-apply-btn"
                     onClick={handleApplyFilters}
                   >
-                    Appliquer les filtres
+                    Afficher les {filteredProperties.length} bien{filteredProperties.length > 1 ? 's' : ''} pro
                   </button>
                 </div>
               </div>
 
             </div>
+          </div>
+        )}
+
+        {/* Active Filter Pills Row (matching SerpPage / particulier.png) */}
+        {hasActiveFilters && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginTop: '10px', paddingTop: '8px', borderTop: '1px solid var(--border-light, #F1F5F9)' }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--graphite-gray)', textTransform: 'uppercase' }}>Filtres actifs :</span>
+            
+            {opParam !== 'ALL' && (
+              <span className="filter-chip">
+                <span>Projet : {opParam === 'LOCATION' ? 'À Louer' : 'À Vendre'}</span>
+                <button type="button" onClick={() => removeFilter('type')} title="Supprimer"><X size={12} /></button>
+              </span>
+            )}
+
+            {catParam !== 'ALL' && (
+              <span className="filter-chip">
+                <span>Catégorie : {PRO_CATEGORIES.find(c => c.id === catParam)?.label || catParam}</span>
+                <button type="button" onClick={() => removeFilter('category')} title="Supprimer"><X size={12} /></button>
+              </span>
+            )}
+
+            {cityParam && (
+              <span className="filter-chip">
+                <span>Ville : {cityParam}</span>
+                <button type="button" onClick={() => removeFilter('city')} title="Supprimer"><X size={12} /></button>
+              </span>
+            )}
+
+            {leaseParam !== 'ALL' && (
+              <span className="filter-chip">
+                <span>Bail : {leaseParam}</span>
+                <button type="button" onClick={() => removeFilter('lease')} title="Supprimer"><X size={12} /></button>
+              </span>
+            )}
+
+            {locationParam && (
+              <span className="filter-chip">
+                <span>Lieu : {locationParam}</span>
+                <button type="button" onClick={() => removeFilter('location')} title="Supprimer"><X size={12} /></button>
+              </span>
+            )}
+
+            {minAreaParam && (
+              <span className="filter-chip">
+                <span>Surface ≥ {minAreaParam} m²</span>
+                <button type="button" onClick={() => removeFilter('minArea')} title="Supprimer"><X size={12} /></button>
+              </span>
+            )}
+
+            {maxBudgetParam && (
+              <span className="filter-chip">
+                <span>Budget ≤ {formatPrice(Number(maxBudgetParam))}</span>
+                <button type="button" onClick={() => removeFilter('maxBudget')} title="Supprimer"><X size={12} /></button>
+              </span>
+            )}
+
+            {amenitiesParam.map(a => (
+              <span key={a} className="filter-chip">
+                <span>{a}</span>
+                <button type="button" onClick={() => removeFilter('amenities', a)} title="Supprimer"><X size={12} /></button>
+              </span>
+            ))}
+
+            <button
+              type="button"
+              onClick={clearAllFilters}
+              style={{
+                fontSize: '0.75rem',
+                color: 'var(--primary-red)',
+                fontWeight: 700,
+                textDecoration: 'underline',
+                marginLeft: '6px',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              Tout réinitialiser
+            </button>
           </div>
         )}
       </div>
@@ -835,26 +986,41 @@ export const ProRealEstatePage = () => {
         )}
       </div>
 
-      {/* 4. Mobile Bottom Floating Tab Toggle (Liste vs Carte) */}
-      <div className="serp-mobile-bottom-tabs">
+      {/* 4. Floating mobile toggle button (matches SerpPage / Acheter & Louer particuliers) */}
+      <div className="serp-mobile-floating-switch">
         <button
           type="button"
-          className={`serp-mobile-tab-btn ${mobileTab === 'list' ? 'active' : ''}`}
-          onClick={() => setMobileTab('list')}
-        >
-          <Building2 size={16} />
-          <span>Liste ({filteredProperties.length})</span>
-        </button>
-        <button
-          type="button"
-          className={`serp-mobile-tab-btn ${mobileTab === 'map' ? 'active' : ''}`}
           onClick={() => {
-            setShowMap(true);
-            setMobileTab('map');
+            if (mobileTab === 'list') {
+              if (isMapExpanded) setIsMapExpanded(false);
+              setShowMap(true);
+              setMobileTab('map');
+            } else {
+              setMobileTab('list');
+            }
+          }}
+          className="btn-dark"
+          style={{
+            borderRadius: 'var(--radius-pill)',
+            padding: '10px 20px',
+            fontSize: '0.875rem',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px'
           }}
         >
-          <MapIcon size={16} />
-          <span>Carte</span>
+          {mobileTab === 'list' ? (
+            <>
+              <MapIcon size={16} />
+              <span>Afficher la carte</span>
+            </>
+          ) : (
+            <>
+              <List size={16} />
+              <span>Afficher la liste</span>
+            </>
+          )}
         </button>
       </div>
 

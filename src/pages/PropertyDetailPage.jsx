@@ -730,7 +730,7 @@ export const PropertyDetailPage = () => {
 
                   <div>
                     <span style={{ fontSize: '0.75rem', color: 'var(--graphite-gray)', display: 'block' }}>
-                      {property.specs.workstations ? 'Postes de travail' : 'Bureaux fermés'}
+                      {property.specs.workstations ? 'Postes de travail' : (property.proCategory === 'LOCAL_PRO' ? 'Nombre de pièces' : 'Bureaux fermés')}
                     </span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '1.2rem', fontWeight: 700, marginTop: '2px' }}>
                       {property.specs.workstations ? (
@@ -741,17 +741,17 @@ export const PropertyDetailPage = () => {
                       ) : (
                         <>
                           <Briefcase size={18} color="var(--primary-red)" />
-                          <span>{property.specs.offices ?? (property.specs.bedrooms || 1)} bureaux</span>
+                          <span>{property.specs.offices ?? (property.specs.bedrooms || 1)} {property.proCategory === 'LOCAL_PRO' ? 'pièces' : 'bureaux'}</span>
                         </>
                       )}
                     </div>
                   </div>
 
                   <div>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--graphite-gray)', display: 'block' }}>Sanitaires</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--graphite-gray)', display: 'block' }}>Toilettes</span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '1.2rem', fontWeight: 700, marginTop: '2px' }}>
                       <Bath size={18} color="var(--primary-red)" />
-                      <span>{property.specs.restrooms ?? property.specs.bathrooms ?? 2} points d'eau</span>
+                      <span>{property.specs.restrooms ?? property.specs.bathrooms ?? 2} toilettes</span>
                     </div>
                   </div>
 
@@ -760,7 +760,7 @@ export const PropertyDetailPage = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem', fontWeight: 700, marginTop: '6px', color: 'var(--obsidian-black)' }}>
                       <FileText size={16} color="var(--primary-red)" />
                       <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {property.leaseType || (isVente ? 'Pleine propriété' : 'Bail commercial 3-6-9')}
+                        {property.leaseType || (isVente ? 'Pleine propriété' : 'Bail professionnel')}
                       </span>
                     </div>
                   </div>
@@ -874,8 +874,8 @@ export const PropertyDetailPage = () => {
             <div className="agency-contact-card">
               <div className="agency-card-layout">
                 <img 
-                  src={property.agent.avatar} 
-                  alt={property.agent.name} 
+                  src={property.agent?.avatar || property.ownerAvatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"} 
+                  alt={property.agent?.name || ownerName} 
                   className="agency-card-avatar"
                 />
                 <div className="agency-card-info">
@@ -909,18 +909,13 @@ export const PropertyDetailPage = () => {
                     )}
                   </div>
                   <h4 className="agency-name-title">
-                    {isDemarcheur ? property.agent.name : property.agent.agency}
+                    {isProListing 
+                      ? (isDemarcheur ? (property.agent?.name || ownerName) : (property.agent?.agency || "Agence Partenaire"))
+                      : ownerName
+                    }
                   </h4>
                   <div className="agency-advisor-text">
-                    {isProListing ? (
-                      isDemarcheur ? (
-                        <>Démarcheur Indépendant Agréé • <strong>{property.neighborhood}, {property.city}</strong></>
-                      ) : (
-                        <>Conseiller dédié : <strong>{property.agent.name}</strong></>
-                      )
-                    ) : (
-                      <>Contact direct : <strong>{property.agent.name}</strong></>
-                    )}
+                    {property.neighborhood ? `${property.neighborhood}, ${property.city}` : (property.address || property.city)}
                   </div>
 
                   {isProListing && (
