@@ -987,42 +987,44 @@ export const ProRealEstatePage = () => {
       </div>
 
       {/* 4. Floating mobile toggle button (matches SerpPage / Acheter & Louer particuliers) */}
-      <div className="serp-mobile-floating-switch">
-        <button
-          type="button"
-          onClick={() => {
-            if (mobileTab === 'list') {
-              if (isMapExpanded) setIsMapExpanded(false);
-              setShowMap(true);
-              setMobileTab('map');
-            } else {
-              setMobileTab('list');
-            }
-          }}
-          className="btn-dark"
-          style={{
-            borderRadius: 'var(--radius-pill)',
-            padding: '10px 20px',
-            fontSize: '0.875rem',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}
-        >
-          {mobileTab === 'list' ? (
-            <>
-              <MapIcon size={16} />
-              <span>Afficher la carte</span>
-            </>
-          ) : (
-            <>
-              <List size={16} />
-              <span>Afficher la liste</span>
-            </>
-          )}
-        </button>
-      </div>
+      {!isFilterDropdownOpen && (
+        <div className="serp-mobile-floating-switch">
+          <button
+            type="button"
+            onClick={() => {
+              if (mobileTab === 'list') {
+                if (isMapExpanded) setIsMapExpanded(false);
+                setShowMap(true);
+                setMobileTab('map');
+              } else {
+                setMobileTab('list');
+              }
+            }}
+            className="btn-dark"
+            style={{
+              borderRadius: 'var(--radius-pill)',
+              padding: '10px 20px',
+              fontSize: '0.875rem',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            {mobileTab === 'list' ? (
+              <>
+                <MapIcon size={16} />
+                <span>Afficher la carte</span>
+              </>
+            ) : (
+              <>
+                <List size={16} />
+                <span>Afficher la liste</span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
 
     </div>
   );

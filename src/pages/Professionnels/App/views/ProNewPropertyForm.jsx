@@ -36,14 +36,9 @@ import {
   PROPERTY_TYPES, 
   PRO_CATEGORIES, 
   PRO_LEASE_TYPES, 
-  PRO_AMENITIES_FILTERS 
+  PRO_AMENITIES_FILTERS,
+  COUNTRIES_DATA 
 } from '../../../../data/propertiesData';
-
-const COUNTRIES = [
-  { name: "Côte d'Ivoire", city: "Abidjan", coords: [5.3484, -3.9780] },
-  { name: "RD Congo", city: "Kinshasa", coords: [-4.3217, 15.3125] },
-  { name: "Congo", city: "Brazzaville", coords: [-4.2677, 15.2919] }
-];
 
 const ALL_AMENITIES = [
   'Groupe électrogène automatique',
@@ -217,20 +212,28 @@ export const ProNewPropertyForm = ({
 
   const [errors, setErrors] = useState({});
 
-  const currencyLabel = formData.city === 'Kinshasa' ? 'USD' : (formData.city === 'Brazzaville' ? 'FCFA' : 'FCFA');
+  const currentCountryObj = COUNTRIES_DATA.find(c => c.name === formData.country) || COUNTRIES_DATA[0];
+  const currentCityObj = currentCountryObj.cities.find(c => c.name === formData.city) || currentCountryObj.cities[0];
+  const currentCoordinates = currentCityObj?.coords || currentCountryObj.cities[0].coords;
 
-  // Mise à jour du pays et de la ville correspondante
+  const currencyLabel = currentCountryObj.currency === 'USD' ? 'USD' : (currentCountryObj.symbol || 'FCFA');
+
+  // Mise à jour du pays et de sa ville initiale
   const handleCountryChange = (countryName) => {
-    const found = COUNTRIES.find(c => c.name === countryName) || COUNTRIES[0];
+    const found = COUNTRIES_DATA.find(c => c.name === countryName) || COUNTRIES_DATA[0];
     setFormData(prev => ({
       ...prev,
       country: found.name,
-      city: found.city
+      city: found.cities[0].name
     }));
   };
 
-  const currentCountryObj = COUNTRIES.find(c => c.name === formData.country) || COUNTRIES[0];
-  const currentCoordinates = currentCountryObj.coords;
+  const handleCityChange = (cityName) => {
+    setFormData(prev => ({
+      ...prev,
+      city: cityName
+    }));
+  };
 
   const updateField = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -523,44 +526,44 @@ export const ProNewPropertyForm = ({
             </div>
           </div>
 
-          {/* Typologie / Catégorie & Pays */}
-          <div className="publish-grid-2">
+          {/* Typologie / Catégorie */}
+          <div className="compact-field">
+            <label className="compact-label">
+              {formData.destination === 'PRO' ? "Catégorie professionnelle" : "Type de bien"}
+            </label>
             {formData.destination === 'PRO' ? (
-              <div className="compact-field">
-                <label className="compact-label">Catégorie professionnelle</label>
-                <select
-                  className="compact-select"
-                  value={formData.proCategory}
-                  onChange={(e) => {
-                    const newCat = e.target.value;
-                    const catObj = PRO_CATEGORIES.find(c => c.id === newCat);
-                    setFormData(prev => ({
-                      ...prev,
-                      proCategory: newCat,
-                      type: catObj?.label || newCat
-                    }));
-                  }}
-                >
-                  {PRO_CATEGORIES.map(c => (
-                    <option key={c.id} value={c.id}>{c.label}</option>
-                  ))}
-                </select>
-              </div>
+              <select
+                className="compact-select"
+                value={formData.proCategory}
+                onChange={(e) => {
+                  const newCat = e.target.value;
+                  const catObj = PRO_CATEGORIES.find(c => c.id === newCat);
+                  setFormData(prev => ({
+                    ...prev,
+                    proCategory: newCat,
+                    type: catObj?.label || newCat
+                  }));
+                }}
+              >
+                {PRO_CATEGORIES.map(c => (
+                  <option key={c.id} value={c.id}>{c.label}</option>
+                ))}
+              </select>
             ) : (
-              <div className="compact-field">
-                <label className="compact-label">Type de bien</label>
-                <select
-                  className="compact-select"
-                  value={formData.type}
-                  onChange={(e) => updateField('type', e.target.value)}
-                >
-                  {PROPERTY_TYPES.map(t => (
-                    <option key={t} value={t}>{t}</option>
-                  ))}
-                </select>
-              </div>
+              <select
+                className="compact-select"
+                value={formData.type}
+                onChange={(e) => updateField('type', e.target.value)}
+              >
+                {PROPERTY_TYPES.map(t => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
+              </select>
             )}
+          </div>
 
+          {/* Pays & Ville liés */}
+          <div className="publish-grid-2">
             <div className="compact-field">
               <label className="compact-label">Pays</label>
               <select
@@ -568,8 +571,21 @@ export const ProNewPropertyForm = ({
                 value={formData.country}
                 onChange={(e) => handleCountryChange(e.target.value)}
               >
-                {COUNTRIES.map(c => (
-                  <option key={c.name} value={c.name}>{c.name}</option>
+                {COUNTRIES_DATA.map(c => (
+                  <option key={c.id} value={c.name}>{c.flag} {c.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="compact-field">
+              <label className="compact-label">Ville</label>
+              <select
+                className="compact-select"
+                value={formData.city}
+                onChange={(e) => handleCityChange(e.target.value)}
+              >
+                {currentCountryObj.cities.map(c => (
+                  <option key={c.id} value={c.name}>{c.name}</option>
                 ))}
               </select>
             </div>

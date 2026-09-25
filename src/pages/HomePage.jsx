@@ -578,7 +578,7 @@ export const HomePage = () => {
             
             {/* City 1: Brazzaville */}
             <div 
-              onClick={() => navigate('/recherche?location=Brazzaville')}
+              onClick={() => navigate('/recherche?location=Brazzaville&country=Congo')}
               className="city-explore-card"
             >
               <div className="city-explore-img-wrap">
@@ -591,6 +591,29 @@ export const HomePage = () => {
               <div className="city-explore-info">
                 <div>
                   <div className="city-explore-name">Brazzaville</div>
+                  <div className="city-explore-country">Congo</div>
+                </div>
+                <div className="city-explore-chevron">
+                  <ChevronRightIcon size={18} />
+                </div>
+              </div>
+            </div>
+
+            {/* City 2: Pointe-Noire */}
+            <div 
+              onClick={() => navigate('/recherche?location=Pointe-Noire&country=Congo')}
+              className="city-explore-card"
+            >
+              <div className="city-explore-img-wrap">
+                <img 
+                  src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80" 
+                  alt="Pointe-Noire, Congo"
+                  className="city-explore-img"
+                />
+              </div>
+              <div className="city-explore-info">
+                <div>
+                  <div className="city-explore-name">Pointe-Noire</div>
                   <div className="city-explore-country">Congo</div>
                 </div>
                 <div className="city-explore-chevron">

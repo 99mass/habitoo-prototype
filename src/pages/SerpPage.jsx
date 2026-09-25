@@ -1,18 +1,22 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useHabitoo } from '../context/HabitooContext';
-import { PROPERTIES_DATA } from '../data/propertiesData';
+import { PROPERTIES_DATA, COUNTRIES_DATA } from '../data/propertiesData';
 import { PropertyCard } from '../components/PropertyCard';
 import { MapPane } from '../components/MapPane';
+import './ProRealEstatePage.css';
 import { 
   Map, 
   EyeOff,
   X, 
   Search, 
-  ShieldCheck,
-  List,
-  ChevronLeft,
+  ShieldCheck, 
+  List, 
+  ChevronLeft, 
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
+  Check,
   MapPin,
   Home,
   Building,
@@ -20,23 +24,31 @@ import {
   SlidersHorizontal
 } from 'lucide-react';
 
-const LOCATION_SUGGESTIONS = [
-  { label: "Abidjan (Toute la ville)", value: "Abidjan", city: "Abidjan", country: "Côte d'Ivoire", zip: "01 BP" },
-  { label: "Cocody Riviera Golf", value: "Cocody Riviera Golf", city: "Abidjan", country: "Côte d'Ivoire", zip: "08 BP" },
-  { label: "Le Plateau", value: "Le Plateau", city: "Abidjan", country: "Côte d'Ivoire", zip: "01 BP" },
-  { label: "Cocody Ambassades", value: "Cocody Ambassades", city: "Abidjan", country: "Côte d'Ivoire", zip: "08 BP" },
-  { label: "Marcory Zone 4", value: "Marcory Zone 4", city: "Abidjan", country: "Côte d'Ivoire", zip: "11 BP" },
-  { label: "Deux Plateaux", value: "Deux Plateaux", city: "Abidjan", country: "Côte d'Ivoire", zip: "06 BP" },
-  { label: "Kinshasa (Toute la ville)", value: "Kinshasa", city: "Kinshasa", country: "RDC", zip: "BP 800" },
-  { label: "Kinshasa Gombe", value: "Kinshasa Gombe", city: "Kinshasa", country: "RDC", zip: "BP 801" },
-  { label: "Kinshasa Ngaliema", value: "Kinshasa Ngaliema", city: "Kinshasa", country: "RDC", zip: "BP 802" },
-  { label: "Macampagne", value: "Macampagne", city: "Kinshasa", country: "RDC", zip: "BP 803" },
-  { label: "Mont Fleuri", value: "Mont Fleuri", city: "Kinshasa", country: "RDC", zip: "BP 804" },
-  { label: "Brazzaville (Toute la ville)", value: "Brazzaville", city: "Brazzaville", country: "Congo", zip: "BP 200" },
-  { label: "Brazzaville Mpila", value: "Brazzaville Mpila", city: "Brazzaville", country: "Congo", zip: "BP 201" },
-  { label: "Centre-Ville", value: "Centre-Ville", city: "Brazzaville", country: "Congo", zip: "BP 202" },
-  { label: "Bacongo", value: "Bacongo", city: "Brazzaville", country: "Congo", zip: "BP 203" }
+const RESIDENTIAL_AMENITIES = [
+  "Piscine",
+  "Groupe électrogène",
+  "Gardiennage H24",
+  "Entièrement meublé",
+  "Climatisation",
+  "Forage et Réserve d'eau",
+  "Parking",
+  "Fibre optique",
+  "Vue fleuve"
 ];
+
+const LOCATION_SUGGESTIONS = COUNTRIES_DATA.flatMap(country => [
+  { label: `${country.name} (Toutes les villes)`, value: country.name, city: country.name, country: country.name, zip: country.name },
+  ...country.cities.flatMap(city => [
+    { label: `${city.name} (${country.name})`, value: city.name, city: city.name, country: country.name, zip: country.name },
+    ...(city.neighborhoods || []).map(nh => ({
+      label: `${nh}, ${city.name}`,
+      value: `${nh}, ${city.name}`,
+      city: city.name,
+      country: country.name,
+      zip: city.name
+    }))
+  ])
+]);
 
 export const SerpPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -45,6 +57,7 @@ export const SerpPage = () => {
   const typeParam = searchParams.get('type') || 'ALL'; // "ALL" | "LOCATION" | "VENTE"
   const propertyTypeParam = searchParams.get('propertyType') || 'ALL'; // "ALL" | "villa" | "appartement" | "penthouse" | "residence"
   const countryParam = searchParams.get('country') || 'ALL';
+  const cityParam = searchParams.get('city') || 'ALL';
   const locationParam = searchParams.get('location') || '';
   const typologiesParam = searchParams.get('typologies') ? searchParams.get('typologies').split(',') : [];
   const amenitiesParam = searchParams.get('amenities') ? searchParams.get('amenities').split(',') : [];
@@ -55,21 +68,53 @@ export const SerpPage = () => {
   const [showMap, setShowMap] = useState(true);
   const [isMapExpanded, setIsMapExpanded] = useState(false);
   const [mobileTab, setMobileTab] = useState('list'); // 'list' | 'map'
-  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
+  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
+  const [isAmenitiesDropdownOpen, setIsAmenitiesDropdownOpen] = useState(false);
 
-  // Active filter criteria count for mobile badge
+  // Drawer draft filters state
+  const [draftFilters, setDraftFilters] = useState({
+    type: typeParam,
+    propertyType: propertyTypeParam,
+    country: countryParam,
+    city: cityParam,
+    budget: budgetParam ? String(budgetParam) : '',
+    typologies: typologiesParam,
+    amenities: amenitiesParam
+  });
+
+  const filterBarRef = useRef(null);
+  const amenitiesDropdownRef = useRef(null);
+  const searchBoxRef = useRef(null);
+
+  // Available cities for draft country in drawer
+  const drawerAvailableCities = useMemo(() => {
+    if (draftFilters.country && draftFilters.country !== 'ALL') {
+      const found = COUNTRIES_DATA.find(c => 
+        c.name.toLowerCase() === draftFilters.country.toLowerCase() ||
+        (draftFilters.country === 'RDC' && c.id === 'rdc') ||
+        (draftFilters.country === 'RD Congo' && c.id === 'rdc')
+      );
+      return found ? found.cities : [];
+    }
+    return COUNTRIES_DATA.flatMap(c => c.cities);
+  }, [draftFilters.country]);
+
+  // Active filter criteria count for filter button badge
   const activeCriteriaCount = useMemo(() => {
     let count = 0;
-    if (typeParam !== 'ALL') count++;
-    if (propertyTypeParam !== 'ALL') count++;
-    if (countryParam !== 'ALL') count++;
+    if (typeParam && typeParam !== 'ALL') count++;
+    if (propertyTypeParam && propertyTypeParam !== 'ALL') count++;
+    if (countryParam && countryParam !== 'ALL') count++;
+    if (cityParam && cityParam !== 'ALL') count++;
+    if (budgetParam) count++;
+    if (typologiesParam.length > 0) count += typologiesParam.length;
+    if (amenitiesParam.length > 0) count += amenitiesParam.length;
     return count;
-  }, [typeParam, propertyTypeParam, countryParam]);
+  }, [typeParam, propertyTypeParam, countryParam, cityParam, budgetParam, typologiesParam, amenitiesParam]);
 
   // Location search state & suggestions
   const [locationInput, setLocationInput] = useState(locationParam);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const searchBoxRef = useRef(null);
 
   // Sync location input when URL param changes
   useEffect(() => {
@@ -120,7 +165,16 @@ export const SerpPage = () => {
       }
 
       // Country filter
-      if (countryParam !== 'ALL' && prop.country.toLowerCase() !== countryParam.toLowerCase()) return false;
+      if (countryParam !== 'ALL') {
+        const matchesCountry = 
+          prop.country.toLowerCase() === countryParam.toLowerCase() ||
+          (countryParam === 'RDC' && (prop.country === 'RD Congo' || prop.country === 'RDC')) ||
+          (countryParam === 'RD Congo' && (prop.country === 'RD Congo' || prop.country === 'RDC'));
+        if (!matchesCountry) return false;
+      }
+
+      // City filter
+      if (cityParam !== 'ALL' && prop.city.toLowerCase() !== cityParam.toLowerCase()) return false;
 
       // Location query: match neighborhood, city, country, address or zip
       if (locationParam) {
@@ -149,7 +203,7 @@ export const SerpPage = () => {
       if (sortBy === 'prix-desc') return b.priceXOF - a.priceXOF;
       return 0;
     });
-  }, [typeParam, propertyTypeParam, countryParam, locationParam, typologiesParam, amenitiesParam, budgetParam, sortBy]);
+  }, [typeParam, propertyTypeParam, countryParam, cityParam, locationParam, typologiesParam, amenitiesParam, budgetParam, sortBy]);
 
   // Handle Location selection or submission
   const handleSelectLocation = (val) => {
@@ -171,40 +225,100 @@ export const SerpPage = () => {
     }
   };
 
-  // Filter Transaction Type (Projet : Louer / Acheter)
-  const handleTypeChange = (e) => {
-    const val = e.target.value;
+  // Close multi-select amenities dropdown on click outside
+  useEffect(() => {
+    const handleClickOutsideAmenities = (e) => {
+      if (amenitiesDropdownRef.current && !amenitiesDropdownRef.current.contains(e.target)) {
+        setIsAmenitiesDropdownOpen(false);
+      }
+    };
+    if (isAmenitiesDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutsideAmenities);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideAmenities);
+    };
+  }, [isAmenitiesDropdownOpen]);
+
+  // Toggle Drawer and re-sync draft state from URL
+  const handleToggleDrawer = () => {
+    if (!isFilterDropdownOpen) {
+      setDraftFilters({
+        type: typeParam,
+        propertyType: propertyTypeParam,
+        country: countryParam,
+        city: cityParam,
+        budget: budgetParam ? String(budgetParam) : '',
+        typologies: [...typologiesParam],
+        amenities: [...amenitiesParam]
+      });
+    } else {
+      setIsAmenitiesDropdownOpen(false);
+    }
+    setIsFilterDropdownOpen(prev => !prev);
+  };
+
+  // Apply filters from drawer to URL
+  const handleApplyDraftFilters = () => {
     const newParams = new URLSearchParams(searchParams);
-    if (val === 'ALL') {
+
+    if (draftFilters.type && draftFilters.type !== 'ALL') {
+      newParams.set('type', draftFilters.type);
+    } else {
       newParams.delete('type');
-    } else {
-      newParams.set('type', val);
     }
-    setSearchParams(newParams);
-  };
 
-  // Filter Property Type (Maison, Appartement, etc.)
-  const handlePropertyTypeChange = (e) => {
-    const val = e.target.value;
-    const newParams = new URLSearchParams(searchParams);
-    if (val === 'ALL') {
+    if (draftFilters.propertyType && draftFilters.propertyType !== 'ALL') {
+      newParams.set('propertyType', draftFilters.propertyType);
+    } else {
       newParams.delete('propertyType');
-    } else {
-      newParams.set('propertyType', val);
     }
+
+    if (draftFilters.country && draftFilters.country !== 'ALL') {
+      newParams.set('country', draftFilters.country);
+    } else {
+      newParams.delete('country');
+    }
+
+    if (draftFilters.city && draftFilters.city !== 'ALL') {
+      newParams.set('city', draftFilters.city);
+    } else {
+      newParams.delete('city');
+    }
+
+    if (draftFilters.budget) {
+      newParams.set('budget', draftFilters.budget);
+    } else {
+      newParams.delete('budget');
+    }
+
+    if (draftFilters.typologies && draftFilters.typologies.length > 0) {
+      newParams.set('typologies', draftFilters.typologies.join(','));
+    } else {
+      newParams.delete('typologies');
+    }
+
+    if (draftFilters.amenities && draftFilters.amenities.length > 0) {
+      newParams.set('amenities', draftFilters.amenities.join(','));
+    } else {
+      newParams.delete('amenities');
+    }
+
     setSearchParams(newParams);
+    setIsFilterDropdownOpen(false);
   };
 
-  // Filter Country
-  const handleCountryChange = (e) => {
-    const val = e.target.value;
-    const newParams = new URLSearchParams(searchParams);
-    if (val === 'ALL') {
-      newParams.delete('country');
-    } else {
-      newParams.set('country', val);
-    }
-    setSearchParams(newParams);
+  // Reset draft filters inside drawer
+  const handleResetDraftFilters = () => {
+    setDraftFilters({
+      type: 'ALL',
+      propertyType: 'ALL',
+      country: 'ALL',
+      city: 'ALL',
+      budget: '',
+      typologies: [],
+      amenities: []
+    });
   };
 
   // Remove specific filter helper
@@ -212,7 +326,11 @@ export const SerpPage = () => {
     const newParams = new URLSearchParams(searchParams);
     if (key === 'type') newParams.delete('type');
     else if (key === 'propertyType') newParams.delete('propertyType');
-    else if (key === 'country') newParams.delete('country');
+    else if (key === 'country') {
+      newParams.delete('country');
+      newParams.delete('city');
+    }
+    else if (key === 'city') newParams.delete('city');
     else if (key === 'location') {
       newParams.delete('location');
       setLocationInput('');
@@ -239,8 +357,9 @@ export const SerpPage = () => {
 
   const hasActiveFilters = 
     typeParam !== 'ALL' || 
-    propertyTypeParam !== 'ALL' ||
+    propertyTypeParam !== 'ALL' || 
     countryParam !== 'ALL' || 
+    cityParam !== 'ALL' ||
     locationParam || 
     typologiesParam.length > 0 || 
     amenitiesParam.length > 0 || 
@@ -263,20 +382,12 @@ export const SerpPage = () => {
       
       {/* Sub-Header / Filters Bar — Positioned directly beneath navbar with zero gap */}
       <div 
-        className="serp-filter-bar"
-        style={{
-          backgroundColor: 'var(--surface-white)',
-          borderBottom: '1px solid var(--border-color)',
-          padding: '12px 24px',
-          position: 'sticky',
-          top: '0',
-          zIndex: 100,
-          margin: 0
-        }}
+        className="serp-filter-bar pro-filter-bar"
+        ref={filterBarRef}
       >
         <div className="serp-filters-row">
           
-          {/* Left Group: Search Bar + Projet + Type de bien + Pays */}
+          {/* Left Group: Search Bar + Bouton Filtres uniquement */}
           <div className="serp-filters-left">
             
             {/* Search Input with Auto-Suggestions (Ville, Quartier, Code Postal) */}
@@ -332,7 +443,6 @@ export const SerpPage = () => {
                         <span>{item.label}</span>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span className="serp-suggestion-tag">{item.zip}</span>
                         <span className="serp-suggestion-tag">{item.country}</span>
                       </div>
                     </div>
@@ -347,51 +457,28 @@ export const SerpPage = () => {
               )}
             </div>
 
-            {/* Projet : Vente / Location */}
-            <select
-              value={typeParam}
-              onChange={handleTypeChange}
-              className={`serp-select serp-filter-desktop-only ${typeParam !== 'ALL' ? 'active-filter' : ''}`}
-              title="Projet : Louer ou Acheter"
-            >
-              <option value="ALL">Transaction</option>
-              <option value="LOCATION">Location</option>
-              <option value="VENTE">Vente</option>
-            </select>
-
-            {/* Type de bien : Maison, Appartement, Penthouse, etc. */}
-            <select
-              value={propertyTypeParam}
-              onChange={handlePropertyTypeChange}
-              className={`serp-select serp-filter-desktop-only ${propertyTypeParam !== 'ALL' ? 'active-filter' : ''}`}
-              title="Type de bien"
-            >
-              <option value="ALL">Type de Maison</option>
-              <option value="villa">Maison et Villa</option>
-              <option value="appartement">Appartement</option>
-              <option value="penthouse">Penthouse</option>
-              <option value="residence">Résidence sécurisée</option>
-            </select>
-
-            {/* Country Filter */}
-            <select
-              value={countryParam}
-              onChange={handleCountryChange}
-              className={`serp-select serp-filter-desktop-only ${countryParam !== 'ALL' ? 'active-filter' : ''}`}
-              title="Filtrer par pays"
-            >
-              <option value="ALL">Pays : Tous</option>
-              <option value="Côte d'Ivoire">Côte d'Ivoire</option>
-              <option value="RDC">RDC</option>
-              <option value="Congo">Congo</option>
-            </select>
-
-            {/* Mobile Filter Toggle Button */}
+            {/* Bouton Accordéon « Filtres » (Desktop) */}
             <button
               type="button"
-              className={`serp-mobile-filter-btn ${activeCriteriaCount > 0 ? 'has-active' : ''} ${isMobileFiltersOpen ? 'open' : ''}`}
-              onClick={() => setIsMobileFiltersOpen(!isMobileFiltersOpen)}
-              aria-expanded={isMobileFiltersOpen}
+              className={`pro-filter-btn serp-filter-desktop-only ${activeCriteriaCount > 0 ? 'has-active' : ''} ${isFilterDropdownOpen ? 'open' : ''}`}
+              onClick={handleToggleDrawer}
+              aria-expanded={isFilterDropdownOpen}
+              title="Filtres avancés"
+            >
+              <SlidersHorizontal size={14} />
+              <span>Filtres</span>
+              {activeCriteriaCount > 0 && (
+                <span className="pro-filter-btn-badge">{activeCriteriaCount}</span>
+              )}
+              {isFilterDropdownOpen ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+            </button>
+
+            {/* Mobile Filter Toggle Button (matches ProRealEstatePage) */}
+            <button
+              type="button"
+              className={`serp-mobile-filter-btn ${activeCriteriaCount > 0 ? 'has-active' : ''} ${isFilterDropdownOpen ? 'open' : ''}`}
+              onClick={handleToggleDrawer}
+              aria-expanded={isFilterDropdownOpen}
               title="Filtrer les annonces"
             >
               <SlidersHorizontal size={15} />
@@ -450,121 +537,297 @@ export const SerpPage = () => {
           </div>
         </div>
 
-        {/* Mobile Collapsible Filters Accordion Drawer */}
-        {isMobileFiltersOpen && (
-          <div className="serp-mobile-filters-drawer">
-            <div className="serp-drawer-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <SlidersHorizontal size={14} color="var(--obsidian-black)" />
-                <span className="serp-drawer-title">Critères de recherche</span>
-                {activeCriteriaCount > 0 && (
-                  <span className="serp-drawer-badge">
-                    {activeCriteriaCount} actif{activeCriteriaCount > 1 ? 's' : ''}
-                  </span>
-                )}
+        {/* Volet Tiroir Intégré Pleine Largeur (Drawer accordéon sous la barre) */}
+        {isFilterDropdownOpen && (
+          <div className="pro-filters-drawer">
+            <div className="pro-filters-drawer-inner">
+              
+              {/* En-tête du volet tiroir */}
+              <div className="pro-drawer-header">
+                <div className="pro-drawer-header-left">
+                  <SlidersHorizontal size={16} className="pro-drawer-header-icon" />
+                  <h3 className="pro-drawer-title">Critères de recherche avancés</h3>
+                  {activeCriteriaCount > 0 && (
+                    <span className="pro-drawer-count-badge">
+                      {activeCriteriaCount} critère{activeCriteriaCount > 1 ? 's' : ''} actif{activeCriteriaCount > 1 ? 's' : ''}
+                    </span>
+                  )}
+                </div>
+                <button 
+                  type="button" 
+                  className="pro-drawer-close" 
+                  onClick={() => setIsFilterDropdownOpen(false)}
+                  title="Fermer le volet"
+                >
+                  <X size={16} />
+                </button>
               </div>
-              {activeCriteriaCount > 0 && (
+
+              {/* Grille des critères avancés (3 colonnes équilibrées) */}
+              <div className="pro-drawer-grid">
+                
+                {/* 1. Transaction */}
+                <div className="pro-drawer-group">
+                  <label className="pro-drawer-label">Transaction</label>
+                  <div className="pro-segmented-btns">
+                    <button
+                      type="button"
+                      className={`pro-segmented-btn ${draftFilters.type === 'ALL' ? 'active' : ''}`}
+                      onClick={() => setDraftFilters(prev => ({ ...prev, type: 'ALL' }))}
+                    >
+                      Tout
+                    </button>
+                    <button
+                      type="button"
+                      className={`pro-segmented-btn ${draftFilters.type === 'LOCATION' ? 'active' : ''}`}
+                      onClick={() => setDraftFilters(prev => ({ ...prev, type: 'LOCATION' }))}
+                    >
+                      À Louer
+                    </button>
+                    <button
+                      type="button"
+                      className={`pro-segmented-btn ${draftFilters.type === 'VENTE' ? 'active' : ''}`}
+                      onClick={() => setDraftFilters(prev => ({ ...prev, type: 'VENTE' }))}
+                    >
+                      À Vendre
+                    </button>
+                  </div>
+                </div>
+
+                {/* 2. Type de bien */}
+                <div className="pro-drawer-group">
+                  <label className="pro-drawer-label">Type de bien</label>
+                  <select
+                    className="pro-drawer-select"
+                    value={draftFilters.propertyType}
+                    onChange={(e) => setDraftFilters(prev => ({ ...prev, propertyType: e.target.value }))}
+                  >
+                    <option value="ALL">Tous les types de biens</option>
+                    <option value="villa">Maison et Villa</option>
+                    <option value="appartement">Appartement</option>
+                    <option value="penthouse">Penthouse</option>
+                    <option value="residence">Résidence sécurisée</option>
+                  </select>
+                </div>
+
+                {/* 3. Pays */}
+                <div className="pro-drawer-group">
+                  <label className="pro-drawer-label">Pays</label>
+                  <select
+                    className="pro-drawer-select"
+                    value={draftFilters.country}
+                    onChange={(e) => setDraftFilters(prev => ({ ...prev, country: e.target.value, city: 'ALL' }))}
+                  >
+                    <option value="ALL">Tous les pays</option>
+                    {COUNTRIES_DATA.map(c => (
+                      <option key={c.id} value={c.name}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 4. Ville */}
+                <div className="pro-drawer-group">
+                  <label className="pro-drawer-label">Ville</label>
+                  <select
+                    className="pro-drawer-select"
+                    value={draftFilters.city}
+                    onChange={(e) => setDraftFilters(prev => ({ ...prev, city: e.target.value }))}
+                  >
+                    <option value="ALL">Toutes les villes</option>
+                    {drawerAvailableCities.map(city => (
+                      <option key={city.id} value={city.name}>{city.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 5. Budget max */}
+                <div className="pro-drawer-group">
+                  <label className="pro-drawer-label">Budget max</label>
+                  <select
+                    className="pro-drawer-select"
+                    value={draftFilters.budget}
+                    onChange={(e) => setDraftFilters(prev => ({ ...prev, budget: e.target.value }))}
+                  >
+                    <option value="">Pas de limite</option>
+                    <option value="1000000">Jusqu'à 1 000 000 FCFA (~1 650 $)</option>
+                    <option value="2500000">Jusqu'à 2 500 000 FCFA (~4 100 $)</option>
+                    <option value="5000000">Jusqu'à 5 000 000 FCFA (~8 300 $)</option>
+                    <option value="10000000">Jusqu'à 10 000 000 FCFA (~16 500 $)</option>
+                    <option value="50000000">Jusqu'à 50 000 000 FCFA (~83 000 $)</option>
+                    <option value="200000000">Jusqu'à 200 000 000 FCFA (~330 000 $)</option>
+                    <option value="500000000">Jusqu'à 500 000 000 FCFA (~830 000 $)</option>
+                    <option value="1000000000">Jusqu'à 1 Milliard FCFA</option>
+                  </select>
+                </div>
+
+                {/* 6. Typologies / Pièces */}
+                <div className="pro-drawer-group">
+                  <label className="pro-drawer-label">Typologie / Pièces</label>
+                  <div className="pro-segmented-btns">
+                    {['T1', 'T2', 'T3', 'T4', 'T5+'].map(t => {
+                      const isSelected = draftFilters.typologies.includes(t);
+                      return (
+                        <button
+                          key={t}
+                          type="button"
+                          className={`pro-segmented-btn ${isSelected ? 'active' : ''}`}
+                          onClick={() => {
+                            setDraftFilters(prev => ({
+                              ...prev,
+                              typologies: isSelected
+                                ? prev.typologies.filter(item => item !== t)
+                                : [...prev.typologies, t]
+                            }));
+                          }}
+                        >
+                          {t}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 7. Équipements (Dropdown Multi-Select) */}
+                <div className="pro-drawer-group pro-drawer-group-full" ref={amenitiesDropdownRef}>
+                  <label className="pro-drawer-label">
+                    Équipements
+                    {draftFilters.amenities.length > 0 && (
+                      <span className="pro-amenities-counter">({draftFilters.amenities.length})</span>
+                    )}
+                  </label>
+                  
+                  <div className="pro-multi-select-container">
+                    <button
+                      type="button"
+                      className={`pro-multi-select-trigger ${isAmenitiesDropdownOpen ? 'open' : ''} ${draftFilters.amenities.length > 0 ? 'has-values' : ''}`}
+                      onClick={() => setIsAmenitiesDropdownOpen(prev => !prev)}
+                      aria-expanded={isAmenitiesDropdownOpen}
+                    >
+                      <div className="pro-multi-select-value">
+                        {draftFilters.amenities.length === 0 ? (
+                          <span className="pro-multi-select-placeholder">Sélectionner des équipements...</span>
+                        ) : (
+                          <span className="pro-multi-select-summary">
+                            {draftFilters.amenities.length === 1 
+                              ? draftFilters.amenities[0] 
+                              : `${draftFilters.amenities.length} équipements sélectionnés`}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="pro-multi-select-actions">
+                        {draftFilters.amenities.length > 0 && (
+                          <span
+                            role="button"
+                            className="pro-multi-select-clear-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDraftFilters(prev => ({ ...prev, amenities: [] }));
+                            }}
+                            title="Effacer les équipements"
+                          >
+                            <X size={12} />
+                          </span>
+                        )}
+                        <ChevronDown size={14} className={`pro-multi-select-arrow ${isAmenitiesDropdownOpen ? 'rotated' : ''}`} />
+                      </div>
+                    </button>
+
+                    {/* Popover Menu des options du Multi-Select */}
+                    {isAmenitiesDropdownOpen && (
+                      <div className="pro-multi-select-dropdown">
+                        <div className="pro-multi-select-header">
+                          <span className="pro-multi-select-title">Équipements ({draftFilters.amenities.length})</span>
+                          {draftFilters.amenities.length > 0 && (
+                            <button
+                              type="button"
+                              className="pro-multi-select-reset-link"
+                              onClick={() => setDraftFilters(prev => ({ ...prev, amenities: [] }))}
+                            >
+                              Tout désélectionner
+                            </button>
+                          )}
+                        </div>
+                        <div className="pro-multi-select-list" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '4px', maxHeight: '240px', overflowY: 'auto', padding: '10px' }}>
+                          {RESIDENTIAL_AMENITIES.map(amenity => {
+                            const isChecked = draftFilters.amenities.includes(amenity);
+                            return (
+                              <label key={amenity} className={`pro-multi-select-option ${isChecked ? 'selected' : ''}`} style={{ margin: 0 }}>
+                                <input
+                                  type="checkbox"
+                                  checked={isChecked}
+                                  onChange={(e) => {
+                                    if (e.target.checked) {
+                                      setDraftFilters(prev => ({ ...prev, amenities: [...prev.amenities, amenity] }));
+                                    } else {
+                                      setDraftFilters(prev => ({ ...prev, amenities: prev.amenities.filter(a => a !== amenity) }));
+                                    }
+                                  }}
+                                />
+                                <span className="pro-option-text">{amenity}</span>
+                                {isChecked && <Check size={14} className="pro-option-check-icon" />}
+                              </label>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Badges amovibles sous le sélecteur si équipements choisis */}
+                  {draftFilters.amenities.length > 0 && (
+                    <div className="pro-selected-tags">
+                      {draftFilters.amenities.map(amenity => (
+                        <span key={amenity} className="pro-selected-tag">
+                          <span>{amenity}</span>
+                          <button
+                            type="button"
+                            onClick={() => setDraftFilters(prev => ({
+                              ...prev,
+                              amenities: prev.amenities.filter(a => a !== amenity)
+                            }))}
+                            className="pro-tag-remove"
+                            title={`Retirer ${amenity}`}
+                          >
+                            <X size={11} />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+              </div>
+
+              {/* Pied d'actions du tiroir */}
+              <div className="pro-drawer-footer">
                 <button
                   type="button"
-                  onClick={() => {
-                    const newParams = new URLSearchParams(searchParams);
-                    newParams.delete('type');
-                    newParams.delete('propertyType');
-                    newParams.delete('country');
-                    setSearchParams(newParams);
-                  }}
-                  className="serp-drawer-reset-btn"
+                  className="pro-drawer-reset-btn"
+                  onClick={handleResetDraftFilters}
                 >
-                  <RotateCcw size={12} />
-                  <span>Réinitialiser</span>
+                  <RotateCcw size={13} />
+                  <span>Réinitialiser les critères</span>
                 </button>
-              )}
-            </div>
 
-            <div className="serp-drawer-body">
-              {/* 1. Transaction (Acheter / Louer / Tous) */}
-              <div className="serp-drawer-field">
-                <label className="serp-drawer-label">Projet / Transaction</label>
-                <div className="serp-drawer-segmented">
+                <div className="pro-drawer-footer-right">
                   <button
                     type="button"
-                    className={`serp-seg-btn ${typeParam === 'ALL' ? 'active' : ''}`}
-                    onClick={() => {
-                      const newParams = new URLSearchParams(searchParams);
-                      newParams.delete('type');
-                      setSearchParams(newParams);
-                    }}
+                    className="pro-drawer-cancel-btn"
+                    onClick={() => setIsFilterDropdownOpen(false)}
                   >
-                    Tous
+                    Fermer
                   </button>
                   <button
                     type="button"
-                    className={`serp-seg-btn ${typeParam === 'VENTE' ? 'active' : ''}`}
-                    onClick={() => {
-                      const newParams = new URLSearchParams(searchParams);
-                      newParams.set('type', 'VENTE');
-                      setSearchParams(newParams);
-                    }}
+                    className="pro-drawer-apply-btn"
+                    onClick={handleApplyDraftFilters}
                   >
-                    Acheter
-                  </button>
-                  <button
-                    type="button"
-                    className={`serp-seg-btn ${typeParam === 'LOCATION' ? 'active' : ''}`}
-                    onClick={() => {
-                      const newParams = new URLSearchParams(searchParams);
-                      newParams.set('type', 'LOCATION');
-                      setSearchParams(newParams);
-                    }}
-                  >
-                    Louer
+                    Afficher les {filteredProperties.length} bien{filteredProperties.length > 1 ? 's' : ''}
                   </button>
                 </div>
               </div>
 
-              {/* 2. Type de bien */}
-              <div className="serp-drawer-field">
-                <label className="serp-drawer-label" htmlFor="mobile-filter-property-type">Type de bien</label>
-                <select
-                  id="mobile-filter-property-type"
-                  value={propertyTypeParam}
-                  onChange={handlePropertyTypeChange}
-                  className="serp-drawer-select"
-                >
-                  <option value="ALL">Tous les types de biens</option>
-                  <option value="villa">Maison et Villa</option>
-                  <option value="appartement">Appartement</option>
-                  <option value="penthouse">Penthouse</option>
-                  <option value="residence">Résidence sécurisée</option>
-                </select>
-              </div>
-
-              {/* 3. Pays */}
-              <div className="serp-drawer-field">
-                <label className="serp-drawer-label" htmlFor="mobile-filter-country">Pays</label>
-                <select
-                  id="mobile-filter-country"
-                  value={countryParam}
-                  onChange={handleCountryChange}
-                  className="serp-drawer-select"
-                >
-                  <option value="ALL">Tous les pays</option>
-                  <option value="Côte d'Ivoire">Côte d'Ivoire</option>
-                  <option value="RDC">RDC</option>
-                  <option value="Congo">Congo</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Drawer Footer: Voir les biens / Replier */}
-            <div className="serp-drawer-footer">
-              <button
-                type="button"
-                className="serp-drawer-apply-btn"
-                onClick={() => setIsMobileFiltersOpen(false)}
-              >
-                <span>Afficher les {filteredProperties.length} bien{filteredProperties.length > 1 ? 's' : ''}</span>
-              </button>
             </div>
           </div>
         )}
@@ -599,6 +862,13 @@ export const SerpPage = () => {
               <span className="filter-chip">
                 <span>Pays : {countryParam}</span>
                 <button onClick={() => removeFilter('country')} title="Supprimer"><X size={12} /></button>
+              </span>
+            )}
+
+            {cityParam !== 'ALL' && (
+              <span className="filter-chip">
+                <span>Ville : {cityParam}</span>
+                <button onClick={() => removeFilter('city')} title="Supprimer"><X size={12} /></button>
               </span>
             )}
 
@@ -762,42 +1032,44 @@ export const SerpPage = () => {
 
       </div>
 
-      {/* Floating mobile toggle button */}
-      <div className="serp-mobile-floating-switch">
-        <button
-          onClick={() => {
-            if (mobileTab === 'list') {
-              if (isMapExpanded) setIsMapExpanded(false);
-              setShowMap(true);
-              setMobileTab('map');
-            } else {
-              setMobileTab('list');
-            }
-          }}
-          className="btn-dark"
-          style={{
-            borderRadius: 'var(--radius-pill)',
-            padding: '10px 20px',
-            fontSize: '0.875rem',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}
-        >
-          {mobileTab === 'list' ? (
-            <>
-              <Map size={16} />
-              <span>Afficher la carte</span>
-            </>
-          ) : (
-            <>
-              <List size={16} />
-              <span>Afficher la liste</span>
-            </>
-          )}
-        </button>
-      </div>
+      {/* Floating mobile toggle button (hidden when filter drawer is open) */}
+      {!isFilterDropdownOpen && (
+        <div className="serp-mobile-floating-switch">
+          <button
+            onClick={() => {
+              if (mobileTab === 'list') {
+                if (isMapExpanded) setIsMapExpanded(false);
+                setShowMap(true);
+                setMobileTab('map');
+              } else {
+                setMobileTab('list');
+              }
+            }}
+            className="btn-dark"
+            style={{
+              borderRadius: 'var(--radius-pill)',
+              padding: '10px 20px',
+              fontSize: '0.875rem',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            {mobileTab === 'list' ? (
+              <>
+                <Map size={16} />
+                <span>Afficher la carte</span>
+              </>
+            ) : (
+              <>
+                <List size={16} />
+                <span>Afficher la liste</span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
 
       <style>{`
         /* ===== STICKY FILTER BAR ===== */
@@ -1162,6 +1434,45 @@ export const SerpPage = () => {
           }
         }
 
+        /* Pro Drawer Header & Elements */
+        .pro-drawer-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding-bottom: 12px;
+          border-bottom: 1px solid #F1F5F9;
+          gap: 8px;
+        }
+        .pro-drawer-header-left {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          min-width: 0;
+          flex: 1;
+        }
+        .pro-drawer-title {
+          font-size: 0.8125rem;
+          font-weight: 700;
+          color: #0F172A;
+          margin: 0;
+          font-family: var(--font-heading);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .pro-drawer-count-badge {
+          display: inline-flex;
+          align-items: center;
+          padding: 2px 7px;
+          border-radius: 9999px;
+          background: #FEE2E2;
+          color: #B91C1C;
+          font-size: 0.625rem;
+          font-weight: 700;
+          white-space: nowrap;
+          flex-shrink: 0;
+        }
+
         .serp-drawer-header {
           display: flex;
           align-items: center;
@@ -1171,9 +1482,10 @@ export const SerpPage = () => {
           margin-bottom: 14px;
         }
         .serp-drawer-title {
-          font-size: 0.875rem;
+          font-size: 0.8125rem;
           font-weight: 800;
           color: var(--obsidian-black);
+          white-space: nowrap;
         }
         .serp-drawer-badge {
           font-size: 0.6875rem;
@@ -1342,6 +1654,35 @@ export const SerpPage = () => {
           .serp-cards-container {
             grid-template-columns: 1fr !important;
             padding: 0 4px !important;
+          }
+          .pro-drawer-header {
+            padding-bottom: 8px !important;
+            gap: 6px !important;
+          }
+          .pro-drawer-header-left {
+            gap: 6px !important;
+          }
+          .pro-drawer-title {
+            font-size: 0.75rem !important;
+          }
+          .pro-drawer-count-badge {
+            font-size: 0.59375rem !important;
+            padding: 1px 6px !important;
+          }
+          .pro-drawer-label {
+            font-size: 0.6875rem !important;
+          }
+          .pro-drawer-select {
+            font-size: 0.75rem !important;
+            height: 38px !important;
+          }
+          .pro-segmented-btn {
+            font-size: 0.71875rem !important;
+            padding: 0 4px !important;
+          }
+          .pro-multi-select-placeholder,
+          .pro-multi-select-summary {
+            font-size: 0.75rem !important;
           }
         }
       `}</style>

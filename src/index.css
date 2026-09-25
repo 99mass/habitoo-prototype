@@ -476,3 +476,32 @@ button {
   }
 }
 
+/* Master-Detail Dropdown (Pays -> Villes) */
+.habitoo-master-detail-dropdown {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  min-height: 280px;
+  max-height: 380px;
+}
+
+@media (max-width: 560px) {
+  .habitoo-master-detail-dropdown {
+    display: flex !important;
+    flex-direction: column !important;
+    max-height: 420px !important;
+  }
+  .habitoo-master-detail-dropdown > div:first-child {
+    border-right: none !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    padding: 6px 8px !important;
+    gap: 6px !important;
+  }
+  .habitoo-master-detail-dropdown > div:first-child > div:first-child {
+    display: none !important;
+  }
+}
+
