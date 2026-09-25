@@ -350,7 +350,6 @@ export const AboutPage = () => {
                     <h3 className="about-page__team-name">{member.name}</h3>
                     <a 
                       href={member.linkedin} 
-                      target="_blank" 
                       rel="noreferrer" 
                       aria-label={`Profil LinkedIn de ${member.name}`}
                       className="about-page__team-link"

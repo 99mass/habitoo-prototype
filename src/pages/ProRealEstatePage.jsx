@@ -885,9 +885,9 @@ export const ProRealEstatePage = () => {
             : isMapExpanded 
               ? '1fr' 
               : '55% 45%',
-          minHeight: 'calc(100vh - var(--header-height) - 62px)',
           position: 'relative',
-          transition: 'grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+          transition: 'grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          alignItems: 'start'
         }}
       >
         {/* Left Pane: Grid of Property Cards */}
@@ -896,8 +896,6 @@ export const ProRealEstatePage = () => {
             className={`serp-results-pane ${mobileTab === 'map' ? 'mobile-hidden' : ''}`}
             style={{
               padding: '24px',
-              overflowY: 'auto',
-              maxHeight: 'calc(100vh - var(--header-height) - 62px)',
               width: '100%'
             }}
           >

@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import './ProLanding.css';
 
 import { ProHero } from './components/ProHero';
@@ -11,6 +12,8 @@ import { ProFaq } from './components/ProFaq';
 import { ProFinalCta } from './components/ProFinalCta';
 
 export const ProLandingPage = () => {
+  const location = useLocation();
+
   useEffect(() => {
     const originalTitle = document.title;
     document.title = "Habitoo PRO - L'écosystème immobilier de référence en Afrique";
@@ -31,6 +34,20 @@ export const ProLandingPage = () => {
       }
     };
   }, []);
+
+  // Scroll vers la section cible passée via navigation state
+  useEffect(() => {
+    const sectionId = location.state?.scrollTo;
+    if (!sectionId) return;
+    // Petit délai pour laisser le DOM se rendre
+    const timer = setTimeout(() => {
+      const el = document.getElementById(sectionId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 150);
+    return () => clearTimeout(timer);
+  }, [location.state]);
 
   return (
     <div className="habitoo-pro-page">

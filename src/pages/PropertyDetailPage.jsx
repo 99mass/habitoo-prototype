@@ -123,7 +123,6 @@ const PropertyMiniMap = ({ coordinates, address, neighborhood, city }) => {
         </div>
         <a
           href={`https://www.google.com/maps/search/?api=1&query=${coordinates[0]},${coordinates[1]}`}
-          target="_blank"
           rel="noreferrer"
           style={{
             fontSize: '0.75rem',
@@ -898,8 +897,6 @@ export const PropertyDetailPage = () => {
                             ? `/vitrine/${property.agent.proId}` 
                             : (isDemarcheur ? '/vitrine/demarcheur-kouassi' : '/vitrine/agence-ivoire')
                         }
-                        target="_blank"
-                        rel="noopener noreferrer"
                         className="agency-card-vitrine-btn"
                         title="Consulter la vitrine certifiée"
                       >
@@ -1369,8 +1366,6 @@ export const PropertyDetailPage = () => {
                       ? `Bonjour, je vous contacte concernant votre bien professionnel Habitoo : "${property.title}". Nous souhaiterions recevoir le dossier technique et convenir d'une visite des locaux.`
                       : `Bonjour, je vous contacte au sujet de votre annonce Habitoo : "${property.title}". Est-il possible d'organiser une visite ?`
                   )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   style={{ 
                     width: '100%', 
                     height: '44px', 

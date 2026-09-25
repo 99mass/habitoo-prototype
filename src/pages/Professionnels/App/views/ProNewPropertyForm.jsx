@@ -128,8 +128,6 @@ const PropertyMiniMap = ({ coordinates, address, neighborhood, city }) => {
         </div>
         <a
           href={`https://www.google.com/maps/search/?api=1&query=${coordinates[0]},${coordinates[1]}`}
-          target="_blank"
-          rel="noopener noreferrer"
           className="preview-map-link"
         >
           Google Maps →

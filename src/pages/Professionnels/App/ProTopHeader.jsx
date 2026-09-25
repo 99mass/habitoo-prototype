@@ -111,7 +111,7 @@ export const ProTopHeader = ({
           {/* Accès rapide à la Vitrine publique */}
           <Link
             to={persona === 'agence' ? '/vitrine/agence-ivoire' : '/vitrine/demarcheur-kouassi'}
-            target="_blank"
+            
             rel="noopener noreferrer"
             className="habitoo-dash-btn-ghost habitoo-dash-btn-ghost--small habitoo-dash-vitrine-header-btn"
             style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', textDecoration: 'none' }}

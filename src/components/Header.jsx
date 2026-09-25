@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useHabitoo } from '../context/HabitooContext';
-import { CITIES } from '../data/propertiesData';
 import { 
   Bell, 
   ChevronDown, 
@@ -26,7 +25,6 @@ import {
 export const Header = () => {
   const { 
     activeCity, 
-    setActiveCity, 
     favorites, 
     openDepositModal,
     currentUser,
@@ -35,13 +33,11 @@ export const Header = () => {
   } = useHabitoo();
 
   const [searchParams] = useSearchParams();
-  const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(() => searchParams.get('menu') === '1');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isProMenuOpen, setIsProMenuOpen] = useState(false);
   const [isMobileProAccordionOpen, setIsMobileProAccordionOpen] = useState(false);
-  const dropdownRef = useRef(null);
   const userDropdownRef = useRef(null);
   const proMenuRef = useRef(null);
   const proTriggerRef = useRef(null);
@@ -73,9 +69,6 @@ export const Header = () => {
   // Close dropdowns on click outside
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setIsCityDropdownOpen(false);
-      }
       if (userDropdownRef.current && !userDropdownRef.current.contains(e.target)) {
         setIsUserDropdownOpen(false);
       }
@@ -97,7 +90,6 @@ export const Header = () => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
         setIsProMenuOpen(false);
-        setIsCityDropdownOpen(false);
         setIsUserDropdownOpen(false);
       }
     };
@@ -175,54 +167,7 @@ export const Header = () => {
         {/* Right Actions */}
         <div className="header-actions">
           
-          {/* Currency / City Switcher */}
-          <div className="currency-toggle-wrap hide-mobile" style={{ position: 'relative' }} ref={dropdownRef}>
-            <button
-              onClick={() => setIsCityDropdownOpen(!isCityDropdownOpen)}
-              className="currency-toggle-btn"
-              title="Changer de ville et devise"
-              aria-label={`Marché actif : ${activeCity.name}, Devise : ${activeCity.currency}. Cliquer pour changer.`}
-              aria-expanded={isCityDropdownOpen}
-              aria-haspopup="true"
-            >
-              <span className="currency-toggle-flag">{activeCity.flag}</span>
-              <span className="currency-toggle-code">{activeCity.currency}</span>
-              <ChevronDown size={12} className={`currency-toggle-chevron ${isCityDropdownOpen ? 'open' : ''}`} />
-            </button>
 
-            {isCityDropdownOpen && (
-              <div className="city-dropdown">
-                <div className="city-dropdown-title">
-                  Marchés et Devises
-                </div>
-                {CITIES.map((city) => (
-                  <button
-                    key={city.id}
-                    onClick={() => {
-                      setActiveCity(city);
-                      setIsCityDropdownOpen(false);
-                    }}
-                    className={`city-dropdown-item ${activeCity.id === city.id ? 'active' : ''}`}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <span style={{ fontSize: '1.2rem' }}>{city.flag}</span>
-                      <div>
-                        <div style={{ fontWeight: 600, fontSize: '0.85rem', color: 'var(--obsidian-black)' }}>
-                          {city.name}
-                        </div>
-                        <div style={{ fontSize: '0.72rem', color: 'var(--graphite-gray)' }}>
-                          {city.country}
-                        </div>
-                      </div>
-                    </div>
-                    <span className={`currency-badge ${activeCity.id === city.id ? 'active' : ''}`}>
-                      {city.currency}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
 
           {/* User Account / Login */}
           {currentUser ? (
@@ -398,47 +343,63 @@ export const Header = () => {
 
               {/* Corps du volet épuré : 2 zones */}
               <div className="header-pro-body">
-                {/* 4 atouts réels */}
+                {/* 4 atouts réels — cliquables → /professionnels#avantages */}
                 <div className="header-pro-features-grid">
-                  <div className="header-pro-feature">
-                    <div className="header-pro-icon-wrap">
-                      <Award size={18} color="var(--primary-red)" />
-                    </div>
+                  <button
+                    type="button"
+                    className="header-pro-feature"
+                    onClick={() => {
+                      setIsProMenuOpen(false);
+                      navigate('/professionnels', { state: { scrollTo: 'avantages' } });
+                    }}
+                  >
                     <div>
                       <h4 className="header-pro-feature-title">Badge PRO certifié</h4>
                       <p className="header-pro-feature-desc">Crédibilité immédiate auprès des acquéreurs et locataires.</p>
                     </div>
-                  </div>
+                  </button>
 
-                  <div className="header-pro-feature">
-                    <div className="header-pro-icon-wrap">
-                      <Sparkles size={18} color="var(--primary-red)" />
-                    </div>
+                  <button
+                    type="button"
+                    className="header-pro-feature"
+                    onClick={() => {
+                      setIsProMenuOpen(false);
+                      navigate('/professionnels', { state: { scrollTo: 'avantages' } });
+                    }}
+                  >
                     <div>
-                      <h4 className="header-pro-feature-title">Diffusion & Boost</h4>
+                      <h4 className="header-pro-feature-title">Diffusion &amp; Boost</h4>
                       <p className="header-pro-feature-desc">Mise en avant prioritaire de vos mandats sur votre secteur.</p>
                     </div>
-                  </div>
+                  </button>
 
-                  <div className="header-pro-feature">
-                    <div className="header-pro-icon-wrap">
-                      <BarChart3 size={18} color="var(--primary-red)" />
-                    </div>
+                  <button
+                    type="button"
+                    className="header-pro-feature"
+                    onClick={() => {
+                      setIsProMenuOpen(false);
+                      navigate('/professionnels', { state: { scrollTo: 'avantages' } });
+                    }}
+                  >
                     <div>
                       <h4 className="header-pro-feature-title">Tableau de bord</h4>
                       <p className="header-pro-feature-desc">Suivi en temps réel de vos mandats, vues et prises de contact.</p>
                     </div>
-                  </div>
+                  </button>
 
-                  <div className="header-pro-feature">
-                    <div className="header-pro-icon-wrap">
-                      <CreditCard size={18} color="var(--primary-red)" />
-                    </div>
+                  <button
+                    type="button"
+                    className="header-pro-feature"
+                    onClick={() => {
+                      setIsProMenuOpen(false);
+                      navigate('/professionnels', { state: { scrollTo: 'avantages' } });
+                    }}
+                  >
                     <div>
                       <h4 className="header-pro-feature-title">Règlement Mobile Money</h4>
                       <p className="header-pro-feature-desc">Encaissement sécurisé et instantané de vos commissions.</p>
                     </div>
-                  </div>
+                  </button>
                 </div>
 
                 {/* Encadré d'action compact */}
@@ -1309,33 +1270,34 @@ export const Header = () => {
         .header-pro-features-grid {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
-          gap: 24px 32px;
+          gap: 6px 16px;
           padding-right: 36px;
         }
         .header-pro-feature {
           display: flex;
-          gap: 14px;
+          flex-direction: column;
+          gap: 4px;
           align-items: flex-start;
           background: transparent;
           border: none;
-          padding: 0;
+          padding: 12px 14px;
+          border-radius: 8px;
+          text-align: left;
+          cursor: pointer;
+          transition: background 0.15s ease;
+          width: 100%;
         }
-        .header-pro-icon-wrap {
-          width: 34px;
-          height: 34px;
-          border-radius: 6px;
-          background-color: #FFFFFF;
-          border: 1px solid rgba(0, 0, 0, 0.08);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
+        .header-pro-feature:hover {
+          background: rgba(0, 0, 0, 0.04);
         }
         .header-pro-feature-title {
           font-size: 0.9rem;
           font-weight: 700;
           color: var(--obsidian-black);
           margin-bottom: 3px;
+        }
+        .header-pro-feature:hover .header-pro-feature-title {
+          color: var(--primary-red);
         }
         .header-pro-feature-desc {
           font-size: 0.8rem;

@@ -952,8 +952,8 @@
 
 .serp-results-pane {
   padding: 24px;
-  overflow-y: auto;
   width: 100%;
+  height: fit-content;
 }
 
 .serp-cards-container {

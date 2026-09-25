@@ -26,31 +26,7 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState(false);
-  const [expandedCountries, setExpandedCountries] = useState({
-    congo: true,
-    'cote-divoire': false,
-    rdc: false
-  });
 
-  const toggleCountryExpand = (countryId, e) => {
-    e?.stopPropagation();
-    setExpandedCountries(prev => ({
-      ...prev,
-      [countryId]: !prev[countryId]
-    }));
-  };
-
-  useEffect(() => {
-    if (selectedCountry) {
-      const match = COUNTRIES_DATA.find(c => c.name === selectedCountry);
-      if (match) {
-        setExpandedCountries(prev => ({
-          ...prev,
-          [match.id]: true
-        }));
-      }
-    }
-  }, [selectedCountry]);
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [isTypeDropdownOpen, setIsTypeDropdownOpen] = useState(false);
   const [maxBudget, setMaxBudget] = useState(transactionType === "VENTE" ? 150000000 : 2500000);
@@ -59,13 +35,6 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
 
   const typeDropdownRef = useRef(null);
   const locationDropdownRef = useRef(null);
-
-  // Suggestions across all markets
-  const neighborhoodSuggestions = [
-    "Abidjan", "Cocody Riviera Golf", "Le Plateau", "Cocody Ambassades", "Marcory Zone 4", "Deux Plateaux", "Assinie", "Yamoussoukro",
-    "Kinshasa", "Kinshasa Gombe", "Kinshasa Ngaliema", "Macampagne", "Mont Fleuri", "Lubumbashi",
-    "Brazzaville", "Brazzaville Mpila", "Brazzaville Centre-Ville", "Bacongo", "Pointe-Noire", "Côte Sauvage"
-  ];
 
   // Close dropdowns on click outside
   useEffect(() => {
@@ -262,11 +231,10 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
               alignItems: 'center'
             }}
           >
-            {/* 1. LOCALISATION (PAYS → VILLES) */}
+            {/* 1. LOCALISATION — Recherche libre avec suggestions */}
             <div style={{ position: 'relative' }} ref={locationDropdownRef}>
               <div 
                 className="search-field-box"
-                onClick={() => setIsLocationDropdownOpen(true)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -276,7 +244,7 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
                   border: isLocationDropdownOpen ? '1px solid var(--primary-red)' : '1px solid var(--border-color)',
                   backgroundColor: '#FAFAFA',
                   transition: 'all 0.15s ease',
-                  cursor: 'pointer'
+                  cursor: 'text'
                 }}
               >
                 <div style={{ color: 'var(--primary-red)', flexShrink: 0 }}>
@@ -300,15 +268,13 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
                   <input
                     id="hero-location-input"
                     type="text"
-                    placeholder="Choisir un pays ou taper une ville..."
+                    placeholder="Quartier, ville ou pays..."
                     value={locationQuery}
                     onChange={(e) => {
                       setLocationQuery(e.target.value);
+                      setSelectedCountry('');
+                      setSelectedCity('');
                       setIsLocationDropdownOpen(true);
-                      if (!e.target.value) {
-                        setSelectedCountry('');
-                        setSelectedCity('');
-                      }
                     }}
                     onFocus={() => setIsLocationDropdownOpen(true)}
                     style={{
@@ -324,141 +290,104 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
                     }}
                   />
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  {locationQuery && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleClearLocation();
-                      }}
-                      style={{ color: '#9CA3AF', cursor: 'pointer', padding: '2px', background: 'none', border: 'none' }}
-                      aria-label="Effacer la localisation"
-                    >
-                      <X size={13} />
-                    </button>
-                  )}
-                  <ChevronDown 
-                    size={14} 
-                    style={{ 
-                      color: isLocationDropdownOpen ? 'var(--primary-red)' : '#9CA3AF', 
-                      transition: 'transform 0.2s',
-                      transform: isLocationDropdownOpen ? 'rotate(180deg)' : 'none'
-                    }} 
-                  />
-                </div>
+                {locationQuery && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleClearLocation();
+                    }}
+                    style={{ color: '#9CA3AF', cursor: 'pointer', padding: '2px', background: 'none', border: 'none' }}
+                    aria-label="Effacer la localisation"
+                  >
+                    <X size={13} />
+                  </button>
+                )}
               </div>
 
-              {/* Cascading Dropdown: Pays → Villes (Accordion vertical sans icônes ni devises, comme 4.png) */}
-              {isLocationDropdownOpen && (
-                <div
-                  className="location-cascade-dropdown"
-                  style={{
-                    position: 'absolute',
-                    top: 'calc(100% + 8px)',
-                    left: 0,
-                    width: '420px',
-                    maxWidth: 'min(420px, calc(100vw - 32px))',
-                    backgroundColor: '#FFFFFF',
-                    borderRadius: '16px',
-                    boxShadow: '0 20px 48px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(0, 0, 0, 0.06)',
-                    border: '1px solid rgba(0, 0, 0, 0.08)',
-                    zIndex: 150,
-                    overflow: 'hidden'
-                  }}
-                >
-                  {/* Dropdown Header (sans icône) */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px 10px 18px', borderBottom: '1px solid #F1F5F9', backgroundColor: '#FFFFFF' }}>
-                    <span style={{ fontSize: '0.74rem', fontWeight: 800, color: 'var(--graphite-gray)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      PAYS & VILLES DISPONIBLES
-                    </span>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--primary-red)', fontWeight: 700, backgroundColor: '#FFF0F0', padding: '3px 10px', borderRadius: '12px' }}>
-                      {COUNTRIES_DATA.length} Pays
-                    </span>
-                  </div>
+              {/* Suggestions dropdown */}
+              {isLocationDropdownOpen && (() => {
+                const q = locationQuery.toLowerCase().trim();
+                const allSuggestions = COUNTRIES_DATA.flatMap(country => [
+                  { label: country.name, sublabel: 'Pays', value: `Toutes les villes (${country.name})`, country: country.name, city: '' },
+                  ...country.cities.map(city => ({
+                    label: city.name,
+                    sublabel: country.name,
+                    value: `${city.name}, ${country.name}`,
+                    country: country.name,
+                    city: city.name
+                  })),
+                  ...(country.cities.flatMap(city =>
+                    (city.neighborhoods || []).map(nh => ({
+                      label: nh,
+                      sublabel: `${city.name}, ${country.name}`,
+                      value: `${nh}, ${city.name}`,
+                      country: country.name,
+                      city: city.name,
+                      neighborhood: nh
+                    }))
+                  ))
+                ]);
+                const filtered = q
+                  ? allSuggestions.filter(s =>
+                      s.label.toLowerCase().includes(q) ||
+                      s.sublabel.toLowerCase().includes(q) ||
+                      s.value.toLowerCase().includes(q)
+                    ).slice(0, 8)
+                  : allSuggestions.slice(0, 8);
 
-                  {/* Mode Recherche Filtrée en Direct (si l'utilisateur tape du texte) */}
-                  {locationQuery.trim().length > 0 && !locationQuery.startsWith('Toutes les villes') && !locationQuery.includes(',') ? (
-                    <div style={{ padding: '10px 14px', maxHeight: '360px', overflowY: 'auto' }}>
-                      {/* Option directe de recherche (sans icône) */}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsLocationDropdownOpen(false);
-                        }}
-                        style={{
-                          width: '100%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          padding: '10px 14px',
-                          borderRadius: '8px',
-                          border: 'none',
-                          background: 'rgba(235, 33, 46, 0.06)',
-                          textAlign: 'left',
-                          cursor: 'pointer',
-                          marginBottom: '8px'
-                        }}
-                      >
-                        <span style={{ fontSize: '0.84rem', color: 'var(--obsidian-black)' }}>
-                          Rechercher <strong>« {locationQuery} »</strong>
-                        </span>
-                      </button>
-
-                      {/* Matching Cities (sans icône ni devise) */}
-                      {COUNTRIES_DATA.flatMap(country =>
-                        country.cities
-                          .filter(city => city.name.toLowerCase().includes(locationQuery.toLowerCase().trim()))
-                          .map(city => ({ city, country }))
-                      ).map(({ city, country }) => (
+                return (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 'calc(100% + 8px)',
+                      left: 0,
+                      width: '360px',
+                      maxWidth: 'min(360px, calc(100vw - 32px))',
+                      backgroundColor: '#FFFFFF',
+                      borderRadius: '14px',
+                      boxShadow: '0 20px 48px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06)',
+                      border: '1px solid rgba(0,0,0,0.08)',
+                      zIndex: 150,
+                      overflow: 'hidden'
+                    }}
+                  >
+                    <div style={{ padding: '10px 14px 6px 14px', fontSize: '0.68rem', fontWeight: 800, color: 'var(--graphite-gray)', textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: '1px solid #F1F5F9' }}>
+                      Suggestions
+                    </div>
+                    <div style={{ maxHeight: '320px', overflowY: 'auto' }}>
+                      {q && (
                         <button
-                          key={`${country.id}-${city.id}`}
                           type="button"
-                          onClick={() => handleSelectCity(country, city)}
+                          onClick={() => {
+                            setIsLocationDropdownOpen(false);
+                          }}
                           style={{
                             width: '100%',
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'space-between',
-                            padding: '9px 12px',
-                            borderRadius: '8px',
+                            gap: '10px',
+                            padding: '10px 14px',
                             border: 'none',
-                            background: 'transparent',
+                            background: 'rgba(235,33,46,0.05)',
                             textAlign: 'left',
-                            cursor: 'pointer',
-                            transition: 'background 0.15s'
+                            cursor: 'pointer'
                           }}
-                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F8FAFC'}
-                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                         >
-                          <div>
-                            <div style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--obsidian-black)' }}>
-                              {city.name}
-                            </div>
-                            <div style={{ fontSize: '0.72rem', color: 'var(--graphite-gray)', marginTop: '2px' }}>
-                              {country.name} • {city.neighborhoods?.slice(0, 2).join(', ')}...
-                            </div>
-                          </div>
-                          <span style={{ fontSize: '0.72rem', fontWeight: 600, color: 'var(--primary-red)' }}>
-                            Sélectionner
+                          <Search size={14} color="var(--primary-red)" style={{ flexShrink: 0 }} />
+                          <span style={{ fontSize: '0.84rem', color: 'var(--obsidian-black)' }}>
+                            Rechercher <strong>«&nbsp;{locationQuery}&nbsp;»</strong>
                           </span>
                         </button>
-                      ))}
-
-                      {/* Matching Neighborhoods (sans icône ni devise) */}
-                      {COUNTRIES_DATA.flatMap(country =>
-                        country.cities.flatMap(city =>
-                          (city.neighborhoods || [])
-                            .filter(n => n.toLowerCase().includes(locationQuery.toLowerCase().trim()))
-                            .map(n => ({ neighborhood: n, city, country }))
-                        )
-                      ).slice(0, 5).map(({ neighborhood, city, country }, idx) => (
+                      )}
+                      {filtered.map((s, i) => (
                         <button
-                          key={idx}
+                          key={i}
                           type="button"
                           onClick={() => {
-                            setSelectedCountry(country.name);
-                            setSelectedCity(city.name);
-                            setLocationQuery(`${neighborhood}, ${city.name}`);
+                            setLocationQuery(s.value);
+                            setSelectedCountry(s.country);
+                            setSelectedCity(s.city || '');
                             setIsLocationDropdownOpen(false);
                           }}
                           style={{
@@ -466,188 +395,53 @@ export const SearchWidget = ({ compact = false, onSearchSubmit = null }) => {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            padding: '8px 12px',
-                            borderRadius: '8px',
+                            gap: '10px',
+                            padding: '10px 14px',
                             border: 'none',
                             background: 'transparent',
                             textAlign: 'left',
                             cursor: 'pointer',
-                            transition: 'background 0.15s'
+                            transition: 'background 0.12s'
                           }}
-                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F8FAFC'}
-                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                          onMouseEnter={e => e.currentTarget.style.backgroundColor = '#F8FAFC'}
+                          onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
                         >
-                          <div>
-                            <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--obsidian-black)' }}>
-                              {neighborhood}
-                            </div>
-                            <div style={{ fontSize: '0.7rem', color: 'var(--graphite-gray)', marginTop: '1px' }}>
-                              {city.name}, {country.name}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+                            <MapPin size={13} color="var(--graphite-gray)" style={{ flexShrink: 0 }} />
+                            <div style={{ minWidth: 0 }}>
+                              <div style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--obsidian-black)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {s.label}
+                              </div>
+                              <div style={{ fontSize: '0.72rem', color: 'var(--graphite-gray)', marginTop: '1px' }}>
+                                {s.sublabel}
+                              </div>
                             </div>
                           </div>
-                          <span style={{ fontSize: '0.68rem', color: '#9CA3AF' }}>Quartier</span>
+                          <span style={{
+                            fontSize: '0.68rem',
+                            fontWeight: 700,
+                            color: '#64748B',
+                            backgroundColor: '#F1F5F9',
+                            padding: '2px 8px',
+                            borderRadius: '10px',
+                            whiteSpace: 'nowrap',
+                            flexShrink: 0
+                          }}>
+                            {s.neighborhood ? 'Quartier' : s.city ? 'Ville' : 'Pays'}
+                          </span>
                         </button>
                       ))}
+                      {filtered.length === 0 && (
+                        <div style={{ padding: '14px 16px', fontSize: '0.8125rem', color: 'var(--graphite-gray)', textAlign: 'center' }}>
+                          Aucune suggestion
+                        </div>
+                      )}
                     </div>
-                  ) : (
-                    /* Disposition Accordion Vertical (comme 4.png, sans icône et sans devise) */
-                    <div style={{ padding: '8px 12px 14px 12px', maxHeight: '420px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      {COUNTRIES_DATA.map((country) => {
-                        const isExpanded = !!expandedCountries[country.id];
-                        const isCountryActive = selectedCountry === country.name;
-
-                        return (
-                          <div 
-                            key={country.id}
-                            style={{
-                              borderRadius: '12px',
-                              backgroundColor: isExpanded ? '#F8FAFC' : '#FFFFFF',
-                              border: isExpanded ? '1px solid #E2E8F0' : '1px solid #F1F5F9',
-                              transition: 'all 0.2s ease',
-                              overflow: 'hidden'
-                            }}
-                          >
-                            {/* Accordion Country Header */}
-                            <div
-                              onClick={(e) => toggleCountryExpand(country.id, e)}
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                padding: '12px 14px',
-                                cursor: 'pointer',
-                                userSelect: 'none'
-                              }}
-                            >
-                              <div>
-                                <div style={{ 
-                                  fontSize: '0.92rem', 
-                                  fontWeight: 800, 
-                                  color: 'var(--obsidian-black)' 
-                                }}>
-                                  {country.name}
-                                </div>
-                                <div style={{ fontSize: '0.74rem', color: '#94A3B8', marginTop: '2px' }}>
-                                  {country.cities.length} ville{country.cities.length > 1 ? 's' : ''} disponible{country.cities.length > 1 ? 's' : ''}
-                                </div>
-                              </div>
-
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <span style={{
-                                  fontSize: '0.72rem',
-                                  color: '#64748B',
-                                  backgroundColor: '#FFFFFF',
-                                  border: '1px solid #E2E8F0',
-                                  padding: '3px 10px',
-                                  borderRadius: '14px',
-                                  whiteSpace: 'nowrap'
-                                }}>
-                                  {country.cities.map(c => c.name).join(', ')}
-                                </span>
-                                <ChevronDown 
-                                  size={14} 
-                                  style={{ 
-                                    color: '#94A3B8',
-                                    transform: isExpanded ? 'rotate(180deg)' : 'none',
-                                    transition: 'transform 0.2s ease'
-                                  }} 
-                                />
-                              </div>
-                            </div>
-
-                            {/* Accordion Content : Liste des villes */}
-                            {isExpanded && (
-                              <div style={{ padding: '0 10px 10px 10px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                                {/* Option: Toutes les villes */}
-                                <button
-                                  type="button"
-                                  onClick={() => handleSelectCountry(country)}
-                                  style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                    padding: '9px 12px',
-                                    borderRadius: '8px',
-                                    border: '1px dashed rgba(235, 33, 46, 0.4)',
-                                    background: (isCountryActive && !selectedCity) ? '#FFF0F0' : '#FFFFFF',
-                                    textAlign: 'left',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.15s'
-                                  }}
-                                  onMouseEnter={(e) => {
-                                    if (!isCountryActive || selectedCity) {
-                                      e.currentTarget.style.backgroundColor = '#FDF2F2';
-                                    }
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    if (!isCountryActive || selectedCity) {
-                                      e.currentTarget.style.backgroundColor = '#FFFFFF';
-                                    }
-                                  }}
-                                >
-                                  <span style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--obsidian-black)' }}>
-                                    Toutes les villes ({country.name})
-                                  </span>
-                                  <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--primary-red)' }}>
-                                    Tout voir
-                                  </span>
-                                </button>
-
-                                {/* Villes spécifiques */}
-                                {country.cities.map((city) => {
-                                  const isCitySelected = selectedCity === city.name && selectedCountry === country.name;
-
-                                  return (
-                                    <button
-                                      key={city.id}
-                                      type="button"
-                                      onClick={() => handleSelectCity(country, city)}
-                                      style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                        padding: '9px 12px',
-                                        borderRadius: '8px',
-                                        border: isCitySelected ? '1px solid var(--primary-red)' : '1px solid #EDF2F7',
-                                        background: isCitySelected ? 'rgba(235, 33, 46, 0.06)' : '#FFFFFF',
-                                        textAlign: 'left',
-                                        cursor: 'pointer',
-                                        boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
-                                        transition: 'all 0.15s'
-                                      }}
-                                      onMouseEnter={(e) => {
-                                        if (!isCitySelected) e.currentTarget.style.backgroundColor = '#F8FAFC';
-                                      }}
-                                      onMouseLeave={(e) => {
-                                        if (!isCitySelected) e.currentTarget.style.backgroundColor = '#FFFFFF';
-                                      }}
-                                    >
-                                      <div>
-                                        <div style={{ fontSize: '0.84rem', fontWeight: isCitySelected ? 800 : 700, color: 'var(--obsidian-black)' }}>
-                                          {city.name}
-                                        </div>
-                                        {city.neighborhoods && city.neighborhoods.length > 0 && (
-                                          <div style={{ fontSize: '0.72rem', color: '#94A3B8', marginTop: '2px' }}>
-                                            {city.neighborhoods.slice(0, 3).join(', ')}...
-                                          </div>
-                                        )}
-                                      </div>
-                                      <span style={{ fontSize: '0.72rem', fontWeight: 700, color: isCitySelected ? 'var(--primary-red)' : '#94A3B8' }}>
-                                        {isCitySelected ? '✓ Choisi' : 'Sélectionner'}
-                                      </span>
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              )}
+                  </div>
+                );
+              })()}
             </div>
+
 
             {/* 2. TYPE DE BIEN (Multi-select dropdown) */}
             <div 

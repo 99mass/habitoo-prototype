@@ -114,8 +114,6 @@ export const ProAgencySidebar = ({
           <li className="habitoo-agency-sidebar__nav-li" style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid rgba(0, 0, 0, 0.06)' }}>
             <Link
               to="/vitrine/agence-ivoire"
-              target="_blank"
-              rel="noopener noreferrer"
               className="habitoo-agency-sidebar__nav-btn"
               style={{ textDecoration: 'none' }}
               title="Ouvrir la vitrine publique de l'agence dans un nouvel onglet"

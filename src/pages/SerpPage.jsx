@@ -834,7 +834,7 @@ export const SerpPage = () => {
 
         {/* Active Filter Pills Row */}
         {hasActiveFilters && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginTop: '10px', paddingTop: '8px', borderTop: '1px solid var(--border-light)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginTop: '10px', paddingTop: '8px', borderTop: '1px solid var(--border-light)', paddingLeft: '24px', paddingRight: '24px' }}>
             <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--graphite-gray)', textTransform: 'uppercase' }}>Filtres actifs :</span>
             
             {typeParam !== 'ALL' && (
@@ -929,9 +929,9 @@ export const SerpPage = () => {
             : isMapExpanded 
               ? '1fr' 
               : '55% 45%',
-          minHeight: 'calc(100vh - var(--header-height) - 62px)',
           position: 'relative',
-          transition: 'grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+          transition: 'grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          alignItems: 'start'
         }}
       >
         {/* Left Pane: Grid of Properties (rendered if NOT isMapExpanded) */}
@@ -940,8 +940,6 @@ export const SerpPage = () => {
             className={`serp-results-pane ${mobileTab === 'map' ? 'mobile-hidden' : ''}`}
             style={{
               padding: '24px',
-              overflowY: 'auto',
-              maxHeight: 'calc(100vh - var(--header-height) - 62px)',
               width: '100%'
             }}
           >

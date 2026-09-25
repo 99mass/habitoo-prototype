@@ -119,8 +119,6 @@ export const ProMoreDrawer = ({
           <div className="pro-more-vitrine-wrapper">
             <Link
               to={persona === 'agence' ? '/vitrine/agence-ivoire' : '/vitrine/demarcheur-kouassi'}
-              target="_blank"
-              rel="noopener noreferrer"
               className="habitoo-dash-btn-ghost pro-more-vitrine-btn-desktop"
               onClick={onClose}
               title="Consulter ma vitrine publique (nouvel onglet)"
