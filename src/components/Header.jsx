@@ -528,26 +528,50 @@ export const Header = () => {
             {isMobileProAccordionOpen && (
               <div className="mobile-pro-panel">
                 <div className="mobile-pro-features">
-                  <div className="mobile-pro-feature-item">
-                    <div>
-                      <strong>Badge PRO certifié :</strong> crédibilité immédiate.
-                    </div>
-                  </div>
-                  <div className="mobile-pro-feature-item">
-                    <div>
-                      <strong>Diffusion & Boost :</strong> visibilité prioritaire.
-                    </div>
-                  </div>
-                  <div className="mobile-pro-feature-item">
-                    <div>
-                      <strong>Tableau de bord :</strong> mandats, vues et contacts.
-                    </div>
-                  </div>
-                  <div className="mobile-pro-feature-item">
-                    <div>
-                      <strong>Mobile Money :</strong> encaissement sécurisé.
-                    </div>
-                  </div>
+                  <button
+                    type="button"
+                    className="mobile-pro-feature-item mobile-pro-feature-item--btn"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setIsMobileProAccordionOpen(false);
+                      navigate('/professionnels', { state: { scrollTo: 'avantages' } });
+                    }}
+                  >
+                    <strong>Badge PRO certifié :</strong> crédibilité immédiate.
+                  </button>
+                  <button
+                    type="button"
+                    className="mobile-pro-feature-item mobile-pro-feature-item--btn"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setIsMobileProAccordionOpen(false);
+                      navigate('/professionnels', { state: { scrollTo: 'avantages' } });
+                    }}
+                  >
+                    <strong>Diffusion &amp; Boost :</strong> visibilité prioritaire.
+                  </button>
+                  <button
+                    type="button"
+                    className="mobile-pro-feature-item mobile-pro-feature-item--btn"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setIsMobileProAccordionOpen(false);
+                      navigate('/professionnels', { state: { scrollTo: 'avantages' } });
+                    }}
+                  >
+                    <strong>Tableau de bord :</strong> mandats, vues et contacts.
+                  </button>
+                  <button
+                    type="button"
+                    className="mobile-pro-feature-item mobile-pro-feature-item--btn"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setIsMobileProAccordionOpen(false);
+                      navigate('/professionnels', { state: { scrollTo: 'avantages' } });
+                    }}
+                  >
+                    <strong>Mobile Money :</strong> encaissement sécurisé.
+                  </button>
                 </div>
 
                 <div className="mobile-pro-actions">
@@ -1435,6 +1459,31 @@ export const Header = () => {
         }
         .mobile-pro-feature-item:last-child {
           border-bottom: none;
+        }
+        .mobile-pro-feature-item--btn {
+          width: calc(100% - 3%);
+          background: none;
+          border: none;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+          text-align: left;
+          cursor: pointer;
+          border-radius: 6px;
+          padding: 12px 10px;
+          margin-left: 0;
+          transition: background 0.15s ease;
+        }
+        .mobile-pro-feature-item--btn:last-child {
+          border-bottom: none;
+        }
+        .mobile-pro-feature-item--btn:hover,
+        .mobile-pro-feature-item--btn:active {
+          background: rgba(0, 0, 0, 0.04);
+        }
+        .mobile-pro-feature-item--btn strong {
+          color: var(--obsidian-black);
+        }
+        .mobile-pro-feature-item--btn:hover strong {
+          color: var(--primary-red);
         }
         .mobile-pro-feature-item svg {
           flex-shrink: 0;
