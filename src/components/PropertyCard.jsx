@@ -222,11 +222,11 @@ export const PropertyCard = ({ property, onHover = null, isHighlighted = false }
         >
         <div>
           {/* Location & Neighborhood */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.8125rem', color: 'var(--graphite-gray)', marginBottom: '6px' }}>
-            <MapPin size={13} color="var(--primary-red)" />
-            <span style={{ fontWeight: 600, color: 'var(--obsidian-black)' }}>{property.neighborhood}</span>
-            <span>•</span>
-            <span>{property.city}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.8125rem', color: 'var(--graphite-gray)', marginBottom: '6px' }}>
+            <MapPin size={13} color="var(--primary-red)" style={{ flexShrink: 0 }} />
+            <span style={{ fontWeight: 600, color: 'var(--obsidian-black)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {property.neighborhood ? `${property.neighborhood}, ` : ''}{property.city}, {property.country}
+            </span>
           </div>
 
           {/* Title */}

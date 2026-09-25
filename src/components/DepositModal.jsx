@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHabitoo } from '../context/HabitooContext';
-import { PROPERTY_TYPES, PRO_CATEGORIES, PRO_LEASE_TYPES, PRO_AMENITIES_FILTERS, LUXURY_AMENITIES_FILTERS } from '../data/propertiesData';
+import { PROPERTY_TYPES, PRO_CATEGORIES, PRO_LEASE_TYPES, PRO_AMENITIES_FILTERS, LUXURY_AMENITIES_FILTERS, COUNTRIES_DATA } from '../data/propertiesData';
 import { X, CheckCircle2, Upload, ShieldCheck, ArrowRight, ArrowLeft } from 'lucide-react';
 
 export const DepositModal = () => {
@@ -15,6 +15,7 @@ export const DepositModal = () => {
     title: '',
     category: 'LOCATION',
     type: 'Villa d\'architecte',
+    country: activeCity?.country || "Côte d'Ivoire",
     city: activeCity.name,
     neighborhood: '',
     price: '',
@@ -35,6 +36,24 @@ export const DepositModal = () => {
     ownerEmail: ''
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const selectedCountryObj = COUNTRIES_DATA.find(c => c.name === formData.country || c.cities.some(ci => ci.name === formData.city)) || COUNTRIES_DATA[0];
+
+  const handleCountryChange = (countryName) => {
+    const found = COUNTRIES_DATA.find(c => c.name === countryName) || COUNTRIES_DATA[0];
+    setFormData(prev => ({
+      ...prev,
+      country: found.name,
+      city: found.cities[0].name
+    }));
+  };
+
+  const handleCityChange = (cityName) => {
+    setFormData(prev => ({
+      ...prev,
+      city: cityName
+    }));
+  };
 
   useEffect(() => {
     if (isDepositModalOpen) {
@@ -119,11 +138,12 @@ export const DepositModal = () => {
         type: isPro ? (proCategoryObj?.label || 'Bureaux') : formData.type,
         category: formData.category,
         city: formData.city,
+        country: selectedCountryObj.name,
         neighborhood: formData.neighborhood,
         address: `${formData.neighborhood || formData.city}, ${formData.city}`,
-        priceXOF: formData.city !== 'Kinshasa' && formData.city !== 'Brazzaville' ? Number(formData.price || 0) : null,
-        priceUSD: formData.city === 'Kinshasa' ? Number(formData.price || 0) : null,
-        priceXAF: formData.city === 'Brazzaville' ? Number(formData.price || 0) : null,
+        priceXOF: selectedCountryObj.currency === 'XOF' ? Number(formData.price || 0) : null,
+        priceUSD: selectedCountryObj.currency === 'USD' ? Number(formData.price || 0) : null,
+        priceXAF: selectedCountryObj.currency === 'XAF' ? Number(formData.price || 0) : null,
         period: formData.category === 'LOCATION' ? '/mois' : '',
         specs: {
           area: Number(formData.area) || 0,
@@ -361,27 +381,40 @@ export const DepositModal = () => {
 
                 <div className="deposit-form-grid-2">
                   <div className="form-group">
+                    <label className="form-label">Pays</label>
+                    <select
+                      className="form-select"
+                      value={formData.country}
+                      onChange={(e) => handleCountryChange(e.target.value)}
+                    >
+                      {COUNTRIES_DATA.map(c => (
+                        <option key={c.id} value={c.name}>{c.flag} {c.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group">
                     <label className="form-label">Ville</label>
                     <select
                       className="form-select"
                       value={formData.city}
-                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                      onChange={(e) => handleCityChange(e.target.value)}
                     >
-                      <option value="Abidjan">Abidjan (Côte d'Ivoire)</option>
-                      <option value="Kinshasa">Kinshasa (RDC)</option>
-                      <option value="Brazzaville">Brazzaville (Congo)</option>
+                      {selectedCountryObj.cities.map(c => (
+                        <option key={c.id} value={c.name}>{c.name}</option>
+                      ))}
                     </select>
                   </div>
-                  <div className="form-group">
-                    <label className="form-label">Quartier précis</label>
-                    <input
-                      type="text"
-                      className="form-input"
-                      placeholder="ex: Riviera Golf, Gombe..."
-                      value={formData.neighborhood}
-                      onChange={(e) => setFormData({ ...formData, neighborhood: e.target.value })}
-                    />
-                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Quartier précis</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="ex: Riviera Golf, Gombe, Côte Sauvage, Centre-Ville..."
+                    value={formData.neighborhood}
+                    onChange={(e) => setFormData({ ...formData, neighborhood: e.target.value })}
+                  />
                 </div>
 
                 <div className="form-group">

@@ -6,7 +6,8 @@ import {
   PROPERTY_TYPES, 
   PRO_CATEGORIES, 
   PRO_LEASE_TYPES, 
-  PRO_AMENITIES_FILTERS 
+  PRO_AMENITIES_FILTERS,
+  COUNTRIES_DATA 
 } from '../data/propertiesData';
 import { 
   CheckCircle2, 
@@ -74,7 +75,11 @@ const DEFAULT_COVER_IMAGE = 'https://images.unsplash.com/photo-1600596542815-ffa
 const CITY_COORDINATES = {
   'Abidjan': [5.3484, -3.9780],
   'Kinshasa': [-4.3217, 15.3125],
-  'Brazzaville': [-4.2677, 15.2919]
+  'Brazzaville': [-4.2677, 15.2919],
+  'Pointe-Noire': [-4.7975, 11.8504],
+  'Yamoussoukro': [6.8276, -5.2893],
+  'Assinie': [5.1278, -3.2847],
+  'Lubumbashi': [-11.6609, 27.4794]
 };
 
 // Leaflet Mini Map Component pour la prévisualisation en direct
@@ -208,6 +213,7 @@ export const PublishPropertyPage = () => {
     leaseType: 'Bail professionnel',
     category: 'LOCATION', // 'LOCATION' | 'VENTE'
     type: initialIsPro ? "Bureaux" : "Villa d'architecte",
+    country: activeCity?.country || "Côte d'Ivoire",
     city: activeCity?.name || 'Abidjan',
     neighborhood: initialIsPro ? 'Le Plateau' : 'Riviera Golf',
     title: initialIsPro ? "Plateau de Bureaux Équipé — Quartier d'Affaires" : "Somptueuse Villa Contemporaine avec Vue Lagune",
@@ -239,6 +245,24 @@ export const PublishPropertyPage = () => {
     ownerPhone: currentUser?.phone || '07 08 09 10',
     ownerEmail: currentUser?.email || 'contact@domaine.ci'
   });
+
+  const selectedCountryObj = COUNTRIES_DATA.find(c => c.name === formData.country || c.cities.some(ci => ci.name === formData.city)) || COUNTRIES_DATA[0];
+
+  const handleCountryChange = (countryName) => {
+    const found = COUNTRIES_DATA.find(c => c.name === countryName) || COUNTRIES_DATA[0];
+    setFormData(prev => ({
+      ...prev,
+      country: found.name,
+      city: found.cities[0].name
+    }));
+  };
+
+  const handleCityChange = (cityName) => {
+    setFormData(prev => ({
+      ...prev,
+      city: cityName
+    }));
+  };
 
   // Photos state
   const [uploadedPhotos, setUploadedPhotos] = useState([DEFAULT_COVER_IMAGE]);
@@ -339,7 +363,7 @@ export const PublishPropertyPage = () => {
       : formData.type,
     category: formData.category,
     city: formData.city,
-    country: formData.city === 'Kinshasa' ? 'RD Congo' : formData.city === 'Brazzaville' ? 'Congo' : "Côte d'Ivoire",
+    country: selectedCountryObj.name,
     neighborhood: formData.neighborhood || 'Quartier',
     address: `${formData.neighborhood || 'Quartier'}, ${formData.city}`,
     description: formData.description || "Propriété d'exception aux finitions de haut standing, volumes généreux et sécurité maximale.",
@@ -359,9 +383,9 @@ export const PublishPropertyPage = () => {
       security: "Gardiennage certifié"
     },
     amenities: formData.amenities || [],
-    priceXOF: formData.city === 'Kinshasa' ? null : Number(formData.price || 0),
-    priceUSD: formData.city === 'Kinshasa' ? Number(formData.price || 0) : null,
-    priceXAF: formData.city === 'Brazzaville' ? Number(formData.price || 0) : null,
+    priceXOF: selectedCountryObj.currency === 'XOF' ? Number(formData.price || 0) : null,
+    priceUSD: selectedCountryObj.currency === 'USD' ? Number(formData.price || 0) : null,
+    priceXAF: selectedCountryObj.currency === 'XAF' ? Number(formData.price || 0) : null,
     period: formData.category === 'LOCATION' ? '/mois' : '',
     ownerName: userName,
     ownerAvatar: userAvatar,
@@ -549,57 +573,67 @@ export const PublishPropertyPage = () => {
             </div>
           </div>
 
-          {/* Typology & Country */}
-          <div className="publish-grid-2">
+          {/* Typology */}
+          <div className="compact-field">
+            <label className="compact-label">
+              {formData.destination === 'PRO' ? "Catégorie professionnelle" : "Type de bien"}
+            </label>
             {formData.destination === 'PRO' ? (
-              <div className="compact-field">
-                <label className="compact-label">Catégorie professionnelle</label>
-                <select
-                  className="form-select compact-input"
-                  value={formData.proCategory}
-                  onChange={(e) => {
-                    const newCat = e.target.value;
-                    const catObj = PRO_CATEGORIES.find(c => c.id === newCat);
-                    setFormData(prev => ({
-                      ...prev,
-                      proCategory: newCat,
-                      type: catObj?.label || newCat
-                    }));
-                  }}
-                >
-                  {PRO_CATEGORIES.map(c => (
-                    <option key={c.id} value={c.id}>{c.label}</option>
-                  ))}
-                </select>
-              </div>
+              <select
+                className="form-select compact-input"
+                value={formData.proCategory}
+                onChange={(e) => {
+                  const newCat = e.target.value;
+                  const catObj = PRO_CATEGORIES.find(c => c.id === newCat);
+                  setFormData(prev => ({
+                    ...prev,
+                    proCategory: newCat,
+                    type: catObj?.label || newCat
+                  }));
+                }}
+              >
+                {PRO_CATEGORIES.map(c => (
+                  <option key={c.id} value={c.id}>{c.label}</option>
+                ))}
+              </select>
             ) : (
-              <div className="compact-field">
-                <label className="compact-label">Type de bien</label>
-                <select
-                  className="form-select compact-input"
-                  value={formData.type}
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                >
-                  {PROPERTY_TYPES.map(t => (
-                    <option key={t} value={t}>{t}</option>
-                  ))}
-                </select>
-              </div>
+              <select
+                className="form-select compact-input"
+                value={formData.type}
+                onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+              >
+                {PROPERTY_TYPES.map(t => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
+              </select>
             )}
+          </div>
 
+          {/* Pays & Ville liés */}
+          <div className="publish-grid-2">
             <div className="compact-field">
               <label className="compact-label">Pays</label>
               <select
                 className="form-select compact-input"
-                value={formData.city}
-                onChange={(e) => {
-                  const newCity = e.target.value;
-                  setFormData({ ...formData, city: newCity });
-                }}
+                value={formData.country}
+                onChange={(e) => handleCountryChange(e.target.value)}
               >
-                <option value="Abidjan">Côte d'Ivoire</option>
-                <option value="Kinshasa">RDC</option>
-                <option value="Brazzaville">Congo</option>
+                {COUNTRIES_DATA.map(c => (
+                  <option key={c.id} value={c.name}>{c.flag} {c.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="compact-field">
+              <label className="compact-label">Ville</label>
+              <select
+                className="form-select compact-input"
+                value={formData.city}
+                onChange={(e) => handleCityChange(e.target.value)}
+              >
+                {selectedCountryObj.cities.map(c => (
+                  <option key={c.id} value={c.name}>{c.name}</option>
+                ))}
               </select>
             </div>
           </div>

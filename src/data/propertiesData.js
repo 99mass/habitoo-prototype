@@ -8,8 +8,8 @@ export const PROPERTIES_DATA = [
     category: "LOCATION",
     city: "Abidjan",
     country: "Côte d'Ivoire",
-    neighborhood: "Cocody Riviera Golf",
-    address: "Boulevard de France prolongé, Cocody, Abidjan",
+    neighborhood: "Riviera Golf",
+    address: "Boulevard de France prolongé, Riviera Golf, Abidjan, Côte d'Ivoire",
     priceXOF: 3500000,
     priceXAF: 3500000,
     priceUSD: 5800,
@@ -68,8 +68,8 @@ export const PROPERTIES_DATA = [
     category: "VENTE",
     city: "Abidjan",
     country: "Côte d'Ivoire",
-    neighborhood: "Cocody Ambassades",
-    address: "Rue des Ambassadeurs, Cocody, Abidjan",
+    neighborhood: "Ambassades",
+    address: "Rue des Ambassadeurs, Cocody Ambassades, Abidjan, Côte d'Ivoire",
     priceXOF: 950000000,
     priceXAF: 950000000,
     priceUSD: 1575000,
@@ -123,8 +123,8 @@ export const PROPERTIES_DATA = [
     category: "LOCATION",
     city: "Brazzaville",
     country: "Congo",
-    neighborhood: "Brazzaville Mpila",
-    address: "Corniche de Mpila, Brazzaville",
+    neighborhood: "Mpila",
+    address: "Corniche de Mpila, Brazzaville, Congo",
     priceXOF: 2400000,
     priceXAF: 2400000,
     priceUSD: 4000,
@@ -176,9 +176,9 @@ export const PROPERTIES_DATA = [
     type: "Villa d'architecte",
     category: "VENTE",
     city: "Kinshasa",
-    country: "RDC",
-    neighborhood: "Kinshasa Ngaliema",
-    address: "Quartier Macampagne, Ngaliema, Kinshasa",
+    country: "RD Congo",
+    neighborhood: "Ngaliema",
+    address: "Quartier Macampagne, Ngaliema, Kinshasa, RD Congo",
     priceXOF: 1350000000,
     priceXAF: 1350000000,
     priceUSD: 2250000,
@@ -232,7 +232,7 @@ export const PROPERTIES_DATA = [
     city: "Abidjan",
     country: "Côte d'Ivoire",
     neighborhood: "Deux Plateaux Vallons",
-    address: "Rue des Jardins, Cocody Deux Plateaux, Abidjan",
+    address: "Rue des Jardins, Deux Plateaux Vallons, Abidjan, Côte d'Ivoire",
     priceXOF: 780000000,
     priceXAF: 780000000,
     priceUSD: 1290000,
@@ -287,8 +287,8 @@ export const PROPERTIES_DATA = [
     category: "LOCATION",
     city: "Brazzaville",
     country: "Congo",
-    neighborhood: "Brazzaville Centre-Ville",
-    address: "Avenue Amilcar Cabral, Centre-Ville, Brazzaville",
+    neighborhood: "Centre-Ville",
+    address: "Avenue Amilcar Cabral, Centre-Ville, Brazzaville, Congo",
     priceXOF: 1600000,
     priceXAF: 1600000,
     priceUSD: 2650,
@@ -340,7 +340,7 @@ export const PROPERTIES_DATA = [
     city: "Abidjan",
     country: "Côte d'Ivoire",
     neighborhood: "Le Plateau",
-    address: "Avenue Chardy, Le Plateau, Abidjan",
+    address: "Avenue Chardy, Le Plateau, Abidjan, Côte d'Ivoire",
     priceXOF: 2800000,
     priceXAF: 2800000,
     priceUSD: 4650,
@@ -396,9 +396,9 @@ export const PROPERTIES_DATA = [
     type: "Résidences sécurisées",
     category: "LOCATION",
     city: "Kinshasa",
-    country: "RDC",
-    neighborhood: "Kinshasa Mont Fleuri",
-    address: "Avenue de la Montagne, Mont Fleuri, Kinshasa",
+    country: "RD Congo",
+    neighborhood: "Mont Fleuri",
+    address: "Avenue de la Montagne, Mont Fleuri, Kinshasa, RD Congo",
     priceXOF: 5200000,
     priceXAF: 5200000,
     priceUSD: 8600,
@@ -449,9 +449,9 @@ export const PROPERTIES_DATA = [
     type: "Penthouses",
     category: "LOCATION",
     city: "Kinshasa",
-    country: "RDC",
-    neighborhood: "Kinshasa Gombe",
-    address: "Boulevard du 30 Juin, Gombe, Kinshasa",
+    country: "RD Congo",
+    neighborhood: "Gombe",
+    address: "Boulevard du 30 Juin, Gombe, Kinshasa, RD Congo",
     priceXOF: 4500000,
     priceXAF: 4500000,
     priceUSD: 7500,
@@ -504,8 +504,8 @@ export const PROPERTIES_DATA = [
     category: "LOCATION",
     city: "Abidjan",
     country: "Côte d'Ivoire",
-    neighborhood: "Marcory Zone 4",
-    address: "Rue Paul Langevin, Marcory Zone 4, Abidjan",
+    neighborhood: "Zone 4",
+    address: "Rue Paul Langevin, Zone 4, Abidjan, Côte d'Ivoire",
     priceXOF: 1900000,
     priceXAF: 1900000,
     priceUSD: 3150,
@@ -565,7 +565,7 @@ export const PROPERTIES_DATA = [
     city: "Abidjan",
     country: "Côte d'Ivoire",
     neighborhood: "Le Plateau",
-    address: "Avenue Chardy, Le Plateau, Abidjan",
+    address: "Avenue Chardy, Le Plateau, Abidjan, Côte d'Ivoire",
     priceXOF: 4800000,
     priceXAF: 4800000,
     priceUSD: 8000,
@@ -630,8 +630,8 @@ export const PROPERTIES_DATA = [
     category: "LOCATION",
     city: "Abidjan",
     country: "Côte d'Ivoire",
-    neighborhood: "Marcory Zone 4",
-    address: "Boulevard de Marseille angle Rue Pierre et Marie Curie, Abidjan",
+    neighborhood: "Zone 4",
+    address: "Boulevard de Marseille angle Rue Pierre et Marie Curie, Zone 4, Abidjan, Côte d'Ivoire",
     priceXOF: 2600000,
     priceXAF: 2600000,
     priceUSD: 4330,
@@ -693,7 +693,7 @@ export const PROPERTIES_DATA = [
     city: "Abidjan",
     country: "Côte d'Ivoire",
     neighborhood: "Deux Plateaux",
-    address: "Rue des Jardins, Deux Plateaux Vallon, Abidjan",
+    address: "Rue des Jardins, Deux Plateaux Vallon, Abidjan, Côte d'Ivoire",
     priceXOF: 240000000,
     priceXAF: 240000000,
     priceUSD: 400000,
@@ -754,9 +754,9 @@ export const PROPERTIES_DATA = [
     type: "Entrepôt et local d'activité",
     category: "LOCATION",
     city: "Kinshasa",
-    country: "RDC",
-    neighborhood: "Kinshasa Gombe",
-    address: "Zone d'Activité Poids Lourds, Limete, Kinshasa",
+    country: "RD Congo",
+    neighborhood: "Limete",
+    address: "Zone d'Activité Poids Lourds, Limete, Kinshasa, RD Congo",
     priceXOF: 5700000,
     priceXAF: 5700000,
     priceUSD: 9500,
@@ -815,9 +815,9 @@ export const PROPERTIES_DATA = [
     type: "Coworking",
     category: "LOCATION",
     city: "Kinshasa",
-    country: "RDC",
-    neighborhood: "Kinshasa Gombe",
-    address: "Boulevard du 30 Juin, Gombe, Kinshasa",
+    country: "RD Congo",
+    neighborhood: "Gombe",
+    address: "Boulevard du 30 Juin, Gombe, Kinshasa, RD Congo",
     priceXOF: 2100000,
     priceXAF: 2100000,
     priceUSD: 3500,
@@ -878,7 +878,7 @@ export const PROPERTIES_DATA = [
     city: "Brazzaville",
     country: "Congo",
     neighborhood: "Centre-Ville",
-    address: "Avenue Amilcar Cabral, Centre-Ville, Brazzaville",
+    address: "Avenue Amilcar Cabral, Centre-Ville, Brazzaville, Congo",
     priceXOF: 520000000,
     priceXAF: 520000000,
     priceUSD: 865000,
@@ -925,14 +925,284 @@ export const PROPERTIES_DATA = [
       avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
     },
     description: "Immeuble commercial et tertiaire indépendant idéal pour siège de banque, compagnie d'assurance ou multinationale à Brazzaville. Bénéficie d'une visibilité d'angle exceptionnelle et d'un stationnement privé rare en centre-ville."
+  },
+  {
+    id: "hab-cg-03",
+    destination: "RESIDENTIAL",
+    isPro: true,
+    advertiserType: "AGENCE",
+    title: "Villa Océane Contemporaine — Côte Sauvage",
+    type: "Villas d'architecte",
+    category: "LOCATION",
+    city: "Pointe-Noire",
+    country: "Congo",
+    neighborhood: "Côte Sauvage",
+    address: "Boulevard Denis Sassou Nguesso, Côte Sauvage, Pointe-Noire, Congo",
+    priceXOF: 3500000,
+    priceXAF: 3500000,
+    priceUSD: 5800,
+    period: " / mois",
+    specs: {
+      beds: 5,
+      baths: 5,
+      area: 450,
+      yearBuilt: 2023,
+      condition: "Neuf / Première occupation",
+      energyRating: "A",
+      parkingSpaces: 4,
+      securityLevel: "Poste de garde blindé 24/7, clôture électrifiée et vidéosurveillance"
+    },
+    amenities: [
+      "Vue directe sur l'Océan Atlantique",
+      "Piscine à débordement privée",
+      "Groupe électrogène automatique 60 kVA",
+      "Forage et système de surpression d'eau",
+      "Climatisation intégrale Inverter",
+      "Terrasse panoramique sur le toit",
+      "Logement pour le personnel indépendant"
+    ],
+    coordinates: [-4.7890, 11.8340],
+    images: [
+      "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1200&q=85",
+      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=85",
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85"
+    ],
+    floorPlan: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&w=1200&q=85",
+    auditDate: "18 Février 2025",
+    auditStatus: "Titre Foncier notarié certifié — Bail de standing diplomatique",
+    chargesBreakdown: {
+      copropriete: "N/A — Propriété indépendante",
+      securite: "Inclus gardiennage privé 24/7",
+      depotGarantie: "3 mois séquestrés Habitoo",
+      chargesLocatives: "Entretien piscine et groupe inclus"
+    },
+    agent: {
+      name: "Serge Mabiala",
+      agency: "Pointe-Noire Luxury Real Estate",
+      title: "Conseiller Immobilier Agréé",
+      certified: true,
+      phone: "+242 05 555 12 34",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
+    },
+    description: "Somptueuse villa d'architecte contemporaine les pieds dans le sable sur la prestigieuse Côte Sauvage de Pointe-Noire. Offre une vue imprenable sur les couchers de soleil atlantiques, de vastes volumes de réception et une autonomie énergétique totale."
+  },
+  {
+    id: "hab-cg-04",
+    destination: "RESIDENTIAL",
+    isPro: true,
+    advertiserType: "AGENCE",
+    title: "Appartement de Haut Standing — Vue Baie de Pointe-Noire",
+    type: "Appartements meublés",
+    category: "VENTE",
+    city: "Pointe-Noire",
+    country: "Congo",
+    neighborhood: "Centre-Ville",
+    address: "Avenue du Général de Gaulle, Centre-Ville, Pointe-Noire, Congo",
+    priceXOF: 260000000,
+    priceXAF: 260000000,
+    priceUSD: 430000,
+    period: "",
+    specs: {
+      beds: 3,
+      baths: 3,
+      area: 210,
+      yearBuilt: 2022,
+      condition: "Excellent état",
+      energyRating: "A",
+      parkingSpaces: 2,
+      securityLevel: "Contrôle d'accès biométrique et gardiennage 24/7"
+    },
+    amenities: [
+      "Balcon filant avec vue panoramique",
+      "Cuisine américaine entièrement équipée",
+      "Ascenseur privatif codé",
+      "Climatisation intégrale",
+      "Groupe électrogène de secours résidence"
+    ],
+    coordinates: [-4.7940, 11.8560],
+    images: [
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=85",
+      "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1200&q=85"
+    ],
+    floorPlan: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?auto=format&fit=crop&w=1200&q=85",
+    auditDate: "10 Février 2025",
+    auditStatus: "Titre Foncier notarié certifié — Vente directe sans litige",
+    chargesBreakdown: {
+      copropriete: "150 000 FCFA / mois",
+      securite: "Inclus copropriété",
+      depotGarantie: "Compte séquestre notarié 10%",
+      chargesLocatives: "N/A"
+    },
+    agent: {
+      name: "Serge Mabiala",
+      agency: "Pointe-Noire Luxury Real Estate",
+      title: "Conseiller Immobilier Agréé",
+      certified: true,
+      phone: "+242 05 555 12 34",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
+    },
+    description: "Appartement de prestige au sein de l'une des résidences les plus sécurisées du centre-ville de Pointe-Noire. Emplacement stratégique à proximité immédiate des sièges pétroliers et du port autonome."
+  },
+  {
+    id: "hab-ci-07",
+    destination: "RESIDENTIAL",
+    isPro: true,
+    advertiserType: "PARTICULIER",
+    title: "Villa d'Exception Pieds dans l'Eau — Bord de Lagune",
+    type: "Villas d'architecte",
+    category: "VENTE",
+    city: "Assinie",
+    country: "Côte d'Ivoire",
+    neighborhood: "Assinie-Mafia",
+    address: "Km 14, Bord de lagune, Assinie-Mafia, Assinie, Côte d'Ivoire",
+    priceXOF: 480000000,
+    priceXAF: 480000000,
+    priceUSD: 800000,
+    period: "",
+    specs: {
+      beds: 6,
+      baths: 6,
+      area: 520,
+      yearBuilt: 2023,
+      condition: "Neuf",
+      energyRating: "A",
+      parkingSpaces: 6,
+      securityLevel: "Poste de garde, clôture sécurisée"
+    },
+    amenities: [
+      "Ponton d'amarrage privé pour bateau",
+      "Piscine miroir face à la lagune",
+      "Plage privée aménagée",
+      "Groupe électrogène automatique",
+      "Jardin tropical paysager de 2 500 m²"
+    ],
+    coordinates: [5.1320, -3.2750],
+    images: [
+      "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=85",
+      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=85"
+    ],
+    auditDate: "12 Février 2025",
+    auditStatus: "Certificat de Propriété Notarié — Titre Foncier Régularisé",
+    chargesBreakdown: {
+      copropriete: "N/A",
+      securite: "Gardiennage privé",
+      depotGarantie: "Compte séquestre notarié 10%",
+      chargesLocatives: "N/A"
+    },
+    agent: {
+      name: "Jean-Marc Kouassi",
+      agency: "Démarcheur Agréé Habitoo",
+      certified: true,
+      phone: "+225 07 00 11 22 33",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80"
+    },
+    description: "Propriété somptueuse située à Assinie-Mafia avec accès direct à la lagune et ponton privé. Havre de paix raffiné combinant architecture balnéaire contemporaine et finitions de très haut standing."
+  },
+  {
+    id: "hab-rdc-05",
+    destination: "RESIDENTIAL",
+    isPro: true,
+    advertiserType: "AGENCE",
+    title: "Manoir Privatif & Jardins — Quartier Golf",
+    type: "Villas d'architecte",
+    category: "VENTE",
+    city: "Lubumbashi",
+    country: "RD Congo",
+    neighborhood: "Golf",
+    address: "Avenue des Éperviers, Golf, Lubumbashi, RD Congo",
+    priceXOF: 720000000,
+    priceXAF: 720000000,
+    priceUSD: 1200000,
+    period: "",
+    specs: {
+      beds: 5,
+      baths: 5,
+      area: 600,
+      yearBuilt: 2022,
+      condition: "Parfait état",
+      energyRating: "A",
+      parkingSpaces: 8,
+      securityLevel: "Clôture d'enceinte 3.5m, caméra thermique et poste de garde"
+    },
+    amenities: [
+      "Piscine olympique intérieure et extérieure",
+      "Court de tennis privé",
+      "Forage industriel et panneaux solaires",
+      "Système de filtration d'eau UV",
+      "Domotique complète"
+    ],
+    coordinates: [-11.6420, 27.4680],
+    images: [
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=85",
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=85"
+    ],
+    auditDate: "14 Février 2025",
+    auditStatus: "Certificat d'Enregistrement Notarié — Propriété certifiée",
+    chargesBreakdown: {
+      copropriete: "N/A",
+      securite: "Privative",
+      depotGarantie: "Compte séquestre notarié 10%",
+      chargesLocatives: "N/A"
+    },
+    agent: {
+      name: "David Mulamba",
+      agency: "Katanga Prestige Real Estate",
+      certified: true,
+      phone: "+243 99 888 77 66",
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
+    },
+    description: "Manoir d'exception dans le quartier le plus sécurisé et prisé de Lubumbashi. Architecture néoclassique somptueuse, équipements de loisirs privés et autonomie énergétique totale."
   }
 ];
 
-export const CITIES = [
-  { id: "abidjan", name: "Abidjan", country: "Côte d'Ivoire", currency: "XOF", flag: "🇨🇮", symbol: "FCFA", coords: [5.3484, -3.9780] },
-  { id: "kinshasa", name: "Kinshasa", country: "RDC", currency: "USD", flag: "🇨🇩", symbol: "$", coords: [-4.3250, 15.3000] },
-  { id: "brazzaville", name: "Brazzaville", country: "Congo", currency: "XAF", flag: "🇨🇬", symbol: "FCFA", coords: [-4.2690, 15.2830] }
+export const COUNTRIES_DATA = [
+  {
+    id: "congo",
+    name: "Congo",
+    flag: "🇨🇬",
+    currency: "XAF",
+    symbol: "FCFA",
+    cities: [
+      { id: "brazzaville", name: "Brazzaville", coords: [-4.2690, 15.2830], neighborhoods: ["Mpila", "Centre-Ville", "Bacongo", "Ouenze", "Talangaï"] },
+      { id: "pointe-noire", name: "Pointe-Noire", coords: [-4.7975, 11.8504], neighborhoods: ["Centre-Ville", "Côte Sauvage", "Tié-Tié", "Mpita", "Ngoyo"] }
+    ]
+  },
+  {
+    id: "cote-divoire",
+    name: "Côte d'Ivoire",
+    flag: "🇨🇮",
+    currency: "XOF",
+    symbol: "FCFA",
+    cities: [
+      { id: "abidjan", name: "Abidjan", coords: [5.3484, -3.9780], neighborhoods: ["Cocody", "Riviera Golf", "Plateau", "Deux Plateaux", "Marcory Zone 4", "Cocody Ambassades"] },
+      { id: "yamoussoukro", name: "Yamoussoukro", coords: [6.8276, -5.2893], neighborhoods: ["Centre-Ville", "Habitat", "Quartier Administratif", "Fondation"] },
+      { id: "assinie", name: "Assinie", coords: [5.1278, -3.2847], neighborhoods: ["Assinie-Mafia", "Assouindé", "Bord de Lagune", "Front de Mer"] }
+    ]
+  },
+  {
+    id: "rdc",
+    name: "RD Congo",
+    flag: "🇨🇩",
+    currency: "USD",
+    symbol: "$",
+    cities: [
+      { id: "kinshasa", name: "Kinshasa", coords: [-4.3250, 15.3000], neighborhoods: ["Gombe", "Ngaliema", "Macampagne", "Mont Fleuri", "Kintambo"] },
+      { id: "lubumbashi", name: "Lubumbashi", coords: [-11.6609, 27.4794], neighborhoods: ["Golf", "Lido", "Centre-Ville", "Makomeno", "Gambela"] }
+    ]
+  }
 ];
+
+export const CITIES = COUNTRIES_DATA.flatMap(country =>
+  country.cities.map(city => ({
+    id: city.id,
+    name: city.name,
+    country: country.name,
+    currency: country.currency,
+    flag: country.flag,
+    symbol: country.symbol,
+    coords: city.coords
+  }))
+);
 
 export const PROPERTY_TYPES = [
   "Villas d'architecte",
