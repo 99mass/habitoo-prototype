@@ -202,14 +202,13 @@ export const ProRealEstatePage = () => {
   const activeCriteriaCount = useMemo(() => {
     let count = 0;
     if (opParam && opParam !== 'ALL') count++;
-    if (catParam && catParam !== 'ALL') count++;
     if (leaseParam && leaseParam !== 'ALL') count++;
     if (cityParam) count++;
     if (minAreaParam) count++;
     if (maxBudgetParam) count++;
     if (amenitiesParam.length > 0) count += amenitiesParam.length;
     return count;
-  }, [opParam, catParam, leaseParam, cityParam, minAreaParam, maxBudgetParam, amenitiesParam]);
+  }, [opParam, leaseParam, cityParam, minAreaParam, maxBudgetParam, amenitiesParam]);
 
   const secondaryActiveCount = activeCriteriaCount;
 
@@ -217,7 +216,6 @@ export const ProRealEstatePage = () => {
   const hasActiveFilters = useMemo(() => {
     return (
       (opParam && opParam !== 'ALL') ||
-      (catParam && catParam !== 'ALL') ||
       (leaseParam && leaseParam !== 'ALL') ||
       Boolean(cityParam) ||
       Boolean(locationParam) ||
@@ -225,7 +223,7 @@ export const ProRealEstatePage = () => {
       Boolean(maxBudgetParam) ||
       amenitiesParam.length > 0
     );
-  }, [opParam, catParam, leaseParam, cityParam, locationParam, minAreaParam, maxBudgetParam, amenitiesParam]);
+  }, [opParam, leaseParam, cityParam, locationParam, minAreaParam, maxBudgetParam, amenitiesParam]);
 
   // Remove individual filter chip
   const removeFilter = (key, valueToRemove = null) => {
@@ -409,19 +407,6 @@ export const ProRealEstatePage = () => {
               )}
             </div>
 
-            {/* Catégorie Pro (Desktop only - accessible in drawer on mobile) */}
-            <select
-              value={catParam}
-              onChange={(e) => updateFilter('category', e.target.value)}
-              className={`serp-select serp-filter-desktop-only ${catParam !== 'ALL' ? 'active-filter' : ''}`}
-              title="Catégorie professionnelle"
-            >
-              <option value="ALL">Toutes catégories pro</option>
-              {PRO_CATEGORIES.map(c => (
-                <option key={c.id} value={c.id}>{c.label}</option>
-              ))}
-            </select>
-
             {/* Bouton Accordéon « Filtres » (Desktop) */}
             <button
               type="button"
@@ -501,6 +486,26 @@ export const ProRealEstatePage = () => {
           </div>
         </div>
 
+        {/* TabView for Categories */}
+        <div className="pro-categories-tabs">
+          <button 
+            className={`pro-tab-item ${catParam === 'ALL' ? 'active' : ''}`}
+            onClick={() => updateFilter('category', 'ALL')}
+          >
+            Tous
+          </button>
+          {PRO_CATEGORIES.map(c => (
+            <button
+              key={c.id}
+              className={`pro-tab-item ${catParam === c.id ? 'active' : ''}`}
+              onClick={() => updateFilter('category', c.id)}
+            >
+              {c.label}
+            </button>
+          ))}
+        </div>
+
+
         {/* Volet Tiroir Intégré Pleine Largeur (Drawer accordéon sous la barre) */}
         {isFilterDropdownOpen && (
           <div className="pro-filters-drawer">
@@ -558,20 +563,6 @@ export const ProRealEstatePage = () => {
                   </div>
                 </div>
 
-                {/* 2. Catégorie pro (accessible dans le tiroir sur mobile & desktop) */}
-                <div className="pro-drawer-group">
-                  <label className="pro-drawer-label">Catégorie pro</label>
-                  <select
-                    className="pro-drawer-select"
-                    value={draftFilters.category || 'ALL'}
-                    onChange={(e) => setDraftFilters(prev => ({ ...prev, category: e.target.value }))}
-                  >
-                    <option value="ALL">Toutes catégories pro</option>
-                    {PRO_CATEGORIES.map(c => (
-                      <option key={c.id} value={c.id}>{c.label}</option>
-                    ))}
-                  </select>
-                </div>
 
                 {/* 3. Ville */}
                 <div className="pro-drawer-group">
@@ -796,20 +787,13 @@ export const ProRealEstatePage = () => {
 
         {/* Active Filter Pills Row (matching SerpPage / particulier.png) */}
         {hasActiveFilters && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginTop: '10px', paddingTop: '8px', borderTop: '1px solid var(--border-light, #F1F5F9)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', paddingTop: '12px', paddingBottom: '12px', paddingLeft: '24px', paddingRight: '24px', maxWidth: '1400px', margin: '0 auto', borderTop: '1px solid var(--border-light, #F1F5F9)' }}>
             <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--graphite-gray)', textTransform: 'uppercase' }}>Filtres actifs :</span>
             
             {opParam !== 'ALL' && (
               <span className="filter-chip">
                 <span>Projet : {opParam === 'LOCATION' ? 'À Louer' : 'À Vendre'}</span>
                 <button type="button" onClick={() => removeFilter('type')} title="Supprimer"><X size={12} /></button>
-              </span>
-            )}
-
-            {catParam !== 'ALL' && (
-              <span className="filter-chip">
-                <span>Catégorie : {PRO_CATEGORIES.find(c => c.id === catParam)?.label || catParam}</span>
-                <button type="button" onClick={() => removeFilter('category')} title="Supprimer"><X size={12} /></button>
               </span>
             )}
 

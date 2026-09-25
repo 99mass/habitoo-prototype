@@ -132,6 +132,44 @@
   margin: 0 auto;
 }
 
+/* TabView pour catégories (horizontal scroll) */
+.pro-categories-tabs {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+.pro-categories-tabs::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.pro-tab-item {
+  background: none;
+  border: none;
+  padding: 12px 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--graphite-gray, #64748B);
+  white-space: nowrap;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+.pro-tab-item:hover {
+  color: var(--obsidian-black, #111111);
+}
+.pro-tab-item.active {
+  color: var(--obsidian-black, #111111);
+  border-bottom-color: var(--obsidian-black, #111111);
+  font-weight: 600;
+}
+
+
 .serp-filters-left {
   display: flex;
   align-items: center;
