@@ -823,7 +823,7 @@ export const SerpPage = () => {
                     className="pro-drawer-apply-btn"
                     onClick={handleApplyDraftFilters}
                   >
-                    Afficher les {filteredProperties.length} bien{filteredProperties.length > 1 ? 's' : ''}
+                    Appliquer
                   </button>
                 </div>
               </div>

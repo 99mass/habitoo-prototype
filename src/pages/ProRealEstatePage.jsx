@@ -776,7 +776,7 @@ export const ProRealEstatePage = () => {
                     className="pro-drawer-apply-btn"
                     onClick={handleApplyFilters}
                   >
-                    Afficher les {filteredProperties.length} bien{filteredProperties.length > 1 ? 's' : ''} pro
+                    Appliquer
                   </button>
                 </div>
               </div>
