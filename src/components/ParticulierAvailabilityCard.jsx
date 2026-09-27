@@ -1,6 +1,9 @@
+'use client';
+
+import { safeStorage } from '@/lib/storage';
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from '@/lib/router-compat';
 import { 
   Calendar, 
   Clock, 
@@ -57,7 +60,7 @@ export const ParticulierAvailabilityCard = () => {
   // Jours d'accueil
   const [days, setDays] = useState(() => {
     try {
-      const saved = localStorage.getItem('habitoo_user_avail_days');
+      const saved = safeStorage.getItem('habitoo_user_avail_days');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
@@ -81,7 +84,7 @@ export const ParticulierAvailabilityCard = () => {
   // Créneaux horaires personnalisés libres
   const [slots, setSlots] = useState(() => {
     try {
-      const saved = localStorage.getItem('habitoo_user_avail_slots');
+      const saved = safeStorage.getItem('habitoo_user_avail_slots');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
@@ -101,11 +104,11 @@ export const ParticulierAvailabilityCard = () => {
 
 
   useEffect(() => {
-    localStorage.setItem('habitoo_user_avail_days', JSON.stringify(days));
+    safeStorage.setItem('habitoo_user_avail_days', JSON.stringify(days));
   }, [days]);
 
   useEffect(() => {
-    localStorage.setItem('habitoo_user_avail_slots', JSON.stringify(slots));
+    safeStorage.setItem('habitoo_user_avail_slots', JSON.stringify(slots));
   }, [slots]);
 
   const triggerSaveFeedback = () => {

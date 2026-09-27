@@ -1,5 +1,7 @@
+'use client';
+
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from '@/lib/router-compat';
 import { useHabitoo } from '../context/HabitooContext';
 import { Home, Search, Heart, User, PlusCircle } from 'lucide-react';
 

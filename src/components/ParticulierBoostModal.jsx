@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { X, Flame, Check, ShieldCheck, Sparkles, Smartphone, CreditCard, Lock, ArrowRight } from 'lucide-react';
 import { OperatorSelectorGrid, CardBrandLogos } from './PaymentOperatorLogos';

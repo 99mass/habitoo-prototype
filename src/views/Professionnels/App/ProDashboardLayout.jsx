@@ -1,0 +1,285 @@
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from '@/lib/router-compat';
+import { ProTopHeader } from './ProTopHeader';
+import { ProTabView } from './ProTabView';
+import { ProBottomNav } from './ProBottomNav';
+import { ProMoreDrawer } from './ProMoreDrawer';
+import { ProAgencySidebar } from './components/ProAgencySidebar';
+import { ProDashboardView } from './ProDashboardView';
+import { ProPropertiesView } from './views/ProPropertiesView';
+import { ProVisitsView } from './views/ProVisitsView';
+import { ProRevenueView } from './views/ProRevenueView';
+import { ProCreditsView } from './views/ProCreditsView';
+import { ProProfileView } from './views/ProProfileView';
+import { ProSettingsView } from './views/ProSettingsView';
+import { PROPERTIES_DATA } from '../../../data/propertiesData';
+import {
+  GraduationCap,
+  ArrowRight
+} from 'lucide-react';
+import './ProDashboard.css';
+
+// Initialisation des annonces du professionnel
+const INITIAL_PROPERTIES = PROPERTIES_DATA
+  .filter(p => p.isPro || p.advertiserType === 'PRO')
+  .slice(0, 6)
+  .map((p, idx) => {
+    const isBoosted = idx === 0 || idx === 3;
+    const views = [5420, 4110, 3890, 3120, 2480, 1950][idx] || 2000;
+    const inquiries = [142, 98, 76, 64, 42, 31][idx] || 50;
+
+    return {
+      id: p.id,
+      title: p.title,
+      type: p.type,
+      category: p.category === 'LOCATION' ? 'Location' : 'Vente',
+      city: p.city,
+      neighborhood: p.neighborhood,
+      price: `${p.priceXOF.toLocaleString('fr-FR')} FCFA${p.period || ''}`,
+      image: p.images[0] || '/assets/villa-abidjan-signature.jpg',
+      specs: `${p.specs.bedrooms} ch. • ${p.specs.area} m²`,
+      status: isBoosted ? 'BOOSTED' : 'ACTIVE',
+      statusLabel: isBoosted ? 'Boostée' : 'En ligne',
+      views,
+      inquiries
+    };
+  });
+
+export const ProDashboardLayout = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const activeTab = searchParams.get('tab') || 'overview';
+  const actionParam = searchParams.get('action') || '';
+
+  const personaParam = searchParams.get('persona');
+  const [persona, setPersona] = useState(personaParam === 'agence' ? 'agence' : 'demarcheur');
+  const [credits, setCredits] = useState(45);
+  const [propertiesList, setPropertiesList] = useState(INITIAL_PROPERTIES);
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
+
+  // État dynamique du profil synchronisé avec la navbar
+  const [userProfile, setUserProfile] = useState(personaParam === 'agence' ? {
+    name: 'Ivoire Prestige Conseil',
+    avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80',
+    phone: '+225 27 22 44 55 66',
+    email: 'contact@ivoire-prestige.ci',
+    address: 'Immeuble Palm Club, 3ème étage, Boulevard Latrille',
+    city: 'Abidjan',
+    license: 'AGR-CI-2024-0892'
+  } : {
+    name: 'Jean-Marc Kouassi',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+    phone: '+225 07 89 22 14 00',
+    email: 'j.kouassi@habitoo-pro.ci',
+    address: 'Immeuble Palm Club, 3ème étage, Boulevard Latrille',
+    city: 'Abidjan',
+    license: 'AGR-CI-2024-0892'
+  });
+
+  useEffect(() => {
+    document.title = "Habitoo PRO | dashboard"
+
+  }, []);
+
+  const handleSelectTab = (tabId, params = {}) => {
+    setSearchParams(prev => {
+      const next = new URLSearchParams();
+      const currentPersona = prev.get('persona') || persona;
+      if (currentPersona) {
+        next.set('persona', currentPersona);
+      }
+      next.set('tab', tabId);
+      Object.entries(params).forEach(([k, v]) => {
+        if (v !== null && v !== undefined && v !== '') {
+          next.set(k, v);
+        }
+      });
+      return next;
+    });
+  };
+
+  const handlePersonaChange = (newPersona) => {
+    setPersona(newPersona);
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      next.set('persona', newPersona);
+      return next;
+    });
+    if (newPersona === 'agence') {
+      setUserProfile(prev => ({
+        ...prev,
+        name: 'Ivoire Prestige Conseil',
+        avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80'
+      }));
+    } else {
+      setUserProfile(prev => ({
+        ...prev,
+        name: 'Jean-Marc Kouassi',
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80'
+      }));
+    }
+  };
+
+  const handleRechargeSuccess = (addedCredits) => {
+    setCredits(prev => prev + addedCredits);
+  };
+
+  const handleAddProperty = (newProperty, creditsUsed = 0) => {
+    setPropertiesList(prev => [newProperty, ...prev]);
+    if (creditsUsed > 0) {
+      setCredits(prev => Math.max(0, prev - creditsUsed));
+    }
+  };
+
+  const handleSaveProfile = (updatedProfile) => {
+    setUserProfile(prev => ({
+      ...prev,
+      ...updatedProfile
+    }));
+  };
+
+  const isAgency = persona === 'agence';
+
+  return (
+    <div className={`habitoo-dash-shell ${isAgency ? 'habitoo-dash-shell--agence' : ''}`}>
+      {/* Sidebar latérale Agence en mode Desktop */}
+      {isAgency && (
+        <ProAgencySidebar
+          activeTab={activeTab}
+          onSelectTab={handleSelectTab}
+          propertyCount={propertiesList.length}
+          visitCount={2}
+          credits={credits}
+          onOpenCreditsModal={() => handleSelectTab('credits')}
+          userProfile={userProfile}
+        />
+      )}
+
+      <div className={`habitoo-dash-content-wrapper ${isAgency ? 'habitoo-dash-content-wrapper--with-sidebar' : ''}`}>
+        {/* 1. Bandeau supérieur institutionnel épuré */}
+        <ProTopHeader
+          persona={persona}
+          onPersonaChange={handlePersonaChange}
+          credits={credits}
+          onOpenCreditsModal={() => handleSelectTab('credits')}
+          userProfile={userProfile}
+          onOpenMenu={() => setIsMoreOpen(true)}
+        />
+
+        {/* 2. Barre d'onglets uniquement pour Démarcheur (sur Agence, la sidebar remplace la tabview sur desktop) */}
+        {!isAgency && (
+          <ProTabView
+            activeTab={activeTab}
+            onSelectTab={handleSelectTab}
+            persona={persona}
+            propertyCount={propertiesList.length}
+          />
+        )}
+
+        {/* 3. Conteneur Full Canvas */}
+        <main className="habitoo-dash-main">
+          <div className="habitoo-dash-container">
+
+          {/* Onglet 1 : Vue d'ensemble (Cockpit de décision sans mandats) */}
+          {activeTab === 'overview' && (
+            <ProDashboardView
+              onSelectTab={handleSelectTab}
+              onOpenCreditsModal={() => handleSelectTab('credits')}
+            />
+          )}
+
+          {/* Onglet 2 : Mes Annonces (Listing sans colonne performance + publication in-space) */}
+          {activeTab === 'properties' && (
+            <ProPropertiesView
+              onOpenCreditsModal={() => handleSelectTab('credits')}
+              credits={credits}
+              action={actionParam}
+              onNavigateNew={() => handleSelectTab('properties', { action: 'new' })}
+              onCancelNew={() => handleSelectTab('properties')}
+              propertiesList={propertiesList}
+              onAddProperty={handleAddProperty}
+            />
+          )}
+
+          {/* Onglet 3 : Mes Visites (À faire vs Passées & Disponibilités) */}
+          {activeTab === 'visits' && (
+            <ProVisitsView />
+          )}
+
+          {/* Onglet 4 : Revenus (Finances, Virements, Historique) */}
+          {activeTab === 'revenue' && (
+            <ProRevenueView />
+          )}
+
+          {/* Onglet 5 : Habitoo Académie (Conditionnel démarcheur) */}
+          {activeTab === 'academy' && persona === 'demarcheur' && (
+            <div className="habitoo-dash-tab-placeholder">
+              <div className="habitoo-dash-tab-placeholder__card">
+                <div className="habitoo-dash-tab-placeholder__icon-wrap">
+                  <GraduationCap size={24} />
+                </div>
+                <h2 className="habitoo-dash-tab-placeholder__title">Habitoo Académie</h2>
+                <p className="habitoo-dash-tab-placeholder__desc">
+                  Modules de perfectionnement professionnel : prise de vue immobilière, argumentation et déontologie de visite.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => alert("Masterclass 'Sublimer vos biens d'exception' démarrée.")}
+                  className="habitoo-dash-btn-primary"
+                >
+                  Lancer la formation
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Onglet 6 : Profil (Édition photo, coordonnées, biographie) */}
+          {(activeTab === 'profile' || activeTab === 'reputation') && (
+            <ProProfileView
+              userProfile={userProfile}
+              onSaveProfile={handleSaveProfile}
+              persona={persona}
+            />
+          )}
+
+          {/* Onglet 7 : Paramètres (Mot de passe, alertes, sessions actives) */}
+          {activeTab === 'settings' && (
+            <ProSettingsView />
+          )}
+
+          {/* Vue Dédiée Recharge Crédits Boost (Paiement SaaS Wave / Mobile Money / Carte) */}
+          {activeTab === 'credits' && (
+            <ProCreditsView
+              currentCredits={credits}
+              onRechargeSuccess={handleRechargeSuccess}
+              onBack={() => handleSelectTab('properties')}
+            />
+          )}
+
+        </div>
+      </main>
+      </div>
+
+      {/* 4. Bottom Navigation Mobile PRO (visible uniquement sous 768px) */}
+      <ProBottomNav
+        activeTab={activeTab}
+        onSelectTab={handleSelectTab}
+        onOpenMore={() => setIsMoreOpen(true)}
+        visitCount={2}
+      />
+
+      {/* 5. Tiroir "Plus" Mobile PRO (drawer latéral droit) */}
+      <ProMoreDrawer
+        isOpen={isMoreOpen}
+        onClose={() => setIsMoreOpen(false)}
+        onSelectTab={handleSelectTab}
+        persona={persona}
+        onPersonaChange={handlePersonaChange}
+        userProfile={userProfile}
+        credits={credits}
+      />
+    </div>
+  );
+};

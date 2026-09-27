@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/lib/router-compat';
 import { useHabitoo } from '../context/HabitooContext';
 import { PROPERTY_TYPES, LUXURY_AMENITIES_FILTERS, COUNTRIES_DATA } from '../data/propertiesData';
 import { 

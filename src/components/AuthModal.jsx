@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useHabitoo } from '../context/HabitooContext';
 import { 

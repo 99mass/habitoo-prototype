@@ -1,6 +1,8 @@
+'use client';
+
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import L from 'leaflet';
+import { useNavigate } from '@/lib/router-compat';
+
 import { useHabitoo } from '../context/HabitooContext';
 import { ExternalLink, X, MapPin, CheckCircle2 } from 'lucide-react';
 
@@ -29,6 +31,11 @@ export const MapPane = ({
   const navigate = useNavigate();
   const { activeCity, formatPrice } = useHabitoo();
   const [selectedProperty, setSelectedProperty] = useState(null);
+  const [L, setL] = useState(null);
+
+  useEffect(() => {
+    import('leaflet').then((m) => setL(m.default || m));
+  }, []);
 
   // Helper to format short price tag (e.g. 3.5M FCFA, $5.8k)
   const formatShortPriceTag = (prop) => {
@@ -48,7 +55,7 @@ export const MapPane = ({
 
   // Initialize Map
   useEffect(() => {
-    if (!mapContainerRef.current) return;
+    if (!L || !mapContainerRef.current) return;
 
     if (!mapInstanceRef.current) {
       const initialCenter = isValidLatLng(activeCity?.coords) ? activeCity.coords : DEFAULT_CENTER;
@@ -79,7 +86,7 @@ export const MapPane = ({
         mapInstanceRef.current = null;
       }
     };
-  }, []);
+  }, [L]);
 
   // Update center when activeCity changes
   useEffect(() => {
@@ -133,7 +140,7 @@ export const MapPane = ({
   // Render & Update Markers
   useEffect(() => {
     const map = mapInstanceRef.current;
-    if (!map) return;
+    if (!L || !map) return;
 
     // Clear previous markers
     Object.values(markersRef.current).forEach(marker => marker.remove());
@@ -214,7 +221,7 @@ export const MapPane = ({
         console.warn("Leaflet fitBounds error:", err);
       }
     }
-  }, [properties, hoveredPropertyId, selectedProperty, activeCity]);
+  }, [L, properties, hoveredPropertyId, selectedProperty, activeCity]);
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '400px' }}>

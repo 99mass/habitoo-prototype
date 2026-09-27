@@ -1,5 +1,7 @@
+'use client';
+
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import { useHabitoo } from '../context/HabitooContext';
 import { PRO_CATEGORIES } from '../data/propertiesData';
 import { 

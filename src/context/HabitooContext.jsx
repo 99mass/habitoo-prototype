@@ -1,3 +1,6 @@
+'use client';
+
+import { safeStorage } from '@/lib/storage';
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { CITIES } from '../data/propertiesData';
 
@@ -223,7 +226,7 @@ const INITIAL_PRO_PROFILES = [
 export const HabitooProvider = ({ children }) => {
   // Active city & currency
   const [activeCity, setActiveCity] = useState(() => {
-    const saved = localStorage.getItem('habitoo_city');
+    const saved = safeStorage.getItem('habitoo_city');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -238,19 +241,19 @@ export const HabitooProvider = ({ children }) => {
 
   // Favorites
   const [favorites, setFavorites] = useState(() => {
-    const saved = localStorage.getItem('habitoo_favorites');
+    const saved = safeStorage.getItem('habitoo_favorites');
     return saved ? JSON.parse(saved) : ["hab-ci-01", "hab-ci-02"];
   });
 
   // Transactions
   const [transactions, setTransactions] = useState(() => {
-    const saved = localStorage.getItem('habitoo_transactions');
+    const saved = safeStorage.getItem('habitoo_transactions');
     return saved ? JSON.parse(saved) : INITIAL_TRANSACTIONS;
   });
 
   // Scheduled Visits
   const [scheduledVisits, setScheduledVisits] = useState(() => {
-    const saved = localStorage.getItem('habitoo_visits');
+    const saved = safeStorage.getItem('habitoo_visits');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -293,9 +296,9 @@ const DEFAULT_USER = {
 
   // Authentication State
   const [currentUser, setCurrentUser] = useState(() => {
-    const isLoggedOut = localStorage.getItem('habitoo_logged_out') === 'true';
+    const isLoggedOut = safeStorage.getItem('habitoo_logged_out') === 'true';
     if (isLoggedOut) return null;
-    const saved = localStorage.getItem('habitoo_user');
+    const saved = safeStorage.getItem('habitoo_user');
     return saved ? JSON.parse(saved) : DEFAULT_USER;
   });
 
@@ -310,36 +313,36 @@ const DEFAULT_USER = {
 
   useEffect(() => {
     if (currentUser) {
-      localStorage.setItem('habitoo_user', JSON.stringify(currentUser));
+      safeStorage.setItem('habitoo_user', JSON.stringify(currentUser));
     } else {
-      localStorage.removeItem('habitoo_user');
+      safeStorage.removeItem('habitoo_user');
     }
   }, [currentUser]);
 
   useEffect(() => {
-    localStorage.setItem('habitoo_city', JSON.stringify(activeCity));
+    safeStorage.setItem('habitoo_city', JSON.stringify(activeCity));
   }, [activeCity]);
 
   useEffect(() => {
-    localStorage.setItem('habitoo_favorites', JSON.stringify(favorites));
+    safeStorage.setItem('habitoo_favorites', JSON.stringify(favorites));
   }, [favorites]);
 
   useEffect(() => {
-    localStorage.setItem('habitoo_transactions', JSON.stringify(transactions));
+    safeStorage.setItem('habitoo_transactions', JSON.stringify(transactions));
   }, [transactions]);
 
   useEffect(() => {
-    localStorage.setItem('habitoo_visits', JSON.stringify(scheduledVisits));
+    safeStorage.setItem('habitoo_visits', JSON.stringify(scheduledVisits));
   }, [scheduledVisits]);
 
   // User Published Properties
   const [userProperties, setUserProperties] = useState(() => {
-    const saved = localStorage.getItem('habitoo_user_properties');
+    const saved = safeStorage.getItem('habitoo_user_properties');
     return saved ? JSON.parse(saved) : [];
   });
 
   useEffect(() => {
-    localStorage.setItem('habitoo_user_properties', JSON.stringify(userProperties));
+    safeStorage.setItem('habitoo_user_properties', JSON.stringify(userProperties));
   }, [userProperties]);
 
   const addUserProperty = (property) => {
@@ -377,13 +380,13 @@ const DEFAULT_USER = {
   const PRO_PROFILES_VERSION = "v3_demarcheurs_simulation";
   const [proProfiles, setProProfiles] = useState(() => {
     try {
-      const storedVersion = localStorage.getItem('habitoo_pro_profiles_version');
+      const storedVersion = safeStorage.getItem('habitoo_pro_profiles_version');
       if (storedVersion !== PRO_PROFILES_VERSION) {
-        localStorage.setItem('habitoo_pro_profiles_version', PRO_PROFILES_VERSION);
-        localStorage.setItem('habitoo_pro_profiles', JSON.stringify(INITIAL_PRO_PROFILES));
+        safeStorage.setItem('habitoo_pro_profiles_version', PRO_PROFILES_VERSION);
+        safeStorage.setItem('habitoo_pro_profiles', JSON.stringify(INITIAL_PRO_PROFILES));
         return INITIAL_PRO_PROFILES;
       }
-      const saved = localStorage.getItem('habitoo_pro_profiles');
+      const saved = safeStorage.getItem('habitoo_pro_profiles');
       return saved ? JSON.parse(saved) : INITIAL_PRO_PROFILES;
     } catch (e) {
       console.warn("Erreur lecture proProfiles localStorage, fallback INITIAL_PRO_PROFILES:", e);
@@ -393,8 +396,8 @@ const DEFAULT_USER = {
 
   useEffect(() => {
     try {
-      localStorage.setItem('habitoo_pro_profiles', JSON.stringify(proProfiles));
-      localStorage.setItem('habitoo_pro_profiles_version', PRO_PROFILES_VERSION);
+      safeStorage.setItem('habitoo_pro_profiles', JSON.stringify(proProfiles));
+      safeStorage.setItem('habitoo_pro_profiles_version', PRO_PROFILES_VERSION);
     } catch (e) {
       console.error("Erreur sauvegarde proProfiles localStorage:", e);
     }
@@ -431,12 +434,12 @@ const DEFAULT_USER = {
 
   // Notifications State
   const [notifications, setNotifications] = useState(() => {
-    const saved = localStorage.getItem('habitoo_notifications');
+    const saved = safeStorage.getItem('habitoo_notifications');
     return saved ? JSON.parse(saved) : INITIAL_NOTIFICATIONS;
   });
 
   useEffect(() => {
-    localStorage.setItem('habitoo_notifications', JSON.stringify(notifications));
+    safeStorage.setItem('habitoo_notifications', JSON.stringify(notifications));
   }, [notifications]);
 
   const markAllNotificationsRead = () => {
@@ -461,12 +464,12 @@ const DEFAULT_USER = {
     setFavorites([]);
     setScheduledVisits([]);
     setNotifications([]);
-    localStorage.removeItem('habitoo_user');
-    localStorage.removeItem('habitoo_user_properties');
-    localStorage.removeItem('habitoo_favorites');
-    localStorage.removeItem('habitoo_visits');
-    localStorage.removeItem('habitoo_notifications');
-    localStorage.removeItem('habitoo_preview_property');
+    safeStorage.removeItem('habitoo_user');
+    safeStorage.removeItem('habitoo_user_properties');
+    safeStorage.removeItem('habitoo_favorites');
+    safeStorage.removeItem('habitoo_visits');
+    safeStorage.removeItem('habitoo_notifications');
+    safeStorage.removeItem('habitoo_preview_property');
   };
 
   // Toggle Favorite
@@ -560,7 +563,7 @@ const DEFAULT_USER = {
         }
         return v;
       });
-      localStorage.setItem('habitoo_visits', JSON.stringify(updated));
+      safeStorage.setItem('habitoo_visits', JSON.stringify(updated));
       return updated;
     });
   };
@@ -579,7 +582,7 @@ const DEFAULT_USER = {
       role: "Locataire / Investisseur",
       joinedDate: "Membre depuis Janvier 2025"
     };
-    localStorage.removeItem('habitoo_logged_out');
+    safeStorage.removeItem('habitoo_logged_out');
     setCurrentUser(googleUser);
     setIsAuthModalOpen(false);
     setPendingAuth(null);
@@ -636,7 +639,7 @@ const DEFAULT_USER = {
         joinedDate: "À l'instant"
       };
 
-      localStorage.removeItem('habitoo_logged_out');
+      safeStorage.removeItem('habitoo_logged_out');
       setCurrentUser(verifiedUser);
       setIsAuthModalOpen(false);
       setPendingAuth(null);
@@ -655,7 +658,7 @@ const DEFAULT_USER = {
 
   // Logout
   const logout = () => {
-    localStorage.setItem('habitoo_logged_out', 'true');
+    safeStorage.setItem('habitoo_logged_out', 'true');
     setCurrentUser(null);
     setPendingAuth(null);
   };

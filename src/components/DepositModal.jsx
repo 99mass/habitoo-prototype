@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@/lib/router-compat';
 import { useHabitoo } from '../context/HabitooContext';
 import { PROPERTY_TYPES, PRO_CATEGORIES, PRO_LEASE_TYPES, PRO_AMENITIES_FILTERS, LUXURY_AMENITIES_FILTERS, COUNTRIES_DATA } from '../data/propertiesData';
 import { X, CheckCircle2, Upload, ShieldCheck, ArrowRight, ArrowLeft } from 'lucide-react';

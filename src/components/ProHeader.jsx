@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from '@/lib/router-compat';
 import { Menu, X, ArrowUpRight, ArrowRight, LayoutDashboard } from 'lucide-react';
 
 export const ProHeader = () => {

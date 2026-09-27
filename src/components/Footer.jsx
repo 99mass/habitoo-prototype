@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/router-compat';
 import { Facebook, Instagram, Linkedin, Youtube, ArrowRight, Check } from 'lucide-react';
 import { useHabitoo } from '../context/HabitooContext';
 
